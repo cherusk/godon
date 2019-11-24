@@ -7,6 +7,10 @@ Generic, GEA multi objective obtimization techs wielding solution focussing on
 online optimizing, rearranging, calibrating of technologies in need for it
 throughout the stack.
 
+# Principle Outline
+
+![Outline](https://github.com/cherusk/godon/blob/master/structure.svg?sanitize=true)
+
 # References 
 
 Bases and inspired by POC research done in [1][2] or and broader discussions[3] in public domain.
