@@ -1,6 +1,8 @@
 # godon
 (ancient ger.  = improving, rearranging, rendering benign)
 
+![Outline](https://github.com/cherusk/godon/blob/master/logo.svg?sanitize=true)
+
 # Objective
 
 Generic, GEA multi objective obtimization techs wielding solution focussing on
@@ -16,6 +18,8 @@ throughout the stack.
 Bases and inspired by POC research done in [1][2] or and broader discussions[3] in public domain.
 
 [1] https://www.researchgate.net/publication/327392488_Autonomous_Configuration_of_Network_Parameters_in_Operating_Systems_using_Evolutionary_Algorithms
+
 [2] https://zilimeng.com/papers/decima-sigcomm19.pdf
+
 [3] https://news.ycombinator.com/item?id=15892956
 
