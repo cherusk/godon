@@ -1,7 +1,7 @@
 # godon
 (ancient ger.  = improving, rearranging, rendering benign)
 
-![Outline](https://github.com/cherusk/godon/blob/master/logo.svg?sanitize=true)
+![Logo](https://github.com/cherusk/godon/blob/master/logo.svg?sanitize=true)
 
 # Objective
 
@@ -12,6 +12,10 @@ throughout the stack.
 # Principle Outline
 
 ![Outline](https://github.com/cherusk/godon/blob/master/structure.svg?sanitize=true)
+
+# Flow Outline
+
+![Flow](https://github.com/cherusk/godon/blob/master/engine_flow.svg?sanitize=true)
 
 # References 
 
