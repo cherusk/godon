@@ -1,0 +1,50 @@
+---
+
+dist: xenial 
+os: linux
+language: minimal
+sudo: require
+
+services:
+    - docker
+
+env:
+  global:
+  - HOST_SOFT_RESIDE: ${PWD}/testing/
+  - RUNNER_SOFT_RESIDE: /opt
+  - GODON_IMAGE: local/micro_godon
+  - LIBVIRT_SOCK: /var/run/libvirt/libvirt-sock
+  - LIBVIRT_SOCK_DIR: /var/run/libvirt
+  - HOST_POOL_DIR: /srv/
+
+install:
+    - docker build -f ./testing/Dockerfile ./testing -t "${GODON_IMAGE}" 
+    # libvirt - necessary for host virt forewarding
+    - > 
+      sudo apt-get -y install
+      libvirt-daemon
+      libvirt0 qemu-system-x86
+      qemu-kvm
+      qemu-utils
+    - sudo touch /srv/virt_pid
+    - >
+      sudo libvirtd --pid-file /srv/virt_pid
+      --config "${HOST_SOFT_RESIDE}/config/libvirtd.conf"
+      --daemon
+      --verbose 
+    - sudo chmod -R a+rwx "${LIBVIRT_SOCK_DIR}"
+
+jobs:
+    include:
+        - stage: "testing"
+          script:
+              - > 
+                docker run
+                --privileged
+                -it
+                -e SOFT_RESIDE="${RUNNER_SOFT_RESIDE}"
+                -v "${HOST_POOL_DIR}":"${HOST_POOL_DIR}"
+                -v "${HOST_SOFT_RESIDE}/config/libvirtd.conf":/etc/libvirt/libvirtd.conf
+                -v "${LIBVIRT_SOCK}":"${LIBVIRT_SOCK}"
+                -v "${HOST_SOFT_RESIDE}":"${RUNNER_SOFT_RESIDE}"
+                "${GODON_IMAGE}"
