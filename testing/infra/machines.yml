@@ -17,9 +17,17 @@ micro_fedora:
 
 source_vm:
   profile: micro_fedora 
+  nets:
+      - name: ovs_1
+        nic: ovs_eth 
+        ovs: true
 
 sink_vm:
   profile: micro_fedora 
+  nets:
+      - name: ovs_2
+        nic: ovs_eth 
+        ovs: true
 
 local:
     type: kvm
