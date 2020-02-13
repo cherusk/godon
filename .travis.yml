@@ -26,6 +26,7 @@ install:
       libvirt0 qemu-system-x86
       qemu-kvm
       qemu-utils
+      mininet
     - sudo touch /srv/virt_pid
     - >
       sudo libvirtd --pid-file /srv/virt_pid
@@ -38,9 +39,11 @@ jobs:
     include:
         - stage: "testing"
           script:
+              - sudo ${HOST_SOFT_RESIDE}/infra/network.py
               - > 
                 docker run
                 --privileged
+                --network=host
                 -it
                 -e SOFT_RESIDE="${RUNNER_SOFT_RESIDE}"
                 -v "${HOST_POOL_DIR}":"${HOST_POOL_DIR}"
