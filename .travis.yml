@@ -19,7 +19,7 @@ env:
 
 install:
     - docker build -f ./testing/Dockerfile ./testing -t "${GODON_IMAGE}" 
-    # libvirt - necessary for host virt forewarding
+    # libvirt - necessary for host virt forwarding
     - > 
       sudo apt-get -y install
       libvirt-daemon
