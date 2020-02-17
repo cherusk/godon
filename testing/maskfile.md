@@ -10,15 +10,8 @@ set -eEux
 
 echo "instanciating infra"
 
-kcli create host kvm -H 127.0.0.1 local
-
-kcli create plan -f "${SOFT_RESIDE}/infra/pools.yml" pools 
-kcli list pool
-kcli download image -p image_pool fedora30
-
 kcli create plan -f "${SOFT_RESIDE}/infra/machines.yml" micro_fedora
 kcli list image
-kcli -d start plan micro_fedora
 
 sleep 1
 
@@ -47,6 +40,6 @@ echo "provisioning infra"
 
 set -eEux
 
-echo "performing  tests"
+echo "performing tests"
 # ansible to come
 ~~~

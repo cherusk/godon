@@ -1,12 +1,20 @@
 ---
 
+fedora30:
+ type: image
+ pool: image_pool
+
+image_pool:
+  type: pool
+  path: /srv/
+
 vm_net:
  type: network
  cidr: 10.0.5.0/24
 
 micro_fedora:
   type: profile
-  image: Fedora-Cloud-Base-30-1.2.x86_64.qcow2
+  image: fedora30
   memory: 512 
   numcpus: 1
   disks:
@@ -18,18 +26,13 @@ micro_fedora:
 source_vm:
   profile: micro_fedora 
   nets:
-      - name: ovs_1
-        nic: ovs_eth 
-        ovs: true
+  - name: ovs_1
+    nic: ovs_eth 
+    ovs: true
 
 sink_vm:
   profile: micro_fedora 
   nets:
-      - name: ovs_2
-        nic: ovs_eth 
-        ovs: true
-
-local:
-    type: kvm
-    host: localhost
-    pool: image_pool
+  - name: ovs_2
+    nic: ovs_eth 
+    ovs: true
