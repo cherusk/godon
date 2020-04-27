@@ -1,0 +1,10 @@
+---
+- name: 
+  hosts: all
+  gather_facts: false 
+  vars:
+      ansible_python_interpreter: "/usr/bin/python3"
+  tasks:
+      - name: setup custom ci runner
+        import_role:
+          name: ci_runner
