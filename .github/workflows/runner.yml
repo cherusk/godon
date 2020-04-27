@@ -1,0 +1,66 @@
+on:
+  push:
+    branches:
+      - ci_runner_instance
+jobs:
+    ci_runner:
+        runs-on: ubuntu-18.04
+        env:
+            RUNNER_BASE_IMAGE: "Fedora 30"
+            INSTANCE_NAME: "ci_runner"
+            OS_AUTH_URL: https://oprod-controller1.osuosl.org:5000/v3
+            OS_PROJECT_NAME: "godon"
+            OS_USER_DOMAIN_NAME: "Default"
+            OS_PROJECT_DOMAIN_ID: "default"
+            OS_REGION_NAME: "RegionOne"
+            OS_IDENTITY_API_VERSION: 3
+            OS_INTERFACE: public
+            OS_USERNAME: ${{ secrets.osuosl_openstack_user }}
+            OS_PASSWORD: ${{ secrets.osuosl_openstack_pw }}
+        steps:
+            - uses: actions/checkout@v1
+            - name: install
+              run: >
+                   sudo apt-get update;
+                   sudo apt-get install
+                   ansible
+                   python3-openstackclient
+                   jq;
+            - name: deplete obsoleted runner 
+              run: >
+                   openstack server delete --wait "${INSTANCE_NAME}" || exit 0
+            - name: create runner instance 
+              run: >
+                   openstack server create --wait
+                   --key-name "ci_runner"
+                   --image "${RUNNER_BASE_IMAGE}"
+                   --flavor "m1.xlarge"
+                   --network "general_servers1"
+                   --security-group "godon"
+                   "${INSTANCE_NAME}"
+            - name: stage private access key 
+              # since openstack_inventory.py appears broken
+              run: >
+                  echo "${access_key}" > ./access_key_file;
+                  chmod 0600 ./access_key_file;
+              env: # Set the secret as an input
+                access_key: ${{ secrets.osuosl_openstack_instance_key }}
+            - name: improvise inventory 
+              # since openstack_inventory.py appears broken
+              run: >
+                   openstack server show -f json "${INSTANCE_NAME}" |
+                   jq -r '.addresses' | 
+                   awk -F= '{ print $2 }' > ./instance_address 
+            - name: runner provisioning
+              run: >
+                   sleep 60;
+                   ansible-playbook
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=no"
+                   -i "$(cat ./instance_address)," 
+                   -u fedora
+                   -T 120
+                   .github/automation/ci_runner.yml
+            - name: stop runner 
+              run: >
+                   openstack server stop "${INSTANCE_NAME}"
