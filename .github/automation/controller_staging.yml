@@ -1,0 +1,30 @@
+---
+- name: Controller instrument to stage individual test run session 
+  hosts: all
+  gather_facts: false 
+  vars:
+      ansible_python_interpreter: "/usr/bin/python3"
+  tasks:
+      - name: await runner 
+        wait_for:
+          host: "{{ hostvars[inventory_hostname].inventory_hostname }}"
+          port: 22
+          delay: 5
+          state: started
+          timeout: 60
+        delegate_to: localhost
+
+      - name: prepare run containment 
+        file:
+          path: "{{ run_containment_dir }}"
+          owner: "fedora"
+          group: "fedora"
+          mode: 0755
+          state: directory
+
+      - name: checkout
+        git:
+          repo: https://github.com/cherusk/godon.git
+          dest: "{{ run_containment_dir }}/"
+          force: yes
+
