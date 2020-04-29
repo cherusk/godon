@@ -1,4 +1,27 @@
 ---
 # tasks file for ci_runner
 
-- shell: echo "noop"
+- name: install dnf for plugins
+  dnf:
+    name: 'dnf-command(copr)'
+    state: latest
+
+- name: activate copr repos
+  shell: /usr/bin/dnf copr -y enable karmab/kcli
+
+- name: install pgks 
+  dnf:
+    name:
+        - tree
+        - kcli
+        - libvirt
+        - libvirt-daemon-driver-qemu
+        - qemu-img
+        - qemu-system-x86
+        - qemu-system-x86-core
+        - rust
+        - cargo
+    state: latest
+
+- name: install mask 
+  shell: cargo install -f --vers "0.7.1" --root /usr/local/ mask

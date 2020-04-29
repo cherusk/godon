@@ -1,5 +1,5 @@
 ---
-- name: 
+- name: Deploy|Provisioning of godon custom osuosl ci_runner
   hosts: all
   gather_facts: false 
   vars:

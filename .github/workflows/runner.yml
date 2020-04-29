@@ -59,6 +59,7 @@ jobs:
                    --ssh-extra-args="-o StrictHostKeyChecking=no"
                    -i "$(cat ./instance_address)," 
                    -u fedora
+                   --become
                    -T 120
                    .github/automation/ci_runner.yml
             - name: stop runner 
