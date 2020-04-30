@@ -12,6 +12,7 @@
 - name: install pgks 
   dnf:
     name:
+        - git
         - tree
         - kcli
         - libvirt
