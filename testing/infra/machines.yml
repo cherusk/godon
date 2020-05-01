@@ -1,6 +1,6 @@
 ---
 
-fedora30:
+fedora31:
  type: image
  pool: image_pool
 
@@ -8,31 +8,31 @@ image_pool:
   type: pool
   path: /srv/
 
-vm_net:
+oob_net:
  type: network
  cidr: 10.0.5.0/24
 
 micro_fedora:
   type: profile
-  image: fedora30
-  memory: 512 
-  numcpus: 1
-  disks:
-   - size: 5
-  nets:
-   - vm_net 
+  image: fedora31
+  memory: 2048 
+  numcpus: 2
   pool: image_pool 
 
 source_vm:
   profile: micro_fedora 
   nets:
+  - oob_net 
   - name: ovs_1
+    port_name: source
     nic: ovs_eth 
     ovs: true
 
 sink_vm:
   profile: micro_fedora 
   nets:
+  - oob_net 
   - name: ovs_2
+    port_name: sink
     nic: ovs_eth 
     ovs: true

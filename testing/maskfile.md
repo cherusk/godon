@@ -1,45 +1,89 @@
-# Godon Test Run Coordinator
+# Godon Test Session Coordinator
 
-## instanciate
+## infra
 
-> Instanciate Test Infra Stack with help of kcli on local libvirtd
+> micro infrastructure stack related logic
 
-~~~sh
+### infra create
 
+#### infra create machines (work_containment)
+
+> Instanciate Micro Test Infra Stack machines based on kcli/libvirt
+
+~~~bash
 set -eEux
 
-echo "instanciating infra"
-
-kcli create plan -f "${SOFT_RESIDE}/infra/machines.yml" micro_fedora
-kcli list image
-
-sleep 1
+echo "instanciating machines"
+kcli create \
+     plan -f "${work_containment}/testing/infra/machines.yml" \
+     micro_fedora_stack
 
 kcli list plan
 kcli list vm
 
 ~~~
 
-## provision
+#### infra create network (work_containment)
 
-> Provision Test Infra Instances
-
-~~~sh
-
+~~~bash
 set -eEux
 
-echo "provisioning infra"
-# ansible to come
+python "${work_containment}/testing/infra/network.py"
 ~~~
 
-## perform
+### infra cleanup 
 
-> Perform/Orchestrate Run of Tests 
+#### infra cleanup machines
 
-~~~sh
+> Cleanup libvirt based test instances
 
+~~~bash
+set -eEux
+
+kcli delete plan -y micro_fedora_stack
+~~~
+
+#### infra cleanup network 
+
+> Cleanup mininet test network 
+
+~~~bash
+set -eEux
+
+for switch in ovs_1 ovs_2 
+do
+    sudo ovs-vsctl del-br ${switch}
+done
+
+for link in ovs_1-eth1 ovs_2-eth1
+do
+    sudo ip link del ${link}
+done
+
+~~~
+
+### infra provision
+
+#### infra provision machines
+
+> Provision Test Infra Machine Instances
+
+~~~bash
+set -eEux
+
+echo "provisioning infra instances"
+
+~~~
+
+## testing 
+
+### testing perform
+
+> Perform/Orchestrate Session of Tests Run
+
+~~~bash
 set -eEux
 
 echo "performing tests"
-# ansible to come
+
 ~~~
