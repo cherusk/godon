@@ -1,0 +1,4 @@
+[submodule ".github/automation/roles/github_actions_runner"]
+	path = .github/automation/roles/github_actions_runner
+    url = https://github.com/cherusk/ansible-github_actions_runner.git
+    branch = optional_deps

@@ -1,10 +1,24 @@
 ---
 - name: Deploy|Provisioning of godon custom osuosl ci_runner
   hosts: all
-  gather_facts: false 
+  gather_facts: true
   vars:
       ansible_python_interpreter: "/usr/bin/python3"
   tasks:
       - name: setup custom ci runner
         import_role:
           name: ci_runner
+
+      - name: register ci runner with gh
+        import_role:
+          name: github_actions_runner
+        vars:
+            runner_user: fedora
+            runner_dir: /opt/actions-runner
+            runner_version: "latest"
+            replace_runner: yes
+            hide_sensitive_logs: yes
+            access_token: "{{ gh_token }}"
+            github_server: "https://github.com"
+            github_account: "cherusk"
+            github_repo: "godon"
