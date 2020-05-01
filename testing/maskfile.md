@@ -6,7 +6,7 @@
 
 ### infra create
 
-#### infra create machines (work_containment)
+#### infra create machines
 
 > Instanciate Micro Test Infra Stack machines based on kcli/libvirt
 
@@ -15,7 +15,7 @@ set -eEux
 
 echo "instanciating machines"
 kcli create \
-     plan -f "${work_containment}/testing/infra/machines.yml" \
+     plan -f "${MASKFILE_DIR}/infra/machines.yml" \
      micro_fedora_stack
 
 kcli list plan
@@ -23,12 +23,12 @@ kcli list vm
 
 ~~~
 
-#### infra create network (work_containment)
+#### infra create network
 
 ~~~bash
 set -eEux
 
-python "${work_containment}/testing/infra/network.py"
+python "${MASKFILE_DIR}/infra/network.py"
 ~~~
 
 ### infra cleanup 
