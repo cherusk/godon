@@ -17,8 +17,11 @@ jobs:
             OS_INTERFACE: public
             OS_USERNAME: ${{ secrets.osuosl_openstack_user }}
             OS_PASSWORD: ${{ secrets.osuosl_openstack_pw }}
+            GH_ACTIONS_TOKEN: ${{ secrets.gh_runner_token }}
         steps:
-            - uses: actions/checkout@v1
+            - uses: actions/checkout@v2
+              with:
+                submodules: 'true'
             - name: install
               run: >
                    sudo apt-get update;
@@ -61,6 +64,7 @@ jobs:
                    -u fedora
                    --become
                    -T 120
+                   -e gh_token="${GH_ACTIONS_TOKEN}"
                    .github/automation/ci_runner.yml
             - name: stop runner 
               run: >
