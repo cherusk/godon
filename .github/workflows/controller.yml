@@ -1,7 +1,7 @@
 on:
   pull_request:
     branches:
-      - master 
+      - master
 jobs:
     ci_controller:
         runs-on: ubuntu-18.04
@@ -27,37 +27,37 @@ jobs:
                    python3-openstackclient
                    jq;
             - name: Determine PR
-              id: pr 
+              id: pr
               run: >
                    PR="$(echo "${GITHUB_REF}" | awk -F'/' '{ print $2_$3 }')";
                    echo "${PR}" > pr_data;
-            - name: stage private access key 
+            - name: stage private access key
               run: >
                   echo "${access_key}" > ./access_key_file;
                   chmod 0600 ./access_key_file;
               env: # Set the secret as an input
                 access_key: ${{ secrets.osuosl_openstack_instance_key }}
-            - name: start runner 
+            - name: start runner
               run: >
                    openstack server start "${INSTANCE_NAME}"
-            - name: improvise inventory 
+            - name: improvise inventory
               # since openstack_inventory.py appears broken
               run: >
                    openstack server show -f json "${INSTANCE_NAME}" |
-                   jq -r '.addresses' | 
-                   awk -F= '{ print $2 }' > ./instance_address 
-            - name: stage run 
+                   jq -r '.addresses' |
+                   awk -F= '{ print $2 }' > ./instance_address
+            - name: stage run
               run: >
                    ansible-playbook
                    --private-key ./access_key_file
                    --ssh-extra-args="-o StrictHostKeyChecking=no"
-                   -i "$(cat ./instance_address)," 
+                   -i "$(cat ./instance_address),"
                    -u fedora
                    --become
                    -T 120
                    -e run_containment_dir="${RUN_CONTAINMENT_BASE}/$(cat ./pr_data)_${GITHUB_RUN_NUMBER}"
                    .github/automation/controller_staging.yml
-            - name: perform run 
+            - name: perform run
               run: >
                    echo "TDB"
             - name: cleanup run 
@@ -65,12 +65,12 @@ jobs:
                    ansible-playbook
                    --private-key ./access_key_file
                    --ssh-extra-args="-o StrictHostKeyChecking=no"
-                   -i "$(cat ./instance_address)," 
+                   -i "$(cat ./instance_address),"
                    -u fedora
                    --become
                    -T 120
                    -e run_containment_dir="${RUN_CONTAINMENT_BASE}/$(cat ./pr_data)_${GITHUB_RUN_NUMBER}"
                    .github/automation/controller_cleanup.yml
-            - name: stop runner 
+            - name: stop runner
               run: >
                    openstack server stop "${INSTANCE_NAME}"
