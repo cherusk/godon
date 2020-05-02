@@ -25,13 +25,27 @@ kcli list vm
 
 #### infra create network
 
+> Errect micro test network
+
 ~~~bash
 set -eEux
 
-python "${MASKFILE_DIR}/infra/network.py"
+ # improvised since of mininet disarray and kcli work ongoing
+ # create link between switches
+sudo ip link add veth_port_0 type veth peer name veth_port_1
+
+for switch_number in $(seq 0 1)
+do
+    switch_name="switch_${switch_number}"
+    sudo ovs-vsctl add-br "${switch_name}"
+    sudo ovs-vsctl add-port "${switch_name}" "veth_port_${switch_number}"
+done
+
+tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
+
 ~~~
 
-### infra cleanup 
+### infra cleanup
 
 #### infra cleanup machines
 
@@ -43,22 +57,21 @@ set -eEux
 kcli delete plan -y micro_fedora_stack
 ~~~
 
-#### infra cleanup network 
+#### infra cleanup network
 
-> Cleanup mininet test network 
+> Cleanup micro test network
 
 ~~~bash
 set -eEux
 
-for switch in ovs_1 ovs_2 
+
+for switch_number in $(seq 0 1)
 do
-    sudo ovs-vsctl del-br ${switch}
+    switch_name="switch_${switch_number}"
+    sudo ovs-vsctl del-br "${switch_name}"
 done
 
-for link in ovs_1-eth1 ovs_2-eth1
-do
-    sudo ip link del ${link}
-done
+sudo ip link del veth_port_0
 
 ~~~
 
@@ -75,7 +88,7 @@ echo "provisioning infra instances"
 
 ~~~
 
-## testing 
+## testing
 
 ### testing perform
 
