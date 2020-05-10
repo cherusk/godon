@@ -14,7 +14,7 @@
 set -eEux
 
 echo "instanciating machines"
-kcli create \
+sudo kcli create \
      plan -f "${MASKFILE_DIR}/infra/machines.yml" \
      micro_fedora_stack
 
@@ -54,7 +54,7 @@ tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
 ~~~bash
 set -eEux
 
-kcli delete plan -y micro_fedora_stack
+sudo kcli delete plan -y micro_fedora_stack
 ~~~
 
 #### infra cleanup network
