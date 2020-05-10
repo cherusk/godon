@@ -28,6 +28,8 @@
         - openvswitch
         - iproute
         - ansible
+        - openvswitch
+        - iproute
     state: latest
 
 - name: start services
