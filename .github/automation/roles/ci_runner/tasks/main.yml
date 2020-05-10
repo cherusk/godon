@@ -9,7 +9,7 @@
 - name: activate copr repos
   shell: /usr/bin/dnf copr -y enable karmab/kcli
 
-- name: install pgks 
+- name: install pgks
   dnf:
     name:
         - git
@@ -22,7 +22,21 @@
         - qemu-system-x86-core
         - rust
         - cargo
+        - docker
+        - openvswitch
+        - iproute
     state: latest
 
-- name: install mask 
+- name: start services
+  service:
+      name: "{{ svc }}"
+      enabled: yes
+      state: started
+  loop:
+      - "docker"
+      - "openvswitch"
+  loop_control:
+    loop_var: svc
+
+- name: install mask
   shell: cargo install -f --vers "0.7.1" --root /usr/local/ mask
