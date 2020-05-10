@@ -36,6 +36,10 @@ jobs:
         needs: [ pre_controller ]
         steps:
             - uses: actions/checkout@v2
+            - name: cleanup test run
+              run: >
+                   mask --maskfile "${MASK_FILE}" infra cleanup machines;
+                   mask --maskfile "${MASK_FILE}" infra cleanup network;
             - name: stage test run
               run: >
                    mask --maskfile "${MASK_FILE}" infra create network;
@@ -44,10 +48,6 @@ jobs:
             - name: perform test run
               run: >
                    mask --maskfile "${MASK_FILE}" testing perform;
-            - name: cleanup test run
-              run: >
-                   mask --maskfile "${MASK_FILE}" infra cleanup machines;
-                   mask --maskfile "${MASK_FILE}" infra cleanup network;
         env:
             MASK_FILE: testing/maskfile.md
     ###

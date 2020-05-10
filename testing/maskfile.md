@@ -41,7 +41,7 @@ do
     sudo ovs-vsctl add-port "${switch_name}" "veth_port_${switch_number}"
 done
 
-tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
+sudo tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
 
 ~~~
 
@@ -68,10 +68,10 @@ set -eEux
 for switch_number in $(seq 0 1)
 do
     switch_name="switch_${switch_number}"
-    sudo ovs-vsctl del-br "${switch_name}"
+    sudo ovs-vsctl del-br "${switch_name}" || exit 0
 done
 
-sudo ip link del veth_port_0
+sudo ip link del veth_port_0 || exit 0
 
 ~~~
 
