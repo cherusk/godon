@@ -42,8 +42,8 @@ jobs:
                    mask --maskfile "${MASK_FILE}" infra cleanup network;
             - name: stage test run
               run: >
-                   mask --maskfile "${MASK_FILE}" infra create network;
                    mask --maskfile "${MASK_FILE}" infra create machines;
+                   mask --maskfile "${MASK_FILE}" infra create network;
                    mask --maskfile "${MASK_FILE}" infra provision machines;
             - name: perform test run
               run: >
