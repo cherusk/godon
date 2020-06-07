@@ -23,16 +23,9 @@ source_vm:
   profile: micro_fedora 
   nets:
   - oob_net 
-  - name: ovs_1
-    port_name: source
-    nic: ovs_eth 
-    ovs: true
 
 sink_vm:
   profile: micro_fedora 
   nets:
   - oob_net 
-  - name: ovs_2
-    port_name: sink
-    nic: ovs_eth 
-    ovs: true
+  

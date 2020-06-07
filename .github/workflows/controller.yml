@@ -36,9 +36,20 @@ jobs:
         needs: [ pre_controller ]
         steps:
             - uses: actions/checkout@v2
-            - name: perform run
+            - name: cleanup test run
               run: >
-                   echo "TDB"
+                   mask --maskfile "${MASK_FILE}" infra cleanup machines;
+                   mask --maskfile "${MASK_FILE}" infra cleanup network;
+            - name: stage test run
+              run: >
+                   mask --maskfile "${MASK_FILE}" infra create machines;
+                   mask --maskfile "${MASK_FILE}" infra create network;
+                   mask --maskfile "${MASK_FILE}" infra provision machines;
+            - name: perform test run
+              run: >
+                   mask --maskfile "${MASK_FILE}" testing perform;
+        env:
+            MASK_FILE: testing/maskfile.md
     ###
     post_controller:
         runs-on: ubuntu-18.04

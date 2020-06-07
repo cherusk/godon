@@ -15,7 +15,7 @@ ovs_2 = net.addSwitch('ovs_2')
 
 info('*** Creating emulation link\n')
 net.addLink(ovs_1, ovs_2,
-            cls=TCLink, delay='2ms', bw=1000, loss=0)
+            cls=TCLink, delay='2ms', bw=1000)
 
 info('*** Starting network\n')
 net.start()

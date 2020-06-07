@@ -6,7 +6,7 @@
 
 ### infra create
 
-#### infra create machines (work_containment)
+#### infra create machines
 
 > Instanciate Micro Test Infra Stack machines based on kcli/libvirt
 
@@ -14,24 +14,60 @@
 set -eEux
 
 echo "instanciating machines"
-kcli create \
-     plan -f "${work_containment}/testing/infra/machines.yml" \
+sudo kcli create \
+     plan -f "${MASKFILE_DIR}/infra/machines.yml" \
      micro_fedora_stack
 
-kcli list plan
-kcli list vm
+sudo kcli list plan
+sudo kcli list vm
 
 ~~~
 
-#### infra create network (work_containment)
+#### infra create network
+
+> Errect micro test network
 
 ~~~bash
 set -eEux
 
-python "${work_containment}/testing/infra/network.py"
+ # improvised since of mininet disarray and kcli work ongoing
+ # create link between switches
+
+link_instance_to_switch() {
+
+    __instance="${1}"
+    __switch="${2}"
+    __port_name="${3}"
+
+     # render libvirt to ovs link config
+    __link_template="${MASKFILE_DIR}/infra/network/libvirt_ovs_link_template.xml"
+    __link_definition="${MASKFILE_DIR}/infra/network/libvirt_ovs_link.xml"
+    export __switch
+    export __port_name
+    envsubst < "${__link_template}" > "${__link_definition}"
+
+
+    sudo virsh attach-device --domain "${__instance}" \
+                             --file "${__link_definition}"
+}
+
+sudo ip link add veth_port_0 type veth peer name veth_port_1
+
+for switch_number in $(seq 0 1)
+do
+    switch_name="switch_${switch_number}"
+    sudo ovs-vsctl add-br "${switch_name}"
+    sudo ovs-vsctl add-port "${switch_name}" "veth_port_${switch_number}"
+done
+
+sudo tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
+
+link_instance_to_switch "source_vm" "switch_0" "source_vm_port"
+link_instance_to_switch "sink_vm" "switch_1" "sink_vm_port"
+
 ~~~
 
-### infra cleanup 
+### infra cleanup
 
 #### infra cleanup machines
 
@@ -40,25 +76,24 @@ python "${work_containment}/testing/infra/network.py"
 ~~~bash
 set -eEux
 
-kcli delete plan -y micro_fedora_stack
+sudo kcli delete plan -y micro_fedora_stack
 ~~~
 
-#### infra cleanup network 
+#### infra cleanup network
 
-> Cleanup mininet test network 
+> Cleanup micro test network
 
 ~~~bash
 set -eEux
 
-for switch in ovs_1 ovs_2 
+
+for switch_number in $(seq 0 1)
 do
-    sudo ovs-vsctl del-br ${switch}
+    switch_name="switch_${switch_number}"
+    sudo ovs-vsctl del-br "${switch_name}" || exit 0
 done
 
-for link in ovs_1-eth1 ovs_2-eth1
-do
-    sudo ip link del ${link}
-done
+sudo ip link del veth_port_0 || exit 0
 
 ~~~
 
@@ -75,7 +110,7 @@ echo "provisioning infra instances"
 
 ~~~
 
-## testing 
+## testing
 
 ### testing perform
 
