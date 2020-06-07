@@ -18,8 +18,8 @@ sudo kcli create \
      plan -f "${MASKFILE_DIR}/infra/machines.yml" \
      micro_fedora_stack
 
-kcli list plan
-kcli list vm
+sudo kcli list plan
+sudo kcli list vm
 
 ~~~
 
