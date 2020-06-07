@@ -32,6 +32,25 @@ set -eEux
 
  # improvised since of mininet disarray and kcli work ongoing
  # create link between switches
+
+link_instance_to_switch() {
+
+    __instance="${1}"
+    __switch="${2}"
+    __port_name="${3}"
+
+     # render libvirt to ovs link config
+    __link_template="${MASKFILE_DIR}/infra/network/libvirt_ovs_link_template.xml"
+    __link_definition="${MASKFILE_DIR}/infra/network/libvirt_ovs_link.xml"
+    export __switch
+    export __port_name
+    envsubst < "${__link_template}" > "${__link_definition}"
+
+
+    sudo virsh attach-device --domain "${__instance}" \
+                             --file "${__link_definition}"
+}
+
 sudo ip link add veth_port_0 type veth peer name veth_port_1
 
 for switch_number in $(seq 0 1)
@@ -42,6 +61,9 @@ do
 done
 
 sudo tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
+
+link_instance_to_switch "source_vm" "switch_0" "source_vm_port"
+link_instance_to_switch "sink_vm" "switch_1" "sink_vm_port"
 
 ~~~
 

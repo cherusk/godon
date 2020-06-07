@@ -1,0 +1,5 @@
+<interface type='bridge'>
+  <target dev='${__port_name}'/>
+  <source bridge='${__switch}'/>
+  <virtualport type='openvswitch'/>
+</interface>
