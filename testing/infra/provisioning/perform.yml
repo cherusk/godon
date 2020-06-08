@@ -1,0 +1,21 @@
+---
+
+- name: 
+  hosts: all
+  gather_facts: false 
+  vars:
+      ansible_python_interpreter: "/usr/bin/python3"
+  tasks:
+      - name: Prevent races between infra and provisioning run 
+        wait_for:
+          host: "{{ hostvars[inventory_hostname].ansible_host }}"
+          port: 22 
+          delay: 5 
+          state: started 
+          timeout: 120 
+        delegate_to: localhost
+
+      - name: packages 
+        apt:
+          pkg:
+          - flowgrind

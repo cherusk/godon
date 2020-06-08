@@ -108,6 +108,13 @@ set -eEux
 
 echo "provisioning infra instances"
 
+sudo -E ansible-playbook --private-key "${MASKFILE_DIR}/infra/credentials/ssh/id_rsa" \
+                         --user root \
+                         --become \
+                         -i "/usr/local/bin/klist.py" \
+                         --ssh-extra-args="-o StrictHostKeyChecking=no" \
+                         "${MASKFILE_DIR}/infra/provisioning/perform.yml"
+
 ~~~
 
 ## testing
