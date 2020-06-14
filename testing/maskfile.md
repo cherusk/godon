@@ -108,7 +108,11 @@ set -eEux
 
 echo "provisioning infra instances"
 
-sudo -E ansible-playbook --private-key "${MASKFILE_DIR}/infra/credentials/ssh/id_rsa" \
+__credentials_dir="${MASKFILE_DIR}/infra/credentials/ssh/"
+
+chmod -R 0400 "${__credentials_dir}/id_rsa"
+
+sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
                          --user root \
                          --become \
                          -i "/usr/local/bin/klist.py" \
