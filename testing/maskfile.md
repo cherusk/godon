@@ -115,7 +115,8 @@ chmod -R 0400 "${__credentials_dir}/id_rsa"
 sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
                          --user root \
                          --become \
-                         -i "/usr/local/bin/klist.py" \
+                         -i "/usr/bin/klist.py" \
+                         -T 120 \
                          --ssh-extra-args="-o StrictHostKeyChecking=no" \
                          "${MASKFILE_DIR}/infra/provisioning/perform.yml"
 
