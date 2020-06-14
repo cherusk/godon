@@ -41,3 +41,11 @@
 
 - name: install mask
   shell: cargo install -f --vers "0.7.1" --root /usr/local/ mask
+
+# as install is net stack disruptive
+# better to be endian task
+- name: provide kernel extras for netem tc 
+  dnf:
+    name:
+        - kernel-modules-extra 
+    state: latest
