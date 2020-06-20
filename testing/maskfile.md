@@ -112,6 +112,12 @@ __credentials_dir="${MASKFILE_DIR}/infra/credentials/ssh/"
 
 chmod -R 0400 "${__credentials_dir}/id_rsa"
 
+until sudo ansible-inventory -i /usr/bin/klist.py --list | grep -q ansible_host
+do
+    echo "awaiting libvirt instances init completion"
+    sleep 4
+done
+
 sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
                          --user root \
                          --become \
