@@ -13,10 +13,15 @@
 ~~~bash
 set -eEux
 
+__plan_name=micro_stack
+
 echo "instanciating machines"
 sudo kcli create \
      plan -f "${MASKFILE_DIR}/infra/machines.yml" \
-     micro_stack
+     "${__plan_name}"
+
+ # workaround kcli quirk of not synching state
+sudo kcli restart plan "${__plan_name}"
 
 sudo kcli list plan
 sudo kcli list vm
