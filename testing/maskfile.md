@@ -16,7 +16,7 @@ set -eEux
 echo "instanciating machines"
 sudo kcli create \
      plan -f "${MASKFILE_DIR}/infra/machines.yml" \
-     micro_fedora_stack
+     micro_stack
 
 sudo kcli list plan
 sudo kcli list vm
@@ -76,7 +76,7 @@ link_instance_to_switch "sink_vm" "switch_1" "sink_vm_port"
 ~~~bash
 set -eEux
 
-sudo kcli delete plan -y micro_fedora_stack
+sudo kcli delete plan -y micro_stack
 ~~~
 
 #### infra cleanup network
