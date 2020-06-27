@@ -20,9 +20,6 @@ sudo kcli create \
      plan -f "${MASKFILE_DIR}/infra/machines.yml" \
      "${__plan_name}"
 
- # workaround kcli quirk of not synching state
-sudo kcli restart plan "${__plan_name}"
-
 sudo kcli list plan
 sudo kcli list vm
 
@@ -111,17 +108,25 @@ sudo ip link del veth_port_0 || exit 0
 ~~~bash
 set -eEux
 
+__plan_name=micro_stack
+
 echo "provisioning infra instances"
 
 __credentials_dir="${MASKFILE_DIR}/infra/credentials/ssh/"
 
 chmod -R 0400 "${__credentials_dir}/id_rsa"
 
+__sentinel=0
 until sudo ansible-inventory -i /usr/bin/klist.py --list | grep -q ansible_host
 do
     echo "awaiting libvirt instances init completion"
     sudo kcli list vm > /dev/null
-    sleep 8
+    sleep 20
+    if [[ "${__sentinel}" > 4 ]]
+    then
+        sudo kcli restart plan "${__plan_name}"
+    fi
+    ((__sentinel++)) || true
 done
 
 sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
