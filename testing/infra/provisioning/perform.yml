@@ -19,3 +19,4 @@
         apt:
           pkg:
           - flowgrind
+          update_cache: yes
