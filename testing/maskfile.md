@@ -58,8 +58,14 @@ sudo ip link add veth_port_0 type veth peer name veth_port_1
 for switch_number in $(seq 0 1)
 do
     switch_name="switch_${switch_number}"
+
+    # connect 
     sudo ovs-vsctl add-br "${switch_name}"
     sudo ovs-vsctl add-port "${switch_name}" "veth_port_${switch_number}"
+
+    # activate
+    sudo ip link set"${switch_name}" up
+    sudo ip link set"veth_port_${switch_number}" up
 done
 
 sudo tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
