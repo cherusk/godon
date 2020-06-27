@@ -64,8 +64,8 @@ do
     sudo ovs-vsctl add-port "${switch_name}" "veth_port_${switch_number}"
 
     # activate
-    sudo ip link set"${switch_name}" up
-    sudo ip link set"veth_port_${switch_number}" up
+    sudo ip link set "${switch_name}" up
+    sudo ip link set "veth_port_${switch_number}" up
 done
 
 sudo tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
