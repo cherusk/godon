@@ -120,6 +120,7 @@ chmod -R 0400 "${__credentials_dir}/id_rsa"
 until sudo ansible-inventory -i /usr/bin/klist.py --list | grep -q ansible_host
 do
     echo "awaiting libvirt instances init completion"
+    sudo kcli list vm > /dev/null
     sleep 8
 done
 
@@ -127,7 +128,7 @@ sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
                          --user root \
                          --become \
                          -i "/usr/bin/klist.py" \
-                         -T 120 \
+                         -T 30 \
                          --ssh-extra-args="-o StrictHostKeyChecking=no" \
                          "${MASKFILE_DIR}/infra/provisioning/perform.yml"
 
