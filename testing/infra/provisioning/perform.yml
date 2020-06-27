@@ -20,3 +20,6 @@
           pkg:
           - flowgrind
           update_cache: yes
+
+      - name: setup assessment network 
+        script: assessment_link_setup.sh "{{ inventory_hostname }}"
