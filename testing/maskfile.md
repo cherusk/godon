@@ -128,8 +128,8 @@ until sudo ansible-inventory -i /usr/bin/klist.py --list | grep -q ansible_host
 do
     echo "awaiting libvirt instances init completion"
     sudo kcli list vm > /dev/null
-    sleep 20
-    if [[ "${__sentinel}" > 4 ]]
+    sleep 30
+    if [[ "${__sentinel}" > 6 ]]
     then
         sudo kcli restart plan "${__plan_name}"
     fi
