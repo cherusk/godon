@@ -50,7 +50,8 @@ link_instance_to_switch() {
 
 
     sudo virsh attach-device --domain "${__instance}" \
-                             --file "${__link_definition}"
+                             --file "${__link_definition}" \
+                             --persistent
 }
 
 sudo ip link add veth_port_0 type veth peer name veth_port_1
