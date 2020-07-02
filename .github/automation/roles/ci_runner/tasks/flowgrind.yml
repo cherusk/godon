@@ -1,0 +1,19 @@
+---
+
+- block:
+    - name: deploy flowgrind image build context
+      copy: 
+        src: "{{ role_path }}/files/flowgrind/"
+        dest: "/opt/flowgrind/"
+
+    - name: form flowgrind image
+      docker_image:
+        build:
+          path: "/opt/flowgrind/"
+        name: godon/flowgrind 
+        source: build
+  always:
+    - name: cleanup
+      file:
+        path: "/opt/flowgrind/"
+        state: absent
