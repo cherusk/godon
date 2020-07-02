@@ -28,6 +28,7 @@
         - openvswitch
         - iproute
         - ansible
+        - python3-docker
         - openvswitch
         - iproute
         - ansible
