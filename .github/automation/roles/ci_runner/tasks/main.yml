@@ -23,6 +23,7 @@
         - rust
         - cargo
         - docker
+        - python3-docker
         - openvswitch
         - iproute
         - ansible
@@ -41,6 +42,9 @@
 
 - name: install mask
   shell: cargo install -f --vers "0.7.1" --root /usr/local/ mask
+
+- name: deliver flowgrind
+  include_tasks: "{{ role_path }}/tasks/flowgrind.yml"
 
 # as install is net stack disruptive
 # better to be endian task
