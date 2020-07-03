@@ -46,6 +46,14 @@ It's a special case of the previously described anyways.
 
 ![Flow](https://github.com/cherusk/godon/blob/master/engine_flow.svg?sanitize=true)
 
+# Sponsors
+
+Greatest esteem to:
+
+* OSU Open Source Lab (https://osuosl.org) for bestowing generously with resources on their openstack infrastructure
+
+* genesiscloud (https://www.genesiscloud.com/) for providing free GPU acceleration to the project
+
 # References 
 
 Bases and inspired by POC research done in [1][2] or and broader discussions[3] in public domain.
