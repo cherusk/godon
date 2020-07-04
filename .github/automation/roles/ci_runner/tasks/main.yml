@@ -23,6 +23,7 @@
         - rust
         - cargo
         - docker
+        - docker-compose
         - python3-docker
         - openvswitch
         - iproute
