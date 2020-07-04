@@ -146,6 +146,28 @@ sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
 
 ~~~
 
+## godon
+
+### godon setup 
+
+> Errect the parts of godon
+
+~~~bash
+set -eEux
+
+sudo docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up -d
+
+~~~
+
+### godon deplete 
+
+~~~bash
+set -eEux
+
+sudo docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" down 
+
+~~~
+
 ## testing
 
 ### testing perform
