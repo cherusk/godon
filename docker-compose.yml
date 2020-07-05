@@ -8,5 +8,7 @@ services:
         # minimum of setup steps 
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow initdb; (airflow scheduler &); airflow webserver"
+        volumes:
+            - ./breeder/loops/:/opt/airflow/dags
         ports:
             - 127.0.0.1:8080:8080
