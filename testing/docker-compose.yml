@@ -1,0 +1,15 @@
+version: '3.4'
+services:
+    control_loop:
+        image: apache/airflow:1.10.10-2-python3.7
+        restart: always
+        environment:
+            - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
+        # minimum of setup steps 
+        # on sequencial executor and local sqlite
+        entrypoint: bash -c "airflow initdb; (airflow scheduler &); airflow webserver"
+        volumes:
+            - ../breeder/loops/:/opt/airflow/dags
+            - ./infra/credentials/ssh/:/opt/airflow/credentials/
+        ports:
+            - 127.0.0.1:8080:8080

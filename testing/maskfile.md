@@ -155,7 +155,7 @@ sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
 ~~~bash
 set -eEux
 
-sudo docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up -d
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" up -d
 
 ~~~
 
@@ -164,7 +164,7 @@ sudo docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up -d
 ~~~bash
 set -eEux
 
-sudo docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" down 
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" down 
 
 ~~~
 
@@ -178,5 +178,15 @@ sudo docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" down
 set -eEux
 
 echo "performing tests"
+
+ # TODO improvised until formatted parser install 
+target_ip="$(ansible-inventory -i /usr/bin/klist.py --list --yaml | 
+             grep ansible_host | head -n 1 | \
+             awk -F: '{print $2}')"
+
+cmd="airflow variables --set target ${target_ip}"
+docker-compose exec "${cmd}"
+cmd="airflow trigger_dag lnx_net_stack"
+docker-compose exec "${cmd}"
 
 ~~~

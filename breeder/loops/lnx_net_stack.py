@@ -1,6 +1,9 @@
 
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.BashOperator import BashOperator
+from airflow.contrib.operators.ssh_operator import SSHOperator
+from airflow.contrib.hooks.ssh_hook import SSHHook
+from airflow.models import Variable
 from airflow.utils.dates import days_ago
 
 DEFAULTS = {
@@ -48,9 +51,19 @@ optimizing_step = BashOperator(
 )
 
 # perform config effectuation at target instance
-effectuation_step = BashOperator(
+conn_hook = SSHHook(
+        remote_host=Variable.get("target"),
+        username='root',
+        key_file="/opt/airflow/credentials/id_rsa",
+        timeout=30,
+        keepalive_interval=10
+        )
+
+effectuation_step = SSHOperator(
+    ssh_hook=conn_hook,
     task_id='effectuation',
-    bash_command='echo noop',
+    timeout=30,
+    command='echo noop',
     dag=net_stack_dag,
 )
 
