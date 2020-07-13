@@ -15,7 +15,7 @@
         vars:
             runner_user: fedora
             runner_dir: /opt/actions-runner
-            runner_version: "latest"
+            runner_version: "2.262.1"
             replace_runner: yes
             hide_sensitive_logs: yes
             access_token: "{{ gh_token }}"
