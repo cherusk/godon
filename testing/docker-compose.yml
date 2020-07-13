@@ -5,6 +5,7 @@ services:
         restart: always
         environment:
             - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
+            - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
         # minimum of setup steps 
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow initdb; (airflow scheduler &); airflow webserver"

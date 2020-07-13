@@ -148,6 +148,8 @@ sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
 
 ## godon
 
+> Mngnt logic for the godon stack 
+
 ### godon setup 
 
 > Errect the parts of godon
@@ -155,11 +157,18 @@ sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
 ~~~bash
 set -eEux
 
+svc_name=control_loop
+
 sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" up -d
+
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec "${svc_name}" \
+                       chown -R airflow:airflow /opt/airflow/credentials/
 
 ~~~
 
 ### godon deplete 
+
+> Deplete parts of godon
 
 ~~~bash
 set -eEux
@@ -180,13 +189,16 @@ set -eEux
 echo "performing tests"
 
  # TODO improvised until formatted parser install 
-target_ip="$(ansible-inventory -i /usr/bin/klist.py --list --yaml | 
+target_ip="$(sudo ansible-inventory -i /usr/bin/klist.py --list --yaml | 
              grep ansible_host | head -n 1 | \
-             awk -F: '{print $2}')"
+             awk -F: '{print $2}' | xargs echo -n)"
+svc_name=control_loop
+dag_name="lnx_net_stack"
 
-cmd="airflow variables --set target ${target_ip}"
-docker-compose exec "${cmd}"
-cmd="airflow trigger_dag lnx_net_stack"
-docker-compose exec "${cmd}"
+
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec "${svc_name}" \
+                        airflow variables --set target "${target_ip}"
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec "${svc_name}" \
+                        airflow trigger_dag "${dag_name}"
 
 ~~~

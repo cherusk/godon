@@ -1,6 +1,6 @@
 
 from airflow import DAG
-from airflow.operators.BashOperator import BashOperator
+from airflow.operators.bash_operator import BashOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
 from airflow.models import Variable
@@ -61,6 +61,7 @@ conn_hook = SSHHook(
 
 effectuation_step = SSHOperator(
     ssh_hook=conn_hook,
+    remote_host=Variable.get("target"),
     task_id='effectuation',
     timeout=30,
     command="""
