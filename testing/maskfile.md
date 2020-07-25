@@ -161,7 +161,7 @@ svc_name=control_loop
 
 sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" up -d
 
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec "${svc_name}" \
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T --user root "${svc_name}" \
                        chown -R airflow:airflow /opt/airflow/credentials/
 
 ~~~
@@ -196,9 +196,9 @@ svc_name=control_loop
 dag_name="lnx_net_stack"
 
 
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec "${svc_name}" \
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}" \
                         airflow variables --set target "${target_ip}"
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec "${svc_name}" \
+sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}" \
                         airflow trigger_dag "${dag_name}"
 
 ~~~
