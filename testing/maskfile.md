@@ -136,13 +136,24 @@ do
     ((__sentinel++)) || true
 done
 
+ # perform generic setup 
 sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
                          --user root \
                          --become \
                          -i "/usr/bin/klist.py" \
                          -T 30 \
                          --ssh-extra-args="-o StrictHostKeyChecking=no" \
-                         "${MASKFILE_DIR}/infra/provisioning/perform.yml"
+                         "${MASKFILE_DIR}/infra/provisioning/generic.yml"
+
+ # perform infra machine specific setup
+sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
+                         --user root \
+                         --become \
+                         -l source_vm \
+                         -i "/usr/bin/klist.py" \
+                         -T 30 \
+                         --ssh-extra-args="-o StrictHostKeyChecking=no" \
+                         "${MASKFILE_DIR}/infra/provisioning/source.yml"
 
 ~~~
 

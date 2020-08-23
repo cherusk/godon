@@ -1,0 +1,28 @@
+---
+
+- name: 
+  hosts: all
+  gather_facts: false 
+  vars:
+      ansible_python_interpreter: "/usr/bin/python3"
+  tasks:
+      - name: setup recon prometheus server
+        include_role:
+            name: ansible-prometheus
+        vars:
+            prometheus_version: 2.19.2
+            prometheus_web_listen_address: "0.0.0.0:9090"
+            prometheus_global:
+                scrape_interval: 5s
+                scrape_timeout: 15s
+            prometheus_scrape_configs:
+                # ss exporter
+                - job_name: ss2_flows
+                  static_configs:
+                      - targets:
+                          - "localhost:9091"
+                # sflow exporter
+                - job_name: sflow_flows
+                  static_configs:
+                      - targets:
+                          - "localhost:9092"
