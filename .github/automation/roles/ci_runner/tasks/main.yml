@@ -21,6 +21,7 @@
         - docker
         - docker-compose
         - python3-docker
+        - python3-pip
         - openvswitch
         - iproute
         - ansible
