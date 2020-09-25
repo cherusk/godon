@@ -14,14 +14,13 @@
 set -eEux
 
 __plan_name=micro_stack
+__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
 
 echo "instanciating machines"
-sudo kcli create \
-     plan -f "${MASKFILE_DIR}/infra/machines.yml" \
-     "${__plan_name}"
+${__kcli_cmd} "create plan -f ./infra/machines.yml ${__plan_name}"
 
-sudo kcli list plan
-sudo kcli list vm
+${__kcli_cmd} "list plan"
+${__kcli_cmd} "list vm"
 
 ~~~
 
@@ -85,7 +84,9 @@ link_instance_to_switch "sink_vm" "switch_1" "sink_vm_port"
 ~~~bash
 set -eEux
 
-sudo kcli delete plan -y micro_stack
+__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
+
+${__kcli_cmd} "delete plan -y micro_stack"
 ~~~
 
 #### infra cleanup network
@@ -116,6 +117,7 @@ sudo ip link del veth_port_0 || exit 0
 set -eEux
 
 __plan_name=micro_stack
+__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
 
 echo "provisioning infra instances"
 
@@ -127,11 +129,11 @@ __sentinel=0
 until sudo ansible-inventory -i /usr/bin/klist.py --list | grep -q ansible_host
 do
     echo "awaiting libvirt instances init completion"
-    sudo kcli list vm > /dev/null
+    ${__kcli_cmd} "list vm" > /dev/null
     sleep 30
     if [[ "${__sentinel}" > 6 ]]
     then
-        sudo kcli restart plan "${__plan_name}"
+        ${__kcli_cmd} "restart plan ${__plan_name}"
     fi
     ((__sentinel++)) || true
 done
@@ -211,5 +213,32 @@ sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}
                         airflow variables --set target "${target_ip}"
 sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}" \
                         airflow trigger_dag "${dag_name}"
+
+~~~
+
+## util
+
+> Test flow utilities 
+
+### util kcli 
+
+> kcli specific wrappers
+
+#### util kcli run (cmd)
+
+> kcli invocation wrapper 
+
+~~~bash
+set -eEux
+
+container_name="karmab/kcli"
+pool_dir="/srv/"
+
+sudo docker run --net host --rm \
+                -t -a stdout -a stderr \
+                -v ${pool_dir}:${pool_dir} \
+                -v /var/run/libvirt:/var/run/libvirt \
+                -v  ${MASKFILE_DIR}:/workdir \
+                ${container_name} ${cmd}
 
 ~~~
