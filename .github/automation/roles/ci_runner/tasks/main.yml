@@ -42,14 +42,16 @@
   loop_control:
     loop_var: svc
 
-- name: install kcli
-  shell: pip3 install kcli
-
 - name: install mask
   shell: cargo install -f --vers "0.7.1" --root /usr/local/ mask
 
 - name: deliver flowgrind
   include_tasks: "{{ role_path }}/tasks/flowgrind.yml"
+
+- name: attain kcli
+  docker_image:
+    source: pull
+    name: karmab/kcli
 
 # as install is net stack disruptive
 # better to be endian task
