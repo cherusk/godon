@@ -126,7 +126,7 @@ __credentials_dir="${MASKFILE_DIR}/infra/credentials/ssh/"
 chmod -R 0400 "${__credentials_dir}/id_rsa"
 
 __sentinel=0
-until sudo ansible-inventory -i /usr/bin/klist.py --list | grep -q ansible_host
+until sudo ansible-inventory -i "${MASKFILE_DIR}/infra/inventory.sh" --list -y | grep -q ansible_host
 do
     echo "awaiting libvirt instances init completion"
     ${__kcli_cmd} "list vm" > /dev/null
@@ -142,7 +142,7 @@ done
 sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
                          --user root \
                          --become \
-                         -i "/usr/bin/klist.py" \
+                         -i "${MASKFILE_DIR}/infra/inventory.sh" \
                          -T 30 \
                          --ssh-extra-args="-o StrictHostKeyChecking=no" \
                          "${MASKFILE_DIR}/infra/provisioning/generic.yml"
@@ -152,7 +152,7 @@ sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
                          --user root \
                          --become \
                          -l source_vm \
-                         -i "/usr/bin/klist.py" \
+                         -i "${MASKFILE_DIR}/infra/inventory.sh" \
                          -T 30 \
                          --ssh-extra-args="-o StrictHostKeyChecking=no" \
                          "${MASKFILE_DIR}/infra/provisioning/source.yml"
@@ -202,7 +202,7 @@ set -eEux
 echo "performing tests"
 
  # TODO improvised until formatted parser install 
-target_ip="$(sudo ansible-inventory -i /usr/bin/klist.py --list --yaml | 
+target_ip="$(sudo ansible-inventory --list -y -i ${MASKFILE_DIR}/infra/inventory.sh | 
              grep ansible_host | head -n 1 | \
              awk -F: '{print $2}' | xargs echo -n)"
 svc_name=control_loop
@@ -240,5 +240,19 @@ sudo docker run --net host --rm \
                 -v /var/run/libvirt:/var/run/libvirt \
                 -v  ${MASKFILE_DIR}:/workdir \
                 ${container_name} ${cmd}
+
+~~~
+
+#### util kcli inventory
+
+> Dump dynamic ansible inventory
+
+~~~bash
+set -eEu
+
+sudo docker run --security-opt label:disable \
+                -t -a stdout -a stderr \
+                -v /var/run/libvirt:/var/run/libvirt \
+                --entrypoint=/usr/bin/klist.py karmab/kcli --list
 
 ~~~
