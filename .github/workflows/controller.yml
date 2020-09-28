@@ -35,6 +35,9 @@ jobs:
         runs-on: [self-hosted, linux] # only unique osuosl instance
         needs: [ pre_controller ]
         steps:
+            - name: pre checkout
+              run: >
+                   sudo rm -rf "/opt/actions-runner/_work/godon/godon/*" || exit 0
             - uses: actions/checkout@v2
             - name: cleanup test run
               run: >
