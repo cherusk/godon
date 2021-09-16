@@ -43,7 +43,7 @@
     loop_var: svc
 
 - name: install mask
-  shell: cargo install -f --vers "0.7.1" --root /usr/local/ mask
+  shell: cargo install -f --vers "0.11.0" --root /usr/local/ mask
 
 - name: deliver flowgrind
   include_tasks: "{{ role_path }}/tasks/flowgrind.yml"
