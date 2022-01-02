@@ -19,36 +19,6 @@
 ---
 # tasks file for ci_runner
 
-- name: install dnf for plugins
-  dnf:
-    name: 'dnf-command(copr)'
-    state: latest
-
-- name: install pgks
-  dnf:
-    name:
-        - git
-        - tree
-        - libvirt
-        - libvirt-daemon-driver-qemu
-        - qemu-img
-        - qemu-system-x86
-        - qemu-system-x86-core
-        - rust
-        - cargo
-        - docker
-        - docker-compose
-        - python3-docker
-        - python3-pip
-        - openvswitch
-        - iproute
-        - ansible
-        - python3-docker
-        - openvswitch
-        - iproute
-        - ansible
-    state: latest
-
 - name: start services
   service:
       name: "{{ svc }}"
