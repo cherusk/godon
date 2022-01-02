@@ -59,7 +59,7 @@
     gnupg
     htop
     iperf3
-    iproute
+    iproute2
     jq
     killall
     nmap
@@ -67,6 +67,7 @@
     parted
     pciutils
     rsync
+    rust
     tcpdump
     tcpflow
     traceroute
