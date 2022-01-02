@@ -62,6 +62,7 @@
     iproute2
     jq
     killall
+    mask
     nmap
     openssh
     parted
