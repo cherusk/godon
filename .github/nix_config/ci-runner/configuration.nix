@@ -88,8 +88,32 @@
     ];
   };
 
+  flowgrind_image = pkgs.dockerTools.buildImage {
+      name = "flowgrind";
+      tag = "latest";
+
+      fromImage = ubuntu;
+      fromImageName = null;
+      fromImageTag = "20.04";
+
+      runAsRoot = ''
+         #!${pkgs.runtimeShell}
+         apt-get update && apt-get install -y flowgrind
+      '';
+
+      config = {
+            Cmd = [ "sleep infinity"  ];
+      };
+  };
+
   virtualisation = {
     docker.enable = true;
+    oci-containers.containers = {
+      flowgrind = {
+        image = flowgrind_;
+        imageFile = flowgrind_image;
+      };
+    };
     vswitch.enable = true;
     libvirtd = {
       enable = true;

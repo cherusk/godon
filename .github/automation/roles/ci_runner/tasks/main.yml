@@ -19,9 +19,6 @@
 ---
 # tasks file for ci_runner
 
-- name: deliver flowgrind
-  include_tasks: "{{ role_path }}/tasks/flowgrind.yml"
-
 - name: attain kcli
   docker_image:
     source: pull
