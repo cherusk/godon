@@ -89,6 +89,7 @@
 
   virtualisation = {
     docker.enable = true;
+    vswitch.enable = true;
     libvirtd = {
       enable = true;
       onShutdown = "shutdown";
