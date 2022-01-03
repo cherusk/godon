@@ -115,6 +115,11 @@
     };
   };
 
+  security = {
+    sudo.wheelNeedsPassword = false; # for automatic use
+    polkit = { enable = true; };
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   system.nixos.version = "21.11";
