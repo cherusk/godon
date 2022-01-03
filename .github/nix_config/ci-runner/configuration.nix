@@ -49,6 +49,7 @@
   services = {
     openssh.enable = true;
     github-runner = {
+      enable = true;
       url = "https://github.com/cherusk/godon";
       tokenFile = "/srv/gh_runner.token";
       extraLabels = [ "nixos" "osuosl" ];
@@ -99,6 +100,15 @@
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDLt7w6tl++WJT/Bn1HsOep25KpgL867SuZAnK5ifOgd6wS0PxHGiCD/4A0RSHdHZTXMv37DGlC36rhlWJUdsncI5O1F5Ay2d626fPg+REaGi8R7Hox/qInkDs9/NS2IbZvQaYIdeDK151McagWijRFCxTEMYftpslXWKiN5ckP/KjFdUkS7fKcGwqk+UFy7ehMF42i8MUOdkZMJwy8Yc2y4FTdzlrh8VELkMxCePcU9LrvwY5sSh9j65Q5IcIBlma36JMJZQLuEWi7oEGAASehUNeMXs9WFkbyCCWdR1PjHNfbrgZUpgw71SkiQrM8+9/jcfyl5kfkn+GUECQcWBDQnbi809re1ZVmOSUrDBAoEAevFO8qHLgz0d9H0Zs/EOghyN+a4eBLB3et46F733GYGGO4AMMvRSibeyHCLINCLeV19FkHXSxD5iXTRt6WXo3vhKC/tw0XN0yNSOc1nHC+azAJxG6zOxzUzXjC9c1wxaWmGReeanlefQTHVRcMtBfm1NAOwaD0DubSTEBeRRMHfW2ZRs3nV0l73HJWh9J8+5MTpCOK7BGzC0LILMsSqpltUTLI3YmFO5Ly9RokUbcFmnn4Yu4IreTITMmn73CuLNkjZIKwucWmJkWNmWc1hrLRO12Yad/aQS+rczKcQFoNXl+bBmIAOWYJ1C6mSKG/Hw== ci_runner@gh"
     ];
   };
+
+  users.users.github-runner = {
+    isNormalUser = true;
+    home = "/home/github-runner/";
+    openssh.authorizedKeys.keys = [
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDLt7w6tl++WJT/Bn1HsOep25KpgL867SuZAnK5ifOgd6wS0PxHGiCD/4A0RSHdHZTXMv37DGlC36rhlWJUdsncI5O1F5Ay2d626fPg+REaGi8R7Hox/qInkDs9/NS2IbZvQaYIdeDK151McagWijRFCxTEMYftpslXWKiN5ckP/KjFdUkS7fKcGwqk+UFy7ehMF42i8MUOdkZMJwy8Yc2y4FTdzlrh8VELkMxCePcU9LrvwY5sSh9j65Q5IcIBlma36JMJZQLuEWi7oEGAASehUNeMXs9WFkbyCCWdR1PjHNfbrgZUpgw71SkiQrM8+9/jcfyl5kfkn+GUECQcWBDQnbi809re1ZVmOSUrDBAoEAevFO8qHLgz0d9H0Zs/EOghyN+a4eBLB3et46F733GYGGO4AMMvRSibeyHCLINCLeV19FkHXSxD5iXTRt6WXo3vhKC/tw0XN0yNSOc1nHC+azAJxG6zOxzUzXjC9c1wxaWmGReeanlefQTHVRcMtBfm1NAOwaD0DubSTEBeRRMHfW2ZRs3nV0l73HJWh9J8+5MTpCOK7BGzC0LILMsSqpltUTLI3YmFO5Ly9RokUbcFmnn4Yu4IreTITMmn73CuLNkjZIKwucWmJkWNmWc1hrLRO12Yad/aQS+rczKcQFoNXl+bBmIAOWYJ1C6mSKG/Hw== ci_runner@gh"
+    ];
+  };
+
 
   virtualisation = {
     docker.enable = true;
