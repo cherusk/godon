@@ -150,6 +150,16 @@ jobs:
             - name: start runner
               run: >
                    openstack server start "${INSTANCE_NAME}"
+            - name: cleanup nixos generations
+              run: >
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u reboot
+                   --become
+                   -T 120
+                   -m raw -a "nix-collect-garbage -d";
             - name: rebuild with actual runner config
               run: >
                    sleep 10;
