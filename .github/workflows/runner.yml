@@ -17,25 +17,29 @@
 ## along with godon. If not, see <http://www.gnu.org/licenses/>.
 ##
 on:
-  push:
+  pull_request:
+    types: [ labeled ]
     branches:
       - ci_runner_instance
+
+env:
+  RUNNER_BASE_IMAGE: "Fedora 30"
+  INSTANCE_NAME: "ci_runner"
+  OS_AUTH_URL: https://oprod-controller1.osuosl.org:5000/v3
+  OS_PROJECT_NAME: "godon"
+  OS_USER_DOMAIN_NAME: "Default"
+  OS_PROJECT_DOMAIN_ID: "default"
+  OS_REGION_NAME: "RegionOne"
+  OS_IDENTITY_API_VERSION: 3
+  OS_INTERFACE: public
+  OS_USERNAME: ${{ secrets.osuosl_openstack_user }}
+  OS_PASSWORD: ${{ secrets.osuosl_openstack_pw }}
+  GH_ACTIONS_TOKEN: ${{ secrets.gh_runner_token }}
+
 jobs:
-    ci_runner:
+    ci_runner_recreate:
+        if: ${{ github.event.label.name == 'runner_recreate' }}
         runs-on: ubuntu-18.04
-        env:
-            RUNNER_BASE_IMAGE: "Fedora 30"
-            INSTANCE_NAME: "ci_runner"
-            OS_AUTH_URL: https://oprod-controller1.osuosl.org:5000/v3
-            OS_PROJECT_NAME: "godon"
-            OS_USER_DOMAIN_NAME: "Default"
-            OS_PROJECT_DOMAIN_ID: "default"
-            OS_REGION_NAME: "RegionOne"
-            OS_IDENTITY_API_VERSION: 3
-            OS_INTERFACE: public
-            OS_USERNAME: ${{ secrets.osuosl_openstack_user }}
-            OS_PASSWORD: ${{ secrets.osuosl_openstack_pw }}
-            GH_ACTIONS_TOKEN: ${{ secrets.gh_runner_token }}
         steps:
             - uses: actions/checkout@v2
               with:
@@ -72,18 +76,6 @@ jobs:
                    openstack server show -f json "${INSTANCE_NAME}" |
                    jq -r '.addresses' |
                    awk -F= '{ print $2 }' > ./instance_address
-            - name: runner provisioning
-              run: >
-                   sleep 60;
-                   ansible-playbook
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=no"
-                   -i "$(cat ./instance_address),"
-                   -u fedora
-                   --become
-                   -T 120
-                   -e gh_token="${GH_ACTIONS_TOKEN}"
-                   .github/automation/ci_runner.yml
             - name: stop runner
               run: >
                    openstack server stop "${INSTANCE_NAME}"
