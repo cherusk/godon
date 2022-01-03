@@ -76,6 +76,49 @@ jobs:
                    openstack server show -f json "${INSTANCE_NAME}" |
                    jq -r '.addresses' |
                    awk -F= '{ print $2 }' > ./instance_address
+
+            - name: infect with nixos
+              run: >
+                   sleep 30;
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u fedora
+                   --become
+                   -T 120
+                   -m raw -a "hostnamectl set-hostname ci_runner; curl ${NIXOS_INFECT_SCRIPT_URL} | NO_SWAP=true NIX_CHANNEL=nixos-21.11 bash -x";
+                   sleep 40;
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u root
+                   --become
+                   -T 120
+                   -m raw -a "rm -r /old_root/";
+              env:
+                NIXOS_INFECT_SCRIPT_URL: "https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect"
+            - name: rebuild with actual runner config
+              run: >
+                   sleep 10;
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u root
+                   --become
+                   -T 120
+                   -m copy -a "src=./github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0600";
+                   sleep 10;
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u root
+                   --become
+                   -T 120
+                   -m raw -a "nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
             - name: stop runner
               run: >
                    openstack server stop "${INSTANCE_NAME}"
