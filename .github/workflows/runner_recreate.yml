@@ -87,10 +87,14 @@ jobs:
                    -u fedora
                    --become
                    -T 120
-                   -m raw -a "hostnamectl set-hostname ci_runner; curl ${NIXOS_INFECT_SCRIPT_URL} | NO_SWAP=true NIX_CHANNEL=nixos-21.11 bash -x; rm -r /old_root/";
+                   -m raw -a "hostnamectl set-hostname ci_runner;
+                              curl ${NIXOS_INFECT_SCRIPT_URL} | NO_REBOOT=true NO_SWAP=true NIX_CHANNEL=nixos-21.11 bash -x;"
                    ssh-keygen -R "$(cat ./instance_address)";
               env:
                 NIXOS_INFECT_SCRIPT_URL: "https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect"
+            - name: reboot runner
+              run: >
+                   openstack server reboot "${INSTANCE_NAME}"
             - name: rebuild with actual runner config
               run: >
                    sleep 40;
@@ -101,7 +105,7 @@ jobs:
                    -u root
                    --become
                    -T 120
-                   -m copy -a "src=./github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0644";
+                   -m copy -a "src=.github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0644";
                    sleep 10;
                    ansible "$(cat ./instance_address)"
                    -i "$(cat ./instance_address),"
@@ -119,7 +123,7 @@ jobs:
                    -u root
                    --become
                    -T 120
-                   -m raw -a "nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
+                   -m raw -a "rm -r /old_root/; nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
             - name: stop runner
               run: >
                    openstack server stop "${INSTANCE_NAME}"
