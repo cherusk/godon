@@ -56,9 +56,11 @@ jobs:
              chmod 0600 ./access_key_file;
       - name: start runner
         run: >
-             openstack server start "${INSTANCE_NAME}"
+             openstack server list  -f yaml | grep -q "Status: ACTIVE" ||
+             openstack server start "${INSTANCE_NAME}";
       - name: cleanup nixos generations
         run: >
+             sleep 20;
              ansible "$(cat ./instance_address)"
              -i "$(cat ./instance_address),"
              --private-key ./access_key_file
