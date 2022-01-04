@@ -16,9 +16,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with godon. If not, see <http://www.gnu.org/licenses/>.
 ##
+
 on:
   pull_request:
-    types: [ ready_for_review labeled ]
+    types: [ labeled ]
     branches:
       - ci_runner_instance
 
@@ -76,7 +77,6 @@ jobs:
                    openstack server show -f json "${INSTANCE_NAME}" |
                    jq -r '.addresses' |
                    awk -F= '{ print $2 }' > ./instance_address
-
             - name: infect with nixos
               run: >
                    sleep 30;
@@ -132,63 +132,3 @@ jobs:
               run: >
                    openstack server stop "${INSTANCE_NAME}"
 
-    ci_runner_rebuild_nixos:
-        if: ${{ always() }} # expected that the recreation runs less frequently
-        runs-on: ubuntu-20.04
-        needs: ci_runner_recreate
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                submodules: 'true'
-            - name: install os client
-              run: >
-                   sudo apt-get update;
-                   sudo apt-get install
-                   ansible
-                   python3-openstackclient
-                   jq;
-            - name: start runner
-              run: >
-                   openstack server start "${INSTANCE_NAME}"
-            - name: cleanup nixos generations
-              run: >
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u reboot
-                   --become
-                   -T 120
-                   -m raw -a "nix-collect-garbage -d";
-            - name: rebuild with actual runner config
-              run: >
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u godon
-                   --become
-                   -T 120
-                   -m copy -a "src=./github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0600";
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u godon
-                   --become
-                   -T 120
-                   -m copy -a "content="${GH_ACTIONS_TOKEN}" dest="/srv/gh_runner.token" owner=github-runner mode=0600";
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u reboot
-                   --become
-                   -T 120
-                   -m raw -a "nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
-            - name: reboot runner
-              run: >
-                   openstack server reboot "${INSTANCE_NAME}"

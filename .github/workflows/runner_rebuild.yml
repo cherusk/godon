@@ -1,0 +1,97 @@
+##
+## Copyright (c) 2019 Matthias Tafelmeier
+##
+## This file is part of godon
+##
+## godon is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## godon is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with godon. If not, see <http://www.gnu.org/licenses/>.
+##
+
+on:
+  pull_request:
+    types: [ ready_for_review ]
+    branches:
+      - ci_runner_instance
+
+env:
+  RUNNER_BASE_IMAGE: "Fedora 30"
+  INSTANCE_NAME: "ci_runner"
+  OS_AUTH_URL: https://oprod-controller1.osuosl.org:5000/v3
+  OS_PROJECT_NAME: "godon"
+  OS_USER_DOMAIN_NAME: "Default"
+  OS_PROJECT_DOMAIN_ID: "default"
+  OS_REGION_NAME: "RegionOne"
+  OS_IDENTITY_API_VERSION: 3
+  OS_INTERFACE: public
+  OS_USERNAME: ${{ secrets.osuosl_openstack_user }}
+  OS_PASSWORD: ${{ secrets.osuosl_openstack_pw }}
+  GH_ACTIONS_TOKEN: ${{ secrets.gh_runner_token }}
+
+ci_runner_rebuild_nixos:
+        runs-on: ubuntu-20.04
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                submodules: 'true'
+            - name: install os client
+              run: >
+                   sudo apt-get update;
+                   sudo apt-get install
+                   ansible
+                   python3-openstackclient
+                   jq;
+            - name: start runner
+              run: >
+                   openstack server start "${INSTANCE_NAME}"
+            - name: cleanup nixos generations
+              run: >
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u reboot
+                   --become
+                   -T 120
+                   -m raw -a "nix-collect-garbage -d";
+            - name: rebuild with actual runner config
+              run: >
+                   sleep 10;
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u godon
+                   --become
+                   -T 120
+                   -m copy -a "src=./github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0600";
+                   sleep 10;
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u godon
+                   --become
+                   -T 120
+                   -m copy -a "content="${GH_ACTIONS_TOKEN}" dest="/srv/gh_runner.token" owner=github-runner mode=0600";
+                   sleep 10;
+                   ansible "$(cat ./instance_address)"
+                   -i "$(cat ./instance_address),"
+                   --private-key ./access_key_file
+                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+                   -u reboot
+                   --become
+                   -T 120
+                   -m raw -a "nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
+            - name: reboot runner
+              run: >
+                   openstack server reboot "${INSTANCE_NAME}"
