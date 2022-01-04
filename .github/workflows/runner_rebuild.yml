@@ -53,6 +53,8 @@ jobs:
         run: >
              echo "${access_key}" > ./access_key_file;
              chmod 0600 ./access_key_file;
+        env:
+          access_key: ${{ secrets.osuosl_openstack_instance_key }}
       - name: improvise inventory
         # since openstack_inventory.py appears broken
         run: >
