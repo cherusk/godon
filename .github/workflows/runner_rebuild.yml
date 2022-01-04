@@ -38,60 +38,58 @@ env:
   GH_ACTIONS_TOKEN: ${{ secrets.gh_runner_token }}
 
 ci_runner_rebuild_nixos:
-        runs-on: ubuntu-20.04
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                submodules: 'true'
-            - name: install os client
-              run: >
-                   sudo apt-get update;
-                   sudo apt-get install
-                   ansible
-                   python3-openstackclient
-                   jq;
-            - name: start runner
-              run: >
-                   openstack server start "${INSTANCE_NAME}"
-            - name: cleanup nixos generations
-              run: >
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u reboot
-                   --become
-                   -T 120
-                   -m raw -a "nix-collect-garbage -d";
-            - name: rebuild with actual runner config
-              run: >
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u godon
-                   --become
-                   -T 120
-                   -m copy -a "src=./github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0600";
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u godon
-                   --become
-                   -T 120
-                   -m copy -a "content="${GH_ACTIONS_TOKEN}" dest="/srv/gh_runner.token" owner=github-runner mode=0600";
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u reboot
-                   --become
-                   -T 120
-                   -m raw -a "nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
-            - name: reboot runner
-              run: >
-                   openstack server reboot "${INSTANCE_NAME}"
+  runs-on: ubuntu-20.04
+  steps:
+    - uses: actions/checkout@v2
+    - name: install os client
+      run: >
+           sudo apt-get update;
+           sudo apt-get install
+           ansible
+           python3-openstackclient
+           jq;
+    - name: start runner
+      run: >
+           openstack server start "${INSTANCE_NAME}"
+    - name: cleanup nixos generations
+      run: >
+           ansible "$(cat ./instance_address)"
+           -i "$(cat ./instance_address),"
+           --private-key ./access_key_file
+           --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+           -u reboot
+           --become
+           -T 120
+           -m raw -a "nix-collect-garbage -d";
+    - name: rebuild with actual runner config
+      run: >
+           sleep 10;
+           ansible "$(cat ./instance_address)"
+           -i "$(cat ./instance_address),"
+           --private-key ./access_key_file
+           --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+           -u godon
+           --become
+           -T 120
+           -m copy -a "src=./github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0600";
+           sleep 10;
+           ansible "$(cat ./instance_address)"
+           -i "$(cat ./instance_address),"
+           --private-key ./access_key_file
+           --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+           -u godon
+           --become
+           -T 120
+           -m copy -a "content="${GH_ACTIONS_TOKEN}" dest="/srv/gh_runner.token" owner=github-runner mode=0600";
+           sleep 10;
+           ansible "$(cat ./instance_address)"
+           -i "$(cat ./instance_address),"
+           --private-key ./access_key_file
+           --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
+           -u reboot
+           --become
+           -T 120
+           -m raw -a "nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
+    - name: reboot runner
+      run: >
+                 openstack server reboot "${INSTANCE_NAME}"
