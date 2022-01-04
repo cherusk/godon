@@ -79,7 +79,7 @@ jobs:
                    awk -F= '{ print $2 }' > ./instance_address
             - name: infect with nixos
               run: >
-                   sleep 30;
+                   sleep 60;
                    ansible "$(cat ./instance_address)"
                    -i "$(cat ./instance_address),"
                    --private-key ./access_key_file
@@ -87,21 +87,13 @@ jobs:
                    -u fedora
                    --become
                    -T 120
-                   -m raw -a "hostnamectl set-hostname ci_runner; curl ${NIXOS_INFECT_SCRIPT_URL} | NO_SWAP=true NIX_CHANNEL=nixos-21.11 bash -x";
-                   sleep 40;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u root
-                   --become
-                   -T 120
-                   -m raw -a "rm -r /old_root/";
+                   -m raw -a "hostnamectl set-hostname ci_runner; curl ${NIXOS_INFECT_SCRIPT_URL} | NO_SWAP=true NIX_CHANNEL=nixos-21.11 bash -x; rm -r /old_root/";
+                   ssh-keygen -R "$(cat ./instance_address)";
               env:
                 NIXOS_INFECT_SCRIPT_URL: "https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect"
             - name: rebuild with actual runner config
               run: >
-                   sleep 10;
+                   sleep 40;
                    ansible "$(cat ./instance_address)"
                    -i "$(cat ./instance_address),"
                    --private-key ./access_key_file
