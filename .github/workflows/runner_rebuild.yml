@@ -62,11 +62,11 @@ ci_runner_rebuild_nixos:
            -i "$(cat ./instance_address),"
            --private-key ./access_key_file
            --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-           -u reboot
+           -u godon
            --become
            -T 120
            -m raw -a "nix-collect-garbage -d";
-    - name: rebuild with actual runner config
+    - name: rebuild with latest runner config
       run: >
            sleep 10;
            ansible "$(cat ./instance_address)"
@@ -76,7 +76,7 @@ ci_runner_rebuild_nixos:
            -u godon
            --become
            -T 120
-           -m copy -a "src=./github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0600";
+           -m copy -a "src=.github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0600";
            sleep 10;
            ansible "$(cat ./instance_address)"
            -i "$(cat ./instance_address),"
@@ -94,7 +94,7 @@ ci_runner_rebuild_nixos:
            -u reboot
            --become
            -T 120
-           -m raw -a "nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
+           -m raw -a "nixos-rebuild build; nixos-rebuild boot;";
     - name: reboot runner
       run: >
-                 openstack server reboot "${INSTANCE_NAME}"
+           openstack server reboot "${INSTANCE_NAME}"
