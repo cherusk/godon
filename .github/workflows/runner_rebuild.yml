@@ -50,10 +50,15 @@ jobs:
              python3-openstackclient
              jq;
       - name: stage private access key
-        # since openstack_inventory.py appears broken
         run: >
              echo "${access_key}" > ./access_key_file;
              chmod 0600 ./access_key_file;
+      - name: improvise inventory
+        # since openstack_inventory.py appears broken
+        run: >
+             openstack server show -f json "${INSTANCE_NAME}" |
+             jq -r '.addresses' |
+             awk -F= '{ print $2 }' > ./instance_address
       - name: start runner
         run: >
              openstack server list  -f yaml | grep -q "Status: ACTIVE" ||
