@@ -101,7 +101,7 @@ jobs:
              -i "$(cat ./instance_address),"
              --private-key ./access_key_file
              --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-             -u reboot
+             -u godon
              --become
              -T 120
              -m raw -a "nixos-rebuild build; nixos-rebuild boot;";
