@@ -97,33 +97,18 @@ jobs:
                    openstack server reboot "${INSTANCE_NAME}"
             - name: rebuild with actual runner config
               run: >
+                   TARGET_HOST="$(cat ./instance_address)";
                    sleep 40;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u root
-                   --become
-                   -T 120
-                   -m copy -a "src=.github/nix_config/ci-runner/configuration.nix dest=/etc/nixos/configuration.nix owner=root mode=0644";
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u root
-                   --become
-                   -T 120
-                   -m copy -a "content="${GH_ACTIONS_TOKEN}" dest="/srv/gh_runner.token" owner=github-runner mode=0600";
-                   sleep 10;
-                   ansible "$(cat ./instance_address)"
-                   -i "$(cat ./instance_address),"
-                   --private-key ./access_key_file
-                   --ssh-extra-args="-o StrictHostKeyChecking=accept-new"
-                   -u root
-                   --become
-                   -T 120
-                   -m raw -a "rm -r /old_root/; nixos-rebuild build; nixos-rebuild test; nixos-rebuild boot;";
+                   scp -i ./access_key_file -o ConnectTimeout=120 -o StrictHostKeyChecking=accept-new
+                   .github/nix_config/ci-runner/configuration.nix root@"${TARGET_HOST}":"/etc/nixos/configuration.nix";
+                   sleep 5;
+                   echo -n "${GH_ACTIONS_TOKEN}" > ./gh_actions_token;
+                   scp -i ./access_key_file -o ConnectTimeout=120 -o StrictHostKeyChecking=accept-new
+                   ./gh_actions_token root@"${TARGET_HOST}":"/srv/gh_runner.token";
+                   sleep 5;
+                   ssh -i ./access_key_file -o ConnectTimeout=120 -o StrictHostKeyChecking=accept-new
+                   root@"${TARGET_HOST}"
+                   bash -c "rm -r /old_root/; nixos-rebuild build; nixos-rebuild boot;";
             - name: stop runner
               run: >
                    openstack server stop "${INSTANCE_NAME}"
