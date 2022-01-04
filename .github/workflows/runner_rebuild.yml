@@ -48,6 +48,11 @@ ci_runner_rebuild_nixos:
            ansible
            python3-openstackclient
            jq;
+    - name: stage private access key
+      # since openstack_inventory.py appears broken
+      run: >
+           echo "${access_key}" > ./access_key_file;
+           chmod 0600 ./access_key_file;
     - name: start runner
       run: >
            openstack server start "${INSTANCE_NAME}"
