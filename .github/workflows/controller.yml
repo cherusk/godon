@@ -48,7 +48,8 @@ jobs:
                    jq;
             - name: start runner
               run: >
-                   openstack server start "${INSTANCE_NAME}"
+                   openstack server list  -f yaml | grep -q "Status: ACTIVE" ||
+                   openstack server start "${INSTANCE_NAME}";
     ###
     testing:
         runs-on: [self-hosted, linux] # only unique osuosl instance
