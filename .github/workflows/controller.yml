@@ -74,18 +74,3 @@ jobs:
                    mask --maskfile "${MASK_FILE}" testing perform;
         env:
             MASK_FILE: testing/maskfile.md
-    ###
-    post_controller:
-        runs-on: ubuntu-18.04
-        needs: [ pre_controller, testing ]
-        steps:
-            - name: install
-              run: >
-                   sudo apt-get update;
-                   sudo apt-get install
-                   ansible
-                   python3-openstackclient
-                   jq;
-            - name: stop runner
-              run: >
-                   openstack server stop "${INSTANCE_NAME}"
