@@ -19,9 +19,9 @@
 
 on:
   pull_request:
-    types: [ ready_for_review ]
+    types: [ labeled ready_for_review ]
     branches:
-      - ci_runner_instance
+      - master
 
 env:
   RUNNER_BASE_IMAGE: "Fedora 30"
@@ -39,6 +39,7 @@ env:
 
 jobs:
   ci_runner_rebuild_nixos:
+    if: ${{ github.event.label.name == 'ci_runner' && github.event.label.name == 'rebuild' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
