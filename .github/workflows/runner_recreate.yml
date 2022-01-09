@@ -39,7 +39,7 @@ env:
 
 jobs:
     ci_runner_recreate:
-        if: ${{ github.event.label.name == 'runner_recreate' }}
+        if: ${{ github.event.label.name == 'ci_runner' && github.event.label.name == 'recreate' }}
         runs-on: ubuntu-18.04
         steps:
             - uses: actions/checkout@v2
