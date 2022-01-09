@@ -18,12 +18,12 @@
 ##
 version: '3.4'
 services:
-    control_loop:
-        image: apache/airflow:1.10.10-2-python3.7
+    airflow:
+        image: apache/airflow:2.2.3-python3.9
         restart: always
         environment:
             - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
-        # minimum of setup steps 
+        # minimum of setup steps
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow initdb; (airflow scheduler &); airflow webserver"
         volumes:
