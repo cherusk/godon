@@ -19,9 +19,11 @@
 
 on:
   pull_request:
-    types: [ labeled ready_for_review ]
+    types: [ labeled ]
     branches:
       - master
+    labels:
+      - testvm
 
 env:
   INSTANCE_NAME: "ci_runner"
@@ -38,7 +40,7 @@ env:
 
 jobs:
   test_stack_rebuild_nixos:
-    if: ${{ github.event.label.name == 'test_stack' && github.event.label.name == 'rebuild' }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'teststack') && contains(github.event.pull_request.labels.*.name, 'rebuild') }}
     runs-on: [self-hosted, linux] # only unique osuosl instance
     steps:
       - uses: actions/checkout@v2
