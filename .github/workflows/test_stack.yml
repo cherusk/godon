@@ -22,8 +22,6 @@ on:
     types: [ labeled ]
     branches:
       - master
-    labels:
-      - testvm
 
 env:
   INSTANCE_NAME: "ci_runner"
@@ -44,29 +42,6 @@ jobs:
     runs-on: [self-hosted, linux] # only unique osuosl instance
     steps:
       - uses: actions/checkout@v2
-      - name: install os client
-        run: >
-             sudo apt-get update;
-             sudo apt-get install
-             ansible
-             python3-openstackclient
-             jq;
-      - name: stage private access key
-        run: >
-             echo "${access_key}" > ./access_key_file;
-             chmod 0600 ./access_key_file;
-        env:
-          access_key: ${{ secrets.osuosl_openstack_instance_key }}
-      - name: improvise inventory
-        # since openstack_inventory.py appears broken
-        run: >
-             openstack server show -f json "${INSTANCE_NAME}" |
-             jq -r '.addresses' |
-             awk -F= '{ print $2 }' > ./instance_address
-      - name: start runner
-        run: >
-             openstack server list  -f yaml | grep -q "Status: ACTIVE" ||
-             openstack server start "${INSTANCE_NAME}";
       - name: build test instance nixos configuration
         run: >
              sleep 20;
