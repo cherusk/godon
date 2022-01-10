@@ -1,0 +1,75 @@
+##
+## Copyright (c) 2019 Matthias Tafelmeier.
+##
+## This file is part of godon
+##
+## godon is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+##
+## godon is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this godon. If not, see <http://www.gnu.org/licenses/>.
+##
+
+on:
+  pull_request:
+    types: [ labeled ready_for_review ]
+    branches:
+      - master
+
+env:
+  INSTANCE_NAME: "ci_runner"
+  OS_AUTH_URL: https://oprod-controller1.osuosl.org:5000/v3
+  OS_PROJECT_NAME: "godon"
+  OS_USER_DOMAIN_NAME: "Default"
+  OS_PROJECT_DOMAIN_ID: "default"
+  OS_REGION_NAME: "RegionOne"
+  OS_IDENTITY_API_VERSION: 3
+  OS_INTERFACE: public
+  OS_USERNAME: ${{ secrets.osuosl_openstack_user }}
+  OS_PASSWORD: ${{ secrets.osuosl_openstack_pw }}
+  GH_ACTIONS_TOKEN: ${{ secrets.gh_runner_token }}
+
+jobs:
+  test_stack_rebuild_nixos:
+    if: ${{ github.event.label.name == 'test_stack' && github.event.label.name == 'rebuild' }}
+    runs-on: [self-hosted, linux] # only unique osuosl instance
+    steps:
+      - uses: actions/checkout@v2
+      - name: install os client
+        run: >
+             sudo apt-get update;
+             sudo apt-get install
+             ansible
+             python3-openstackclient
+             jq;
+      - name: stage private access key
+        run: >
+             echo "${access_key}" > ./access_key_file;
+             chmod 0600 ./access_key_file;
+        env:
+          access_key: ${{ secrets.osuosl_openstack_instance_key }}
+      - name: improvise inventory
+        # since openstack_inventory.py appears broken
+        run: >
+             openstack server show -f json "${INSTANCE_NAME}" |
+             jq -r '.addresses' |
+             awk -F= '{ print $2 }' > ./instance_address
+      - name: start runner
+        run: >
+             openstack server list  -f yaml | grep -q "Status: ACTIVE" ||
+             openstack server start "${INSTANCE_NAME}";
+      - name: build test instance nixos configuration
+        run: >
+             sleep 20;
+             mkdir -p "${image_pool_dir}";
+             image="$(nixos-generate -f qcow -c testing/infra/configuration.nix | tail -f 2 | grep qcow2)";
+             cp -u "${image}" "${image_pool_dir}";
+        env:
+          image_pool_dir: "/srv/images/"
