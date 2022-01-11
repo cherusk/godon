@@ -46,6 +46,7 @@ jobs:
         run: >
              sleep 20;
              mkdir -p "${image_pool_dir}";
+             source /etc/bashrc;
              image="$(nixos-generate -f qcow -c testing/infra/configuration.nix | tail -n 2 | grep qcow2)";
              cp -u "${image}" "${image_pool_dir}";
         env:
