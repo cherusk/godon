@@ -59,8 +59,8 @@ link_instance_to_switch() {
     __port_name="${3}"
 
      # render libvirt to ovs link config
-    __link_template="${MASKFILE_DIR}/infra/network/libvirt_ovs_link_template.xml"
-    __link_definition="${MASKFILE_DIR}/infra/network/libvirt_ovs_link.xml"
+    __link_template="${MASKFILE_DIR}/infra/libvirt/network/ovs_link_template.xml"
+    __link_definition="${MASKFILE_DIR}/infra/libvirt/network/ovs_link.xml"
     export __switch
     export __port_name
     envsubst < "${__link_template}" > "${__link_definition}"
