@@ -57,17 +57,6 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             # FIXME needs rework
-            #- name: cleanup test run
-            #  run: >
-            #       mask --maskfile "${MASK_FILE}" infra cleanup machines;
-            #       mask --maskfile "${MASK_FILE}" infra cleanup network;
-            #       mask --maskfile "${MASK_FILE}" godon deplete;
-            #- name: stage test run
-            #  run: >
-            #       mask --maskfile "${MASK_FILE}" infra create machines;
-            #       mask --maskfile "${MASK_FILE}" infra create network;
-            #       mask --maskfile "${MASK_FILE}" infra provision machines;
-            #       mask --maskfile "${MASK_FILE}" godon setup;
             #- name: perform test run
             #  run: >
             #       mask --maskfile "${MASK_FILE}" testing perform;
