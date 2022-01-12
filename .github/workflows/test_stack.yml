@@ -61,11 +61,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: cleanup stack
         run: >
+             source /etc/bashrc;
              mask --maskfile "${MASK_FILE}" infra cleanup machines;
              mask --maskfile "${MASK_FILE}" infra cleanup network;
              #mask --maskfile "${MASK_FILE}" godon deplete;
       - name: errect stack
         run: >
+             source /etc/bashrc;
              mask --maskfile "${MASK_FILE}" infra create machines;
              mask --maskfile "${MASK_FILE}" infra create network;
              #mask --maskfile "${MASK_FILE}" infra provision machines;
