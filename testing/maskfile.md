@@ -139,42 +139,6 @@ __kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
 
 echo "provisioning infra instances"
 
-__credentials_dir="${MASKFILE_DIR}/infra/credentials/ssh/"
-
-chmod -R 0400 "${__credentials_dir}/id_rsa"
-
-__sentinel=0
-until sudo ansible-inventory -i "${MASKFILE_DIR}/infra/inventory.sh" --list -y | grep -q ansible_host
-do
-    echo "awaiting libvirt instances init completion"
-    ${__kcli_cmd} "list vm" > /dev/null
-    sleep 30
-    if [[ "${__sentinel}" > 6 ]]
-    then
-        ${__kcli_cmd} "restart plan ${__plan_name}"
-    fi
-    ((__sentinel++)) || true
-done
-
- # perform generic setup 
-sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
-                         --user root \
-                         --become \
-                         -i "${MASKFILE_DIR}/infra/inventory.sh" \
-                         -T 30 \
-                         --ssh-extra-args="-o StrictHostKeyChecking=no" \
-                         "${MASKFILE_DIR}/infra/provisioning/generic.yml"
-
- # perform infra machine specific setup
-sudo -E ansible-playbook --private-key "${__credentials_dir}/id_rsa" \
-                         --user root \
-                         --become \
-                         -l source_vm \
-                         -i "${MASKFILE_DIR}/infra/inventory.sh" \
-                         -T 30 \
-                         --ssh-extra-args="-o StrictHostKeyChecking=no" \
-                         "${MASKFILE_DIR}/infra/provisioning/source.yml"
-
 ~~~
 
 ## godon
