@@ -55,6 +55,7 @@
   users.users.godon_robot = {
     isNormalUser = true;
     home = "/home/test/";
+    extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDl7d237EJ1hRzVrAMXkhPILHt39AkEcO3l1ktKQUENgACEeNXSUb3ofDBqA0pIGMD+U0Q0+EqyMcxqjJQ5gvu8/O8zVcO1OKO6b9UaWeqrThsjvDCdEiMyml6CKtPJWCHEyo6jXm75lUFeihp0AmWmsSijZcSShNy+EOEBYdRZ56wYZCkD2awKtZB4ui58KP94RYaqHV55u+oTz0WEuFUln69JvVNTDauqv2Iv4VHpewnms7DzQGa/voWtU9oUCRReQJPWZV56Lw2OXxxjIeUaVQNy7ygpFhkERJyjAXtBLUhBDSqA6LE7daT8f2QW6T/4ZM6IB+g70+Q2i+srjlvc6lxBRVb6YSEtyUIxMHQ07/WGedB9KS6RZTiD96+RPRaLsf05Q4k1XL/KVOFtHjf9vM0sFbYw9Q4ExSjtHesLkKMvqHqfx4g60Ws5jLhSaoUqoLofj6njlEp46paUKQDFhBAJHC1Y4O/bSR9PYemGZHPGsBYJRA7Mj7GSF01FxjU= godon-robot@osuosl"
     ];
