@@ -40,18 +40,20 @@ jobs:
   test_stack_rebuild_nixos:
     if: ${{ contains(github.event.pull_request.labels.*.name, 'teststack') && contains(github.event.pull_request.labels.*.name, 'rebuild') }}
     runs-on: [self-hosted, linux] # only unique osuosl instance
+    env:
+      image_pool_dir: "/srv/images/"
+      nix_config_path: "testing/infra/machines/nix/configuration.nix"
     steps:
       - uses: actions/checkout@v2
       - name: build test instance nixos configuration
         run: >
-             sleep 20;
              mkdir -p "${image_pool_dir}";
              source /etc/bashrc;
              image="$(nixos-generate -f qcow -c "${nix_config_path}" | tail -n 2 | grep qcow2)";
+             echo "image=${image}" >> $GITHUB_ENV
+      - name: update image in pool
+        run: >
              cp -u "${image}" "${image_pool_dir}";
-        env:
-          image_pool_dir: "/srv/images/"
-          nix_config_path: "testing/infra/machines/nix/configuration.nix"
   test_stack_recreate:
     if: ${{ contains(github.event.pull_request.labels.*.name, 'teststack') && contains(github.event.pull_request.labels.*.name, 'recreate') }}
     runs-on: [self-hosted, linux] # only unique osuosl instance
