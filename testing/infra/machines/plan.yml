@@ -20,7 +20,7 @@
 
 image_pool:
   type: pool
-  path: /srv/images/
+  path: /run/github-runner/images/
 
 oob:
  type: network
