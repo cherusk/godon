@@ -55,23 +55,27 @@ jobs:
         run: >
              source /etc/bashrc;
              cp "${image}" "${image_pool_dir}";
-  test_stack_recreate:
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'teststack') && contains(github.event.pull_request.labels.*.name, 'recreate') }}
-    runs-on: [self-hosted, linux] # only unique osuosl instance
-    env:
-      MASK_FILE: testing/maskfile.md
-    steps:
-      - uses: actions/checkout@v2
-      - name: cleanup stack
-        run: >
-             source /etc/bashrc;
-             mask --maskfile "${MASK_FILE}" infra cleanup machines;
-             mask --maskfile "${MASK_FILE}" infra cleanup network;
-             #mask --maskfile "${MASK_FILE}" godon deplete;
-      - name: errect stack
-        run: >
-             source /etc/bashrc;
-             mask --maskfile "${MASK_FILE}" infra create machines;
-             mask --maskfile "${MASK_FILE}" infra create network;
-             #mask --maskfile "${MASK_FILE}" infra provision machines;
-             #mask --maskfile "${MASK_FILE}" godon setup;
+
+      #  FIXME: not working in straightforward way, because github-runner on
+      #  nixos running in a very restrictive
+      #  e.g. REF: https://github.com/NixOS/nixpkgs/issues/42117
+      # test_stack_recreate:
+      #   if: ${{ contains(github.event.pull_request.labels.*.name, 'teststack') && contains(github.event.pull_request.labels.*.name, 'recreate') }}
+      #   runs-on: [self-hosted, linux] # only unique osuosl instance
+      #   env:
+      #     MASK_FILE: testing/maskfile.md
+      #   steps:
+      #     - uses: actions/checkout@v2
+      #     - name: cleanup stack
+      #       run: >
+      #            source /etc/bashrc;
+      #            mask --maskfile "${MASK_FILE}" infra cleanup machines;
+      #            mask --maskfile "${MASK_FILE}" infra cleanup network;
+      #            #mask --maskfile "${MASK_FILE}" godon deplete;
+      #     - name: errect stack
+      #       run: >
+      #            source /etc/bashrc;
+      #            mask --maskfile "${MASK_FILE}" infra create machines;
+      #            mask --maskfile "${MASK_FILE}" infra create network;
+      #            #mask --maskfile "${MASK_FILE}" infra provision machines;
+      #            #mask --maskfile "${MASK_FILE}" godon setup;
