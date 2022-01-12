@@ -53,7 +53,8 @@ jobs:
              echo "image=${image}" >> $GITHUB_ENV
       - name: update image in pool
         run: >
-             cp -u "${image}" "${image_pool_dir}";
+             source /etc/bashrc;
+             cp "${image}" "${image_pool_dir}";
   test_stack_recreate:
     if: ${{ contains(github.event.pull_request.labels.*.name, 'teststack') && contains(github.event.pull_request.labels.*.name, 'recreate') }}
     runs-on: [self-hosted, linux] # only unique osuosl instance
