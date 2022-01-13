@@ -213,7 +213,7 @@ sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}
 ~~~bash
 set -eEux
 
-container_name="karmab/kcli"
+container_name="quay.io/karmab/kcli"
 pool_dir="/srv/"
 
 sudo docker run --net host --rm \
