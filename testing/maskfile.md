@@ -35,7 +35,7 @@ __plan_name=micro_stack
 __kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
 
 echo "instanciating machines"
-${__kcli_cmd} "create plan -f ./infra/machines.yml ${__plan_name}"
+${__kcli_cmd} "create plan -f ./infra/machines/plan.yml ${__plan_name}"
 
 ${__kcli_cmd} "list plan"
 ${__kcli_cmd} "list vm"
