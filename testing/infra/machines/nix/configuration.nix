@@ -26,6 +26,7 @@
   };
 
   services = { openssh.enable = true; };
+  networking.firewall.enable = false;
 
   environment.systemPackages = with pkgs; [
     python3
