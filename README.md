@@ -82,3 +82,4 @@ Bases and inspired by POC research done in [1][2] or and broader discussions[3] 
 
 [3] https://news.ycombinator.com/item?id=15892956
 
+[4] https://hal.archives-ouvertes.fr/hal-02304734/document 
