@@ -27,3 +27,16 @@ services:
     entrypoint: sleep infinity
     volumes:
         - ./:/opt/
+  mkdocs:
+    container_name: mkdocs
+    image: polinux/mkdocs:1.2.3
+    restart: always
+    ports:
+      - "9800:8000"
+    volumes:
+      - ./docs:/mkdocs
+    environment:
+      LIVE_RELOAD_SUPPORT: 'true'
+      ADD_MODULES: 'mkdocs-windmill'
+      DOCS_DIRECTORY: '/mkdocs'
+      AUTO_UPDATE: 'false'
