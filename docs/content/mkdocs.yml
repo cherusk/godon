@@ -5,5 +5,5 @@ repo_url: https://github.com/cherusk/godon
 repo_name: GitHub
 theme:
   name: "windmill"
-#extra:
-#  logo: "path/to/logo"
+extra:
+  logo: "./logo.svg"
