@@ -48,7 +48,7 @@ must be handed in structured way to the consumer, allowing him to apply the
 breeding result at higher criticality or the actual optimization target at his
 or her arbitration in the way most desired or applicable.
 
-![Outline_online](https://github.com/cherusk/godon/blob/master/docs/content/drawings/staged_structure.svg?sanitize=true)
+![Outline_online](https://raw.githubusercontent.com/cherusk/godon/master/docs/content/drawings/staged_structure.svg?sanitize=true)
 
 Alternatively, customers will not be hampered from doing all the previously
 outlined directly on productive stacks.  If the targeted sub-components are not
@@ -56,11 +56,11 @@ of utmost criticallity, that could be a frequent scenario to expect also.
 
 It's a special case of the previously described anyways.
 
-![Outline_staged](https://github.com/cherusk/godon/blob/master/docs/content/drawings/online_structure.svg?sanitize=true)
+![Outline_staged](https://raw.githubusercontent.com/cherusk/godon/master/docs/content/drawings/online_structure.svg?sanitize=true)
 
 ## Flow Outline
 
-![Flow](https://github.com/cherusk/godon/blob/master/docs/content/drawings/engine_flow.svg?sanitize=true)
+![Flow](https://raw.githubusercontent.com/cherusk/godon/master/docs/content/drawings/engine_flow.svg?sanitize=true)
 
 ## Sponsors
 
