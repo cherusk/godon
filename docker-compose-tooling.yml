@@ -34,7 +34,8 @@ services:
     ports:
       - "9800:8000"
     volumes:
-      - ./docs:/mkdocs
+      - ./docs_content:/mkdocs
+      - ./docs:/site/
     environment:
       LIVE_RELOAD_SUPPORT: 'true'
       ADD_MODULES: 'mkdocs-windmill'
