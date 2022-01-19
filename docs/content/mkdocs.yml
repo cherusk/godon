@@ -1,5 +1,9 @@
 site_name: godon
+site_description: 'Project around Paralellized Metaheuristics driven Infrastructure Optimization'
+site_author: 'Matthias Tafelmeier'
 repo_url: https://github.com/cherusk/godon
 repo_name: GitHub
 theme:
   name: "windmill"
+#extra:
+#  logo: "path/to/logo"
