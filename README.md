@@ -21,4 +21,4 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 
 ![Logo](https://github.com/cherusk/godon/blob/master/docs/content/logo.svg?sanitize=true)
 
-More data to be found on the [docs site link](https://cherusk.github.io/godon/).
+More data to be found on the [docs site](https://cherusk.github.io/godon/).
