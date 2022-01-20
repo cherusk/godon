@@ -19,13 +19,19 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 
 ![Emblem](https://raw.githubusercontent.com/cherusk/godon/master/docs_content/logo.svg?sanitize=true)
 
-# Overview
-
 ## Objective
+-------------
 
-Generic, GEA multi objective obtimization techs wielding solution focussing on
-online optimizing, rearranging, calibrating of technologies in need for it
-throughout the stack.
+This project approaches the problem of optimizing infrastructure technologies 
+as a continuous multi objective combinatorial optimization problem in a dynamic environment
+
+Meta-Heuristics, e.g. Evolutionary Algorithms (EA), have been found well suited for dealing with 
+such optimization problem fields.
+
+Technologies throughout the stack are targeted.
+
+Optimizing, rearranging, calibrating of technology settings throughout their life-cycle are 
+what is seeked to address with godon.
 
 ## Principle Outline
 
