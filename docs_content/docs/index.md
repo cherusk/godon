@@ -25,13 +25,13 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 This project approaches the problem of optimizing infrastructure technologies 
 as a continuous multi objective combinatorial optimization problem in a dynamic environment
 
-Meta-Heuristics, e.g. Evolutionary Algorithms (EA), have been found well suited for dealing with 
+Meta-Heuristics, e.g. Evolutionary Algorithms (EA), have been found operating well in
 such optimization problem fields.
 
 Technologies throughout the stack are targeted.
 
-Optimizing, rearranging, calibrating of technology settings throughout their life-cycle are 
-what is seeked to address with godon.
+Overall optimizing, rearranging, calibrating of technology settings throughout the life-cycle of an instance
+of a technology are what is seeked to address with godon.
 
 ## Principle Outline
 
