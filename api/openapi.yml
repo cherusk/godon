@@ -1,0 +1,26 @@
+---
+
+openapi: 3.0.0
+info:
+  version: 0.0.0
+  title: godon control API
+  description: API for controlling godon optimizer
+
+servers:
+  - url: /v0
+
+paths:
+  /breeders:
+    get:
+      responses:
+        '204':
+           description: Successfully received breeder request
+        '400':
+           description: Invalid request
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   message:
+                     type: string
