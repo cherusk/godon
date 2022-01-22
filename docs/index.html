@@ -34,12 +34,11 @@
       var is_top_frame = (window === window.parent);
         
         var pageToc = [
-          {title: "Overview", url: "#_top", children: [
-              {title: "Objective", url: "#objective" },
-              {title: "Principle Outline", url: "#principle-outline" },
-              {title: "Flow Outline", url: "#flow-outline" },
-              {title: "Sponsors", url: "#sponsors" },
-              {title: "References", url: "#references" },
+          {title: "Objective", url: "#_top", children: [
+          ]},
+          {title: "Sponsors", url: "#sponsors", children: [
+          ]},
+          {title: "References", url: "#references", children: [
           ]},
         ];
 
@@ -108,6 +107,17 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
   <ul class="wm-toctree">
         <li class="wm-toc-li wm-toc-lev1 "><a href="" class="wm-article-link wm-toc-text">Home</a>
 </li>
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Technical</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="architecture/" class="wm-article-link wm-toc-text">Architecture</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="usage/" class="wm-article-link wm-toc-text">Usage</a>
+</li>
+  </ul>
+</li>
+
   </ul>
 </nav>
 
@@ -119,6 +129,25 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 <div class="container-fluid wm-page-content">
   <a name="_top"></a>
     
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="architecture/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="architecture/" class="btn btn-xs btn-link">
+        Architecture
+      </a>
+    </div>
+    
+  </div>
 
     
 
@@ -142,38 +171,15 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <p><img alt="Emblem" src="https://raw.githubusercontent.com/cherusk/godon/master/docs_content/logo.svg?sanitize=true" /></p>
-<h1 id="overview">Overview</h1>
 <h2 id="objective">Objective</h2>
-<p>Generic, GEA multi objective obtimization techs wielding solution focussing on
-online optimizing, rearranging, calibrating of technologies in need for it
-throughout the stack.</p>
-<h2 id="principle-outline">Principle Outline</h2>
-<p>Idea is to run a continuous or periodic optimization cycle. Ideally, there
-should be a breeding sub landscape, where the GEAs can do their optimiziation
-part in a safe, non-invasive or even disruptive way. Replicating load or
-traffic patterns in such a replicate might appear challenging, but may not be
-necessary. A proper enough approximation might suffice for the larger fraction
-of practical use cases.</p>
-<p>The optimizer core is working on DEAP workers parallelized with help of a shim
-layer over commonplace distributed system orchestrator solutions. Further, the
-feed-back control loop is driven in jobs, perceiving aggregated telemetry and
-data of similar character gathered from the targeted objects. Also direct
-inspection of the breeding status has to be foreseen. After running the
-optimization via parallelized GEAs, the outcome will be applied on the breeder.
-This cycle will run until a customer defined acceptance or approximation
-epsilon has been reached or an another, maybe time-bound termination kicks in.</p>
-<p>Eventual outcome shall be a configuration perceived sufficiently optimal.  It
-must be handed in structured way to the consumer, allowing him to apply the
-breeding result at higher criticality or the actual optimization target at his
-or her arbitration in the way most desired or applicable.</p>
-<p><img alt="Outline_online" src="https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/staged_structure.svg?sanitize=true" /></p>
-<p>Alternatively, customers will not be hampered from doing all the previously
-outlined directly on productive stacks.  If the targeted sub-components are not
-of utmost criticallity, that could be a frequent scenario to expect also.</p>
-<p>It's a special case of the previously described anyways.</p>
-<p><img alt="Outline_staged" src="https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/online_structure.svg?sanitize=true" /></p>
-<h2 id="flow-outline">Flow Outline</h2>
-<p><img alt="Flow" src="https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/engine_flow.svg?sanitize=true" /></p>
+<hr />
+<p>This project approaches the problem of optimizing infrastructure technologies 
+as a continuous multi objective combinatorial optimization problem in a dynamic environment</p>
+<p>Meta-Heuristics, e.g. Evolutionary Algorithms (EA), have been found operating well in
+such optimization problem fields.</p>
+<p>Technologies throughout the stack are targeted.</p>
+<p>Overall optimizing, rearranging, calibrating of technology settings throughout the life-cycle of an instance
+of a technology are what is seeked to address with godon.</p>
 <h2 id="sponsors">Sponsors</h2>
 <p>Greatest esteem to:</p>
 <ul>
@@ -194,6 +200,25 @@ of utmost criticallity, that could be a frequent scenario to expect also.</p>
   <br>
     
 
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="architecture/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="architecture/" class="btn btn-xs btn-link">
+        Architecture
+      </a>
+    </div>
+    
+  </div>
+
     <br>
 </div>
 
@@ -209,5 +234,5 @@ Edit on GitHub</a>
 </html>
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2022-01-19 19:13:07.725521+00:00
+Build Date UTC : 2022-01-22 09:21:14.112854+00:00
 -->

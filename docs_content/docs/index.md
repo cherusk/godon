@@ -33,43 +33,6 @@ Technologies throughout the stack are targeted.
 Overall optimizing, rearranging, calibrating of technology settings throughout the life-cycle of an instance
 of a technology are what is seeked to address with godon.
 
-## Principle Outline
-
-Idea is to run a continuous or periodic optimization cycle. Ideally, there
-should be a breeding sub landscape, where the GEAs can do their optimiziation
-part in a safe, non-invasive or even disruptive way. Replicating load or
-traffic patterns in such a replicate might appear challenging, but may not be
-necessary. A proper enough approximation might suffice for the larger fraction
-of practical use cases.
-
-The optimizer core is working on DEAP workers parallelized with help of a shim
-layer over commonplace distributed system orchestrator solutions. Further, the
-feed-back control loop is driven in jobs, perceiving aggregated telemetry and
-data of similar character gathered from the targeted objects. Also direct
-inspection of the breeding status has to be foreseen. After running the
-optimization via parallelized GEAs, the outcome will be applied on the breeder.
-This cycle will run until a customer defined acceptance or approximation
-epsilon has been reached or an another, maybe time-bound termination kicks in.
-
-Eventual outcome shall be a configuration perceived sufficiently optimal.  It
-must be handed in structured way to the consumer, allowing him to apply the
-breeding result at higher criticality or the actual optimization target at his
-or her arbitration in the way most desired or applicable.
-
-![Outline_online](https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/staged_structure.svg?sanitize=true)
-
-Alternatively, customers will not be hampered from doing all the previously
-outlined directly on productive stacks.  If the targeted sub-components are not
-of utmost criticallity, that could be a frequent scenario to expect also.
-
-It's a special case of the previously described anyways.
-
-![Outline_staged](https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/online_structure.svg?sanitize=true)
-
-## Flow Outline
-
-![Flow](https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/engine_flow.svg?sanitize=true)
-
 ## Sponsors
 
 Greatest esteem to:
