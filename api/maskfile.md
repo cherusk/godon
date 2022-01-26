@@ -39,8 +39,9 @@ docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli validate -
 ~~~bash
 set -eEux
 
-docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+docker run --rm -v "${MASKFILE_DIR}:/local" openapitools/openapi-generator-cli generate \
             -i /local/openapi.yml \
+            --template-dir /local/templates/ \
             --generator-name python-flask \
             -o /local/flask
 ~~~
