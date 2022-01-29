@@ -34,7 +34,7 @@ docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli validate -
 
 ### api generate
 
-> validate server stub from the openapi spec
+> generate server stub from the openapi spec
 
 ~~~bash
 set -eEux
@@ -44,4 +44,6 @@ docker run --rm -v "${MASKFILE_DIR}:/local" openapitools/openapi-generator-cli g
             --template-dir /local/templates/ \
             --generator-name python-flask \
             -o /local/flask
+
+cp "${MASKFILE_DIR}"/flask/openapi_server/controllers/controller.py
 ~~~

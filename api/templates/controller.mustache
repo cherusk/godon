@@ -27,20 +27,10 @@ from {{packageName}} import util
 {{#operations}}
 {{#operation}}
 
+from . import controller
+
 # Based on upstream openapi-generator stub:
 # https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python-flask/controller.mustache
-
-def load_controller_module():
-    controller = None
-    try:
-        dirname, filename = os.path.split(os.path.abspath(__file__))
-        module = f"{dirname}/../../../../controller.py"
-        controller = imp.load_source('Controller', module)
-    except ImportError:
-        self.log_errror(f"Failed to import Hostname auxiliary scripts")
-        raise (e)
-
-    return controller
 
 def {{operationId}}({{#allParams}}{{paramName}}{{^required}}=None{{/required}}{{^-last}}, {{/-last}}{{/allParams}}):  # noqa: E501
     """{{summary}}{{^summary}}{{operationId}}{{/summary}}
@@ -141,7 +131,6 @@ def {{operationId}}({{#allParams}}{{paramName}}{{^required}}=None{{/required}}{{
             {{/items}}
         {{/isMap}}
     {{/allParams}}
-    controller = load_controller_module()
     return controller.{{operationId}}({{#allParams}}{{paramName}}{{^required}}{{/required}}{{^-last}}, {{/-last}}{{/allParams}})
 {{/operation}}
 {{/operations}}
