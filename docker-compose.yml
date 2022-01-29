@@ -32,3 +32,10 @@ services:
             - ./infra/credentials/ssh/:/opt/airflow/credentials/
         ports:
             - 127.0.0.1:8080:8080
+    api:
+        image: godon/api:latest
+        restart: always
+        environment:
+          - AIRFLOW__URL=http://control_loop:8080
+        ports:
+            - 127.0.0.1:9000

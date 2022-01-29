@@ -19,9 +19,10 @@
 
 
 import requests
+import os
 
 
-AIRFLOW_API_BASE_URL = "http://TBD"
+AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 
 
 def breeders_delete(content):  # noqa: E501
