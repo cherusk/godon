@@ -33,6 +33,8 @@ services:
         ports:
             - 127.0.0.1:8080:8080
     api:
+        build:
+          context: ./api/flask/
         image: godon/api:latest
         restart: always
         environment:
