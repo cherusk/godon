@@ -41,9 +41,9 @@ of a technology are what is seeked to address with godon.
 -------------
 
 * augmenting human operation engineers at bringing performance improvements
-** it simplifies the process through standardization and industrialization
-** reduces prior knowledge needed about configuration changes and implications
-** less toil in terms of engineering hours spent
+    * it simplifies the process through standardization and industrialization
+    * reduces prior knowledge needed about configuration changes and implications
+    * less toil in terms of engineering hours spent
 * tackles the wide spread neglection of broader performance tuning
 * pragmatic operations engineering complementing instrument
 * focussed on open technologies first
@@ -56,11 +56,11 @@ of a technology are what is seeked to address with godon.
 
 * fully off-hands automation as human setup, supervision and planning is required
 * a machine learning or data analysis oriented technology
-** kept to a minimum
-** ideally only used if needed in the implemenation of the metaheuristics
+    * kept to a minimum
+    * ideally only used if needed in the implemenation of the metaheuristics
 * guaranteeing a global optimum in the search space of configurations
-** rather approximating
-** but still better than leaving at off-shelf defaults
+    * rather approximating
+    * but still better than leaving at off-shelf defaults
 * a metaheuristics framework
 
 ## Sponsors
