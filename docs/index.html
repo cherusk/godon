@@ -34,7 +34,11 @@
       var is_top_frame = (window === window.parent);
         
         var pageToc = [
-          {title: "Objective", url: "#_top", children: [
+          {title: "Introduction", url: "#_top", children: [
+          ]},
+          {title: "Objective", url: "#objective", children: [
+              {title: "It is", url: "#it-is" },
+              {title: "It is not", url: "#it-is-not" },
           ]},
           {title: "Sponsors", url: "#sponsors", children: [
           ]},
@@ -171,16 +175,45 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <p><img alt="Emblem" src="https://raw.githubusercontent.com/cherusk/godon/master/docs_content/logo.svg?sanitize=true" /></p>
-<h2 id="objective">Objective</h2>
+<h2 id="introduction">Introduction</h2>
 <hr />
 <p>This project approaches the problem of optimizing infrastructure technologies 
 as a continuous multi objective combinatorial optimization problem in a dynamic environment</p>
 <p>Meta-Heuristics, e.g. Evolutionary Algorithms (EA), have been found operating well in
 such optimization problem fields.</p>
-<p>Technologies throughout the stack are targeted.</p>
+<p>Technologies throughout the stack are targeted. A focus is put on open technologies first.</p>
 <p>Overall optimizing, rearranging, calibrating of technology settings throughout the life-cycle of an instance
 of a technology are what is seeked to address with godon.</p>
+<h2 id="objective">Objective</h2>
+<hr />
+<h3 id="it-is">It is</h3>
+<hr />
+<ul>
+<li>augmenting human operation engineers at bringing performance improvements
+<strong> it simplifies the process through standardization and industrialization
+</strong> reduces prior knowledge needed about configuration changes and implications
+** less toil in terms of engineering hours spent</li>
+<li>tackles the wide spread neglection of broader performance tuning</li>
+<li>pragmatic operations engineering complementing instrument</li>
+<li>focussed on open technologies first</li>
+<li>approximating an optimal state in a dynamic environment chaing over time</li>
+<li>leveraging metaheuristics algorithms of all kinds to explore combinatorial configuration spaces</li>
+<li>betting on parallelization and acceleration of metaheuristics</li>
+</ul>
+<h3 id="it-is-not">It is not</h3>
+<hr />
+<ul>
+<li>fully off-hands automation as human setup, supervision and planning is required</li>
+<li>a machine learning or data analysis oriented technology
+<strong> kept to a minimum
+</strong> ideally only used if needed in the implemenation of the metaheuristics</li>
+<li>guaranteeing a global optimum in the search space of configurations
+<strong> rather approximating
+</strong> but still better than leaving at off-shelf defaults</li>
+<li>a metaheuristics framework</li>
+</ul>
 <h2 id="sponsors">Sponsors</h2>
+<hr />
 <p>Greatest esteem to:</p>
 <ul>
 <li>
@@ -191,6 +224,7 @@ of a technology are what is seeked to address with godon.</p>
 </li>
 </ul>
 <h2 id="references">References</h2>
+<hr />
 <p>Bases and inspired by POC research done in [1][2] or and broader discussions[3] in public domain.</p>
 <p>[1] https://www.researchgate.net/publication/327392488_Autonomous_Configuration_of_Network_Parameters_in_Operating_Systems_using_Evolutionary_Algorithms</p>
 <p>[2] https://zilimeng.com/papers/decima-sigcomm19.pdf</p>
@@ -234,5 +268,5 @@ Edit on GitHub</a>
 </html>
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2022-01-30 14:43:53.478725+00:00
+Build Date UTC : 2022-01-30 19:42:14.333528+00:00
 -->
