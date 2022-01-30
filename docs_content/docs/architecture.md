@@ -22,5 +22,5 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 
 ### Engine principle
 
-![Flow](https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/engine_flow.svg?sanitize=true)
+![Flow](https://raw.githubusercontent.com/cherusk/godon/master/docs_content/drawings/architecture.drawio.svg?sanitize=true)
 
