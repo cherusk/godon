@@ -38,7 +38,7 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 set -eEux
 
 curl --request GET http://${hostname}:${port}/breeders
-~
+~~~
 
 ### breeder create
 
@@ -57,7 +57,7 @@ curl --request POST \
      -H 'Content-Type: application/json' \
      --data @"${file}" \
      http://${hostname}:${port}/breeders
-~
+~~~
 
 ### breeder purge
 
@@ -76,7 +76,7 @@ curl --request DELETE \
      -H 'Content-Type: application/json' \
      --data "{ \"name\": \"${name}\" }" \
      http://${hostname}:${port}/breeders
-~
+~~~
 
 ### breeder update
 
@@ -95,7 +95,7 @@ curl --request PUT \
      -H 'Content-Type: application/json' \
      --data @"${file}" \
      http://${hostname}:${port}/breeders
-~
+~~~
 
 ### breeder show
 
@@ -114,4 +114,4 @@ curl --request GET \
      -H 'Content-Type: application/json' \
      --data "{ \"name\": \"${name}\" }" \
      "http://${hostname}:${port}/breeders/${name}"
-~
+~~~
