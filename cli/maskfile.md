@@ -43,9 +43,9 @@ curl --request GET http://${hostname}:${port}/breeders
 ### breeder create
 
 **OPTIONS**
-* definition 
+* definition
     * flags: --file
-    * type: string 
+    * type: string
     * desc: definition file of breeder to be created
 
 > Create a breeder
@@ -62,9 +62,9 @@ curl --request POST \
 ### breeder purge
 
 **OPTIONS**
-* name 
+* name
     * flags: --name
-    * type: string 
+    * type: string
     * desc: name of breeder to be purged
 
 > Purge a breeder
@@ -81,10 +81,10 @@ curl --request DELETE \
 ### breeder update
 
 **OPTIONS**
-* definition 
+* definition
     * flags: --file
-    * type: string 
-    * desc: definition file of breeder to be updated 
+    * type: string
+    * desc: definition file of breeder to be updated
 
 > Update a breeder
 
@@ -100,10 +100,10 @@ curl --request PUT \
 ### breeder show
 
 **OPTIONS**
-* name 
+* name
     * flags: --name
-    * type: string 
-    * desc: name of breeder to get details from 
+    * type: string
+    * desc: name of breeder to get details from
 
 > Show a breeder
 
