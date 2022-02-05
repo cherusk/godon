@@ -53,9 +53,13 @@ curl --request GET http://${hostname}:${port}/breeders
 ~~~bash
 set -eEux
 
+__temp_file_json_tranfer="$(mktemp)"
+
+cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
+
 curl --request POST \
      -H 'Content-Type: application/json' \
-     --data @"${file}" \
+     --data @"${__temp_file_json_tranfer}" \
      http://${hostname}:${port}/breeders
 ~~~
 
@@ -91,9 +95,13 @@ curl --request DELETE \
 ~~~bash
 set -eEux
 
+__temp_file_json_tranfer="$(mktemp)"
+
+cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
+
 curl --request PUT \
      -H 'Content-Type: application/json' \
-     --data @"${file}" \
+     --data @"${__temp_file_json_tranfer}" \
      http://${hostname}:${port}/breeders
 ~~~
 
