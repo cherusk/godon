@@ -1,0 +1,34 @@
+---
+meta:
+  version: "0.1"
+breeder:
+  name: network_optimization
+  dags:
+    - name: lnx_net_stack
+      settings:
+        sysctl:
+          net.ipv4.tcp_mem:
+            constraints:
+              lower: 188760
+              upper: 377520
+          net.ipv4.tcp_rmem:
+            constraints:
+              lower: 4096
+              upper: 6291456
+          net.ipv4.tcp_wmem:
+            constraints:
+              lower: 4096
+              upper: 6291456
+  run:
+    bounds:
+      iterations:
+        min: 10
+        max: 1000
+      timing:
+        # start: 1m
+        end: 10d
+        interval: 60
+  recon:
+    # prometheus:
+    prober:
+      - name: linux_net_latency
