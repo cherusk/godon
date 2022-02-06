@@ -20,14 +20,14 @@ breeder:
               lower: 4096
               upper: 6291456
   run:
-    bounds:
-      iterations:
-        min: 10
-        max: 1000
-      timing:
-        # start: 1m
-        end: 10d
-        interval: 60
+    parallel: 3
+    iterations:
+      min: 10
+      max: 1000
+    timing:
+      # start: 1m
+      end: 10d
+      interval: 60
   recon:
     # prometheus:
     prober:
