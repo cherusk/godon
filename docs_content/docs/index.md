@@ -69,8 +69,6 @@ Greatest esteem to:
 
 * OSU Open Source Lab (https://osuosl.org) for bestowing generously with resources on their openstack infrastructure
 
-* genesiscloud (https://www.genesiscloud.com/) for providing free GPU acceleration to the project
-
 ## References 
 -------------
 
