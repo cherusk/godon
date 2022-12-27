@@ -28,6 +28,17 @@
   services = { openssh.enable = true; };
   networking.firewall.enable = false;
 
+  systemd.services.firewall-stopper = {
+    enable = true;
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    description = "Mitigate frail firewall disable";
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "systemctl mask --now firewall.service";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     python3
     bashInteractive_5
@@ -38,6 +49,7 @@
     gnupg
     htop
     iproute2
+    iperf3
     jq
     killall
     nmap
