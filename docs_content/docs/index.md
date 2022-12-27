@@ -72,12 +72,7 @@ Greatest esteem to:
 ## References 
 -------------
 
-Bases and inspired by POC research done in [1][2] or and broader discussions[3] in public domain.
+[1] Inspiring POC work for the project;[Autonomous_Configuration_of_Network_Parameters_in_Operating_Systems_using_Evolutionary_Algorithms](https://www.researchgate.net/publication/327392488_Autonomous_Configuration_of_Network_Parameters_in_Operating_Systems_using_Evolutionary_Algorithms)
 
-[1] https://www.researchgate.net/publication/327392488_Autonomous_Configuration_of_Network_Parameters_in_Operating_Systems_using_Evolutionary_Algorithms
-
-[2] https://zilimeng.com/papers/decima-sigcomm19.pdf
-
-[3] https://news.ycombinator.com/item?id=15892956
-
-[4] https://hal.archives-ouvertes.fr/hal-02304734/document 
+[2] Underpinning the potential to accelerate metaheurstics by parallelization;[A unified view of parallel multi-objective evolutionary
+algorithms](https://hal.archives-ouvertes.fr/hal-02304734/document)
