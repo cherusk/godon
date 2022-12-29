@@ -24,6 +24,11 @@ from airflow.contrib.hooks.ssh_hook import SSHHook
 from airflow.models import Variable
 from airflow.utils.dates import days_ago
 
+import optuna
+import joblib
+import dask.distributed
+import dask_optuna
+
 DEFAULTS = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -64,11 +69,22 @@ def create_dag(dag_id):
         )
 
         # perform optimiziation run
-        optimizing_step = BashOperator(
-            task_id='optimize',
-            bash_command='echo noop',
-            dag=net_stack_dag,
-        )
+        @dag.task(task_id="optimize")
+        def run_optimization():
+            # boilerplate from https://jrbourbeau.github.io/dask-optuna/
+
+            def objective(trial):
+                return None
+
+            with dask.distributed.Client() as client:
+                # Create a study using Dask-compatible storage
+                storage = dask_optuna.DaskStorage()
+                study = optuna.create_study(storage=storage)
+                # Optimize in parallel on your Dask cluster
+                with joblib.parallel_backend("dask"):
+                    study.optimize(objective, n_trials=100, n_jobs=-1)
+                    print(f"best_params = {study.best_params}")
+
 
         # perform config effectuation at target instance
         conn_hook = SSHHook(
