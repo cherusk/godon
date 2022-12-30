@@ -20,6 +20,8 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 
 ## breeder
 
+### breeder list
+
 **OPTIONS**
 * hostname
     * flags: --hostname
@@ -29,20 +31,37 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
     * flags: --port
     * type: number
     * desc: godon port
+* api_version 
+    * flags: --api-version
+    * type: string 
+    * desc: godon api version
 
-### breeder list
 
 > List all configured breeders
 
 ~~~bash
 set -eEux
 
-curl --request GET http://${hostname}:${port}/breeders
+__api_version="${api_version:-v0}"
+
+curl --request GET "http://${hostname}:${port}/${__api_version}/breeders"
 ~~~
 
 ### breeder create
 
 **OPTIONS**
+* hostname
+    * flags: --hostname
+    * type: string
+    * desc: godon hostname
+* port
+    * flags: --port
+    * type: number
+    * desc: godon port
+* api_version 
+    * flags: --api-version
+    * type: string 
+    * desc: godon api version
 * definition
     * flags: --file
     * type: string
@@ -53,6 +72,7 @@ curl --request GET http://${hostname}:${port}/breeders
 ~~~bash
 set -eEux
 
+__api_version="${api_version:-v0}"
 __temp_file_json_tranfer="$(mktemp)"
 
 cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
@@ -60,7 +80,7 @@ cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin
 curl --request POST \
      -H 'Content-Type: application/json' \
      --data @"${__temp_file_json_tranfer}" \
-     http://${hostname}:${port}/breeders
+     "http://${hostname}:${port}/${__api_version}/breeders"
 ~~~
 
 ### breeder purge
@@ -70,16 +90,30 @@ curl --request POST \
     * flags: --name
     * type: string
     * desc: name of breeder to be purged
+* hostname
+    * flags: --hostname
+    * type: string
+    * desc: godon hostname
+* port
+    * flags: --port
+    * type: number
+    * desc: godon port
+* api_version 
+    * flags: --api-version
+    * type: string 
+    * desc: godon api version   
 
 > Purge a breeder
 
 ~~~bash
 set -eEux
 
+__api_version="${api_version:-v0}"
+
 curl --request DELETE \
      -H 'Content-Type: application/json' \
      --data "{ \"name\": \"${name}\" }" \
-     http://${hostname}:${port}/breeders
+     "http://${hostname}:${port}/${__api_version}/breeders"
 ~~~
 
 ### breeder update
@@ -89,12 +123,26 @@ curl --request DELETE \
     * flags: --file
     * type: string
     * desc: definition file of breeder to be updated
+* hostname
+    * flags: --hostname
+    * type: string
+    * desc: godon hostname
+* port
+    * flags: --port
+    * type: number
+    * desc: godon port
+* api_version 
+    * flags: --api-version
+    * type: string 
+    * desc: godon api version   
 
 > Update a breeder
 
 ~~~bash
+
 set -eEux
 
+__api_version="${api_version:-v0}"
 __temp_file_json_tranfer="$(mktemp)"
 
 cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
@@ -102,7 +150,7 @@ cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin
 curl --request PUT \
      -H 'Content-Type: application/json' \
      --data @"${__temp_file_json_tranfer}" \
-     http://${hostname}:${port}/breeders
+     "http://${hostname}:${port}/${__api_version}/breeders"
 ~~~
 
 ### breeder show
@@ -112,14 +160,28 @@ curl --request PUT \
     * flags: --name
     * type: string
     * desc: name of breeder to get details from
+* hostname
+    * flags: --hostname
+    * type: string
+    * desc: godon hostname
+* port
+    * flags: --port
+    * type: number
+    * desc: godon port
+* api_version 
+    * flags: --api-version
+    * type: string 
+    * desc: godon api version   
 
 > Show a breeder
 
 ~~~bash
 set -eEux
 
+__api_version="${api_version:-v0}"
+
 curl --request GET \
      -H 'Content-Type: application/json' \
      --data "{ \"name\": \"${name}\" }" \
-     "http://${hostname}:${port}/breeders/${name}"
+    "http://${hostname}:${port}/${__api_version}/breeders/${name}"
 ~~~
