@@ -45,5 +45,5 @@ docker run --rm -v "${MASKFILE_DIR}:/local" openapitools/openapi-generator-cli g
             --generator-name python-flask \
             -o /local/flask
 
-cp "${MASKFILE_DIR}"/flask/openapi_server/controllers/controller.py
+cp "${MASKFILE_DIR}"/controller.py ./flask/openapi_server/controllers/controller.py
 ~~~
