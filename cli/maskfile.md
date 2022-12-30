@@ -31,9 +31,9 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
     * flags: --port
     * type: number
     * desc: godon port
-* api_version 
+* api_version
     * flags: --api-version
-    * type: string 
+    * type: string
     * desc: godon api version
 
 
@@ -58,9 +58,9 @@ curl --request GET "http://${hostname}:${port}/${__api_version}/breeders"
     * flags: --port
     * type: number
     * desc: godon port
-* api_version 
+* api_version
     * flags: --api-version
-    * type: string 
+    * type: string
     * desc: godon api version
 * definition
     * flags: --file
@@ -98,10 +98,10 @@ curl --request POST \
     * flags: --port
     * type: number
     * desc: godon port
-* api_version 
+* api_version
     * flags: --api-version
-    * type: string 
-    * desc: godon api version   
+    * type: string
+    * desc: godon api version
 
 > Purge a breeder
 
@@ -131,10 +131,10 @@ curl --request DELETE \
     * flags: --port
     * type: number
     * desc: godon port
-* api_version 
+* api_version
     * flags: --api-version
-    * type: string 
-    * desc: godon api version   
+    * type: string
+    * desc: godon api version
 
 > Update a breeder
 
@@ -168,10 +168,10 @@ curl --request PUT \
     * flags: --port
     * type: number
     * desc: godon port
-* api_version 
+* api_version
     * flags: --api-version
-    * type: string 
-    * desc: godon api version   
+    * type: string
+    * desc: godon api version
 
 > Show a breeder
 
