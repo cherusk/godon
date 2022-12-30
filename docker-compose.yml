@@ -40,7 +40,7 @@ services:
         environment:
           - AIRFLOW__URL=http://control_loop:8080
         ports:
-            - 127.0.0.1:9000
+          - 127.0.0.1:9000:8080
     # for optuna parallel metaheuristics execution on dask
     dask_scheduler:
       image: daskdev/dask:2022.12.1-py3.9
