@@ -61,56 +61,68 @@ def create_dag(dag_id):
                     linux network stack dynamics')
 
     with dag:
-        # perform reconnaisance at target instance
-        recon_step = BashOperator(
-            task_id='reconnaisance',
-            bash_command='echo noop',
-            dag=net_stack_dag,
+
+        dump_config = BashOperator(
+            task_id='print config',
+            bash_command='echo ${config}',
+            env={"config": '{{ dag_run.conf }}'},
+            dag=dag,
         )
 
-        # perform optimiziation run
-        @dag.task(task_id="optimize")
-        def run_optimization():
-            # boilerplate from https://jrbourbeau.github.io/dask-optuna/
+        dump_config
 
-            def objective(trial):
-                return None
+        # Conceptual outline
 
-            with dask.distributed.Client() as client:
-                # Create a study using Dask-compatible storage
-                storage = dask_optuna.DaskStorage()
-                study = optuna.create_study(storage=storage)
-                # Optimize in parallel on your Dask cluster
-                with joblib.parallel_backend("dask"):
-                    study.optimize(objective, n_trials=100, n_jobs=-1)
-                    print(f"best_params = {study.best_params}")
+        ## perform reconnaisance at target instance
+        #recon_step = BashOperator(
+        #    task_id='reconnaisance',
+        #    bash_command='echo noop',
+        #    dag=net_stack_dag,
+        #)
+
+        ## perform optimiziation run
+        #@dag.task(task_id="optimize")
+        #def run_optimization():
+        #    # boilerplate from https://jrbourbeau.github.io/dask-optuna/
+
+        #    def objective(trial):
+        #        return None
+
+        #    with dask.distributed.Client() as client:
+        #        # Create a study using Dask-compatible storage
+        #        storage = dask_optuna.DaskStorage()
+        #        study = optuna.create_study(storage=storage)
+        #        # Optimize in parallel on your Dask cluster
+        #        with joblib.parallel_backend("dask"):
+        #            study.optimize(objective, n_trials=100, n_jobs=-1)
+        #            print(f"best_params = {study.best_params}")
 
 
-        # perform config effectuation at target instance
-        conn_hook = SSHHook(
-                remote_host=Variable.get("target"),
-                username='root',
-                key_file="/opt/airflow/credentials/id_rsa",
-                timeout=30,
-                keepalive_interval=10
-                )
+        ## perform config effectuation at target instance
+        #conn_hook = SSHHook(
+        #        remote_host=Variable.get("target"),
+        #        username='root',
+        #        key_file="/opt/airflow/credentials/id_rsa",
+        #        timeout=30,
+        #        keepalive_interval=10
+        #        )
 
-        effectuation_step = SSHOperator(
-            ssh_hook=conn_hook,
-            remote_host=Variable.get("target"),
-            task_id='effectuation',
-            timeout=30,
-            command="""
-                    sysctl -w net.ipv4.tcp_mem="188760 251683	377520";
-                    sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
-                    sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
-                    sysctl -w net.core.netdev_budget=300;
-                    sysctl -w net.core.netdev_max_backlog=1000;
-                    """,
-            dag=net_stack_dag,
-        )
+        #effectuation_step = SSHOperator(
+        #    ssh_hook=conn_hook,
+        #    remote_host=Variable.get("target"),
+        #    task_id='effectuation',
+        #    timeout=30,
+        #    command="""
+        #            sysctl -w net.ipv4.tcp_mem="188760 251683	377520";
+        #            sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
+        #            sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
+        #            sysctl -w net.core.netdev_budget=300;
+        #            sysctl -w net.core.netdev_max_backlog=1000;
+        #            """,
+        #    dag=net_stack_dag,
+        #)
 
-        recon_step >> optimizing_step >> effectuation_step
+        #recon_step >> optimizing_step >> effectuation_step
 
 dag_id = 'linux_network_stack_breeder'
 globals()[dag_id] = create_dag(dag_id)
