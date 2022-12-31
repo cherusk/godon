@@ -50,6 +50,10 @@ curl --request GET "http://${hostname}:${port}/${__api_version}/breeders"
 ### breeder create
 
 **OPTIONS**
+* file
+    * flags: --file
+    * type: string
+    * desc: definition file of breeder to be created
 * hostname
     * flags: --hostname
     * type: string
@@ -62,10 +66,6 @@ curl --request GET "http://${hostname}:${port}/${__api_version}/breeders"
     * flags: --api-version
     * type: string
     * desc: godon api version
-* definition
-    * flags: --file
-    * type: string
-    * desc: definition file of breeder to be created
 
 > Create a breeder
 
@@ -73,9 +73,10 @@ curl --request GET "http://${hostname}:${port}/${__api_version}/breeders"
 set -eEux
 
 __api_version="${api_version:-v0}"
+__file="${file}"
 __temp_file_json_tranfer="$(mktemp)"
 
-cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
+cat "${__file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
 
 curl --request POST \
      -H 'Content-Type: application/json' \
