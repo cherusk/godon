@@ -21,17 +21,24 @@
 import requests
 import os
 from pprint import pprint
+from dateutil.parser import parse as dateutil_parser
 
-import airflow_client.client
+import airflow_client.client as client
 from airflow_client.client.api import dag_run_api
 from airflow_client.client.model.dag_run import DAGRun
 from airflow_client.client.model.error import Error
+from airflow_client.client.model.list_dag_runs_form import ListDagRunsForm
+from airflow_client.client.model.dag_run_collection import DAGRunCollection
+from airflow_client.client.model.dag_state import DagState
 
 
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
+AIRFLOW_API_AUTH_USER = "airflow"
+AIRFLOW_API_AUTH_PW = "airflow"
 
 breeders_db = dict()
+
 
 def breeders_delete(content):  # noqa: E501
     """breeders_delete
@@ -56,21 +63,23 @@ def breeders_get():  # noqa: E501
 
     api_response = None
     configuration = client.Configuration(
-        host = f"http://{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_BASE_URL}"
+        host = f"{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_VERSION}",
+        username = f"{AIRFLOW_API_AUTH_USER}",
+        password = f"{AIRFLOW_API_AUTH_PW}"
     )
 
     with client.ApiClient(configuration) as api_client:
         api_instance = dag_run_api.DAGRunApi(api_client)
 
         list_dag_runs_form = ListDagRunsForm(
-            order_by="order_by_example",
+            #order_by="order_by_example",
             page_offset=0,
             page_limit=10000,
             dag_ids=[
                 "linux_network_stack_breeder", # only one dag existing so far
             ],
-            states=[
-            ],
+            #states=[
+            #],
             execution_date_gte=dateutil_parser('1970-01-01T00:00:00.00Z'),
             execution_date_lte=dateutil_parser('1970-01-01T00:00:00.00Z'),
             start_date_gte=dateutil_parser('1970-01-01T00:00:00.00Z'),
@@ -83,12 +92,11 @@ def breeders_get():  # noqa: E501
         try:
            # List DAG runs (batch)
            api_response = api_instance.get_dag_runs_batch(list_dag_runs_form)
-           pprint(api_response)
         except client.ApiException as e:
            pprint("Exception when calling DAGRunApi->get_dag_runs_batch: %s\n" % e)
            raise e
 
-    return api_response
+    return api_response.to_dict()
 
 
 def breeders_name_get(name):  # noqa: E501
@@ -114,17 +122,19 @@ def breeders_post(content):  # noqa: E501
 
     api_response = None
     configuration = client.Configuration(
-        host = f"http://{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_BASE_URL}"
+        host = f"{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_VERSION}",
+        username = f"{AIRFLOW_API_AUTH_USER}",
+        password = f"{AIRFLOW_API_AUTH_PW}"
     )
 
     with client.ApiClient(configuration) as api_client:
         api_instance = dag_run_api.DAGRunApi(api_client)
-        breeder_id = content.get('name')
-        breeder_config = content.get('config')
+        breeder_id = content.get('breeder').get('name')
+        breeder_config = dict(content)
 
         dag_run = DAGRun(
             dag_run_id=breeder_id ,
-            state=DagState("queued"),
+            #state=DagState("queued"),
             conf=breeder_config,
         ) # DAGRun |
 
