@@ -24,11 +24,13 @@ services:
         environment:
             - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
             - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
+            - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
+            - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
         # minimum of setup steps
         # on sequencial executor and local sqlite
-        entrypoint: bash -c "airflow initdb; (airflow scheduler &); airflow webserver"
+        entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"
         volumes:
-            - ../breeder/loops/:/opt/airflow/dags
+            - ./breeder/linux_network_stack/:/opt/airflow/dags
             - ./infra/credentials/ssh/:/opt/airflow/credentials/
         ports:
             - 127.0.0.1:8080:8080
