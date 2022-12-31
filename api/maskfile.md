@@ -46,4 +46,6 @@ docker run --rm -v "${MASKFILE_DIR}:/local" openapitools/openapi-generator-cli g
             -o /local/flask
 
 cp "${MASKFILE_DIR}"/controller.py ./flask/openapi_server/controllers/controller.py
+
+echo "apache-airflow-client == 2.3.0" >> ./flask/requirements.txt
 ~~~
