@@ -32,3 +32,7 @@ breeder:
     # prometheus:
     prober:
       - name: linux_net_latency
+  effectuation:
+    user: godon_robot
+    target: "10.0.5.53"
+    key_file: "/opt/airflow/credentials/id_rsa"
