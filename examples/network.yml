@@ -2,7 +2,7 @@
 meta:
   version: "0.1"
 breeder:
-  name: network_optimization
+  name: "linux_network_stack_breeder"
   dags:
     - name: lnx_net_stack
       settings:
