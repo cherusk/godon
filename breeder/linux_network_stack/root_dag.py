@@ -60,16 +60,16 @@ def create_dag(dag_id):
               description='breeder geared to optimizing \
                     linux network stack dynamics')
 
-    with dag:
+    with dag as net_dag:
+
+        config = '{{ dag_run.conf }}'
 
         dump_config = BashOperator(
             task_id='print_config',
             bash_command='echo ${config}',
             env={"config": '{{ dag_run.conf }}'},
-            dag=dag,
+            dag=net_dag,
         )
-
-        dump_config
 
         # Conceptual outline
 
@@ -99,30 +99,31 @@ def create_dag(dag_id):
 
 
         ## perform config effectuation at target instance
-        #conn_hook = SSHHook(
-        #        remote_host=Variable.get("target"),
-        #        username='root',
-        #        key_file="/opt/airflow/credentials/id_rsa",
-        #        timeout=30,
-        #        keepalive_interval=10
-        #        )
+        _ssh_hook = SSHHook(
+            remote_host=config.get('breeder').get('effectuation').get('target'),
+            username=config.get('breeder').get('effectuation').get('user'),
+            key_file=config.get('breeder').get('effectuation').get('key_file'),
+            timeout=30,
+            keepalive_interval=10
+        )
 
-        #effectuation_step = SSHOperator(
-        #    ssh_hook=conn_hook,
-        #    remote_host=Variable.get("target"),
-        #    task_id='effectuation',
-        #    timeout=30,
-        #    command="""
-        #            sysctl -w net.ipv4.tcp_mem="188760 251683	377520";
-        #            sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
-        #            sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
-        #            sysctl -w net.core.netdev_budget=300;
-        #            sysctl -w net.core.netdev_max_backlog=1000;
-        #            """,
-        #    dag=net_stack_dag,
-        #)
+        effectuation_step = SSHOperator(
+            ssh_hook=_ssh_hook,
+            remote_host=config.get('breeder').get('effectuation').get('target'),
+            task_id='effectuation',
+            timeout=30,
+            command="""
+                    sysctl -w net.ipv4.tcp_mem="188760 251683	377520";
+                    sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
+                    sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
+                    sysctl -w net.core.netdev_budget=300;
+                    sysctl -w net.core.netdev_max_backlog=1000;
+                    """,
+            dag=net_dag,
+        )
 
-        #recon_step >> optimizing_step >> effectuation_step
+        dump_config >> effectuation_step
+
     return dag
 
 dag_id = 'linux_network_stack_breeder'
