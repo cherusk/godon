@@ -120,7 +120,7 @@ curl --request DELETE \
 ### breeder update
 
 **OPTIONS**
-* definition
+* file
     * flags: --file
     * type: string
     * desc: definition file of breeder to be updated
