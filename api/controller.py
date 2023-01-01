@@ -31,6 +31,7 @@ from airflow_client.client.model.list_dag_runs_form import ListDagRunsForm
 from airflow_client.client.model.dag_run_collection import DAGRunCollection
 from airflow_client.client.model.dag_state import DagState
 
+from flask_api import status
 
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
@@ -117,11 +118,21 @@ def breeders_name_get(name):  # noqa: E501
 
     """
 
-    breeder_id = content.get('name')
-    url = f'{AIRFLOW_API_BASE_URL}/dags/{breeder_id}'
-    response = requests.delete(url)
+    api_response = None
 
-    return response
+    with client.ApiClient(configuration) as api_client:
+        # Create an instance of the API class
+       api_instance = dag_run_api.DAGRunApi(api_client)
+       dag_id = name # str | The DAG ID.
+       dag_run_id = name # str | The DAG run ID.
+
+       try:
+       # Get a DAG run
+           api_response = api_instance.get_dag_run(dag_id, dag_run_id)
+       except client.ApiException as e:
+           print("Exception when calling DAGRunApi->get_dag_run: %s\n" % e)
+
+    return api_response.to_dict()
 
 
 def breeders_post(content):  # noqa: E501
@@ -161,9 +172,5 @@ def breeders_put(content):  # noqa: E501
 
     """
 
-    breeder_id = content.get('name')
-    url = f'{AIRFLOW_API_BASE_URL}/dags/{breeder_id}/dagRuns/{breeder_id}'
-    response = requests.patch(url)
-
-    return response
-
+    content = dict()
+    return content, status.HTTP_501_NOT_IMPLEMENTED
