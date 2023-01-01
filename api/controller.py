@@ -141,12 +141,11 @@ def breeders_post(content):  # noqa: E501
         try:
             # Trigger a new DAG run
             api_response = api_instance.post_dag_run(breeder_id, dag_run)
-            pprint(api_response)
         except client.ApiException as e:
             print("Exception when calling DAGRunApi->post_dag_run: %s\n" % e)
             raise e
 
-    return api_response
+    return api_response.to_dict()
 
 
 def breeders_put(content):  # noqa: E501
