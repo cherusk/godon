@@ -24,10 +24,10 @@ from airflow.contrib.hooks.ssh_hook import SSHHook
 from airflow.models import Variable
 from airflow.utils.dates import days_ago
 
-import optuna
-import joblib
-import dask.distributed
-import dask_optuna
+#import optuna
+#import joblib
+#import dask.distributed
+#import dask_optuna
 
 DEFAULTS = {
     'owner': 'airflow',
@@ -63,7 +63,7 @@ def create_dag(dag_id):
     with dag:
 
         dump_config = BashOperator(
-            task_id='print config',
+            task_id='print_config',
             bash_command='echo ${config}',
             env={"config": '{{ dag_run.conf }}'},
             dag=dag,
@@ -123,6 +123,7 @@ def create_dag(dag_id):
         #)
 
         #recon_step >> optimizing_step >> effectuation_step
+    return dag
 
 dag_id = 'linux_network_stack_breeder'
 globals()[dag_id] = create_dag(dag_id)
