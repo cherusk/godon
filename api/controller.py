@@ -39,6 +39,12 @@ AIRFLOW_API_AUTH_PW = "airflow"
 
 breeders_db = dict()
 
+configuration = client.Configuration(
+    host = f"{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_VERSION}",
+    username = f"{AIRFLOW_API_AUTH_USER}",
+    password = f"{AIRFLOW_API_AUTH_PW}"
+)
+
 
 def breeders_delete(content):  # noqa: E501
     """breeders_delete
@@ -48,11 +54,6 @@ def breeders_delete(content):  # noqa: E501
     """
 
     api_response = dict(result=success)
-    configuration = client.Configuration(
-        host = f"{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_VERSION}",
-        username = f"{AIRFLOW_API_AUTH_USER}",
-        password = f"{AIRFLOW_API_AUTH_PW}"
-    )
 
     with client.ApiClient(configuration) as api_client:
         api_instance = dag_run_api.DAGRunApi(api_client)
@@ -77,11 +78,6 @@ def breeders_get():  # noqa: E501
     """
 
     api_response = None
-    configuration = client.Configuration(
-        host = f"{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_VERSION}",
-        username = f"{AIRFLOW_API_AUTH_USER}",
-        password = f"{AIRFLOW_API_AUTH_PW}"
-    )
 
     with client.ApiClient(configuration) as api_client:
         api_instance = dag_run_api.DAGRunApi(api_client)
@@ -136,11 +132,6 @@ def breeders_post(content):  # noqa: E501
     """
 
     api_response = None
-    configuration = client.Configuration(
-        host = f"{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_VERSION}",
-        username = f"{AIRFLOW_API_AUTH_USER}",
-        password = f"{AIRFLOW_API_AUTH_PW}"
-    )
 
     with client.ApiClient(configuration) as api_client:
         api_instance = dag_run_api.DAGRunApi(api_client)
