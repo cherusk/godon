@@ -47,11 +47,26 @@ def breeders_delete(content):  # noqa: E501
 
     """
 
-    breeder_id = content.get('name')
-    url = f'{AIRFLOW_API_BASE_URL}/dags/{breeder_id}/dagRuns/{breeder_id}'
-    response = requests.delete(url)
+    api_response = dict(result=success)
+    configuration = client.Configuration(
+        host = f"{AIRFLOW_API_BASE_URL}/api/{AIRFLOW_API_VERSION}",
+        username = f"{AIRFLOW_API_AUTH_USER}",
+        password = f"{AIRFLOW_API_AUTH_PW}"
+    )
 
-    return response
+    with client.ApiClient(configuration) as api_client:
+        api_instance = dag_run_api.DAGRunApi(api_client)
+        dag_id = content.get('name')
+        dag_run_id = dag_id
+
+        try:
+            # Delete a DAG run
+            api_instance.delete_dag_run(dag_id, dag_run_id)
+        except client.ApiException as e:
+            print("Exception when calling DAGRunApi->delete_dag_run: %s\n" % e)
+            api_response = dict(result=failure)
+
+    return api_response
 
 
 def breeders_get():  # noqa: E501
