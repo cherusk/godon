@@ -31,7 +31,7 @@ from airflow_client.client.model.list_dag_runs_form import ListDagRunsForm
 from airflow_client.client.model.dag_run_collection import DAGRunCollection
 from airflow_client.client.model.dag_state import DagState
 
-from flask_api import status
+from flask import abort
 
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
@@ -171,6 +171,4 @@ def breeders_put(content):  # noqa: E501
     Update a breeder configuration # noqa: E501
 
     """
-
-    content = dict()
-    return content, status.HTTP_501_NOT_IMPLEMENTED
+    abort(501, description="Not Implemented")
