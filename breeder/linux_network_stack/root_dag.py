@@ -62,8 +62,6 @@ def create_dag(dag_id):
 
     with dag as net_dag:
 
-        config = '{{ dag_run.conf }}'
-
         dump_config = BashOperator(
             task_id='print_config',
             bash_command='echo ${config}',
@@ -100,16 +98,16 @@ def create_dag(dag_id):
 
         ## perform config effectuation at target instance
         _ssh_hook = SSHHook(
-            remote_host=config.get('breeder').get('effectuation').get('target'),
-            username=config.get('breeder').get('effectuation').get('user'),
-            key_file=config.get('breeder').get('effectuation').get('key_file'),
+            #remote_host=config.get('breeder').get('effectuation').get('target'),
+            #username=config.get('breeder').get('effectuation').get('user'),
+            #key_file=config.get('breeder').get('effectuation').get('key_file'),
+            ssh_conn_id="linux_network_stack_breeder_ssh",
             timeout=30,
             keepalive_interval=10
         )
 
         effectuation_step = SSHOperator(
             ssh_hook=_ssh_hook,
-            remote_host=config.get('breeder').get('effectuation').get('target'),
             task_id='effectuation',
             timeout=30,
             command="""
