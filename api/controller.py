@@ -30,6 +30,8 @@ from airflow_client.client.model.error import Error
 from airflow_client.client.model.list_dag_runs_form import ListDagRunsForm
 from airflow_client.client.model.dag_run_collection import DAGRunCollection
 from airflow_client.client.model.dag_state import DagState
+from airflow_client.client.api import connection_api
+from airflow_client.client.model.connection import Connection
 
 from flask import abort
 
