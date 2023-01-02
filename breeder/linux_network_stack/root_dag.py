@@ -111,11 +111,11 @@ def create_dag(dag_id):
             task_id='effectuation',
             timeout=30,
             command="""
-                    sysctl -w net.ipv4.tcp_mem="188760 251683	377520";
-                    sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
-                    sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
-                    sysctl -w net.core.netdev_budget=300;
-                    sysctl -w net.core.netdev_max_backlog=1000;
+                    sudo sysctl -w net.ipv4.tcp_mem="188760 251683	377520";
+                    sudo sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
+                    sudo sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
+                    sudo sysctl -w net.core.netdev_budget=300;
+                    sudo sysctl -w net.core.netdev_max_backlog=1000;
                     """,
             dag=net_dag,
         )
