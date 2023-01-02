@@ -24,10 +24,10 @@ from airflow.contrib.hooks.ssh_hook import SSHHook
 from airflow.models import Variable
 from airflow.utils.dates import days_ago
 
-#import optuna
-#import joblib
-#import dask.distributed
-#import dask_optuna
+import optuna
+import joblib
+import dask.distributed
+import dask_optuna
 
 DEFAULTS = {
     'owner': 'airflow',
@@ -79,21 +79,22 @@ def create_dag(dag_id):
         #)
 
         ## perform optimiziation run
-        #@dag.task(task_id="optimize")
-        #def run_optimization():
-        #    # boilerplate from https://jrbourbeau.github.io/dask-optuna/
+        @dag.task(task_id="optimization_step")
+        def run_optimization():
+            # boilerplate from https://jrbourbeau.github.io/dask-optuna/
 
-        #    def objective(trial):
-        #        return None
+            def objective(trial):
+                x = trial.suggest_uniform("x", -10, 10)
+                return (x - 2) ** 2
 
-        #    with dask.distributed.Client() as client:
-        #        # Create a study using Dask-compatible storage
-        #        storage = dask_optuna.DaskStorage()
-        #        study = optuna.create_study(storage=storage)
-        #        # Optimize in parallel on your Dask cluster
-        #        with joblib.parallel_backend("dask"):
-        #            study.optimize(objective, n_trials=100, n_jobs=-1)
-        #            print(f"best_params = {study.best_params}")
+            with dask.distributed.Client(address="godon_dask_scheduler_1:8786") as client:
+                # Create a study using Dask-compatible storage
+                storage = dask_optuna.DaskStorage()
+                study = optuna.create_study(storage=storage)
+                # Optimize in parallel on your Dask cluster
+                with joblib.parallel_backend("dask"):
+                    study.optimize(objective, n_trials=10, n_jobs=-1)
+                    print(f"best_params = {study.best_params}")
 
 
         ## perform config effectuation at target instance
@@ -120,7 +121,7 @@ def create_dag(dag_id):
             dag=net_dag,
         )
 
-        dump_config >> effectuation_step
+        dump_config >> optimization_step >> effectuation_step
 
     return dag
 
