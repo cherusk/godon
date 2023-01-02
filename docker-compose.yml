@@ -55,9 +55,9 @@ services:
         - "8787:8787"
         - "8788:8788"
       command: ["dask-scheduler"]
-    dask_ worker1:
+    dask_worker1:
       image: daskdev/dask:2022.12.1-py3.9
       command: ["dask-worker", "tcp://scheduler:8786"]
-    dask_ worker2:
+    dask_worker2:
       image: daskdev/dask:2022.12.1-py3.9
       command: ["dask-worker", "tcp://scheduler:8788"]
