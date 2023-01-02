@@ -26,12 +26,13 @@ services:
             - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
             - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
             - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
+            - 'AIRFLOW_CONN_LINUX_NETWORK_STACK_BREEDER_SSH={ "conn_type": "ssh", "login": "godon_robot", "host": "10.0.5.53", "port": 22, "extra": { "key_file": "/opt/airflow/credentials/id_rsa" } }'
         # minimum of setup steps
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"
         volumes:
             - ./breeder/linux_network_stack/:/opt/airflow/dags
-            - ./infra/credentials/ssh/:/opt/airflow/credentials/
+            - ./testing/infra/credentials/ssh/:/opt/airflow/credentials/
         ports:
             - 127.0.0.1:8080:8080
     api:
