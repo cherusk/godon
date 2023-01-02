@@ -142,9 +142,34 @@ def breeders_post(content):  # noqa: E501
 
     """
 
-    api_response = None
+    api_response = dict(connection=None, breeder=None)
 
-    with client.ApiClient(configuration) as api_client:
+    def create_connection(api_client, content):
+        # Create an instance of the API class
+        api_instance = connection_api.ConnectionApi(api_client)
+        _connection_id = content.get('breeder').get('name') + '_ssh'
+        _connection_user = content.get('breeder').get('effectuation').get('user')
+        _connection_target = content.get('breeder').get('effectuation').get('target')
+        _connection_key_file = content.get('breeder').get('effectuation').get('key_file')
+
+        connection = Connection(connection_id=_connection_id,
+                                conn_type='ssh',
+                                login=_connection_user ,
+                                host=_connection_target ,
+                                extra=f'{"key_file": "{_connection_key_file}", "no_host_key_check": true}',
+                                )# Connection |
+
+        # example passing only required values which don't have defaults set
+        try:
+        # Create a connection
+            _api_response = api_instance.post_connection(connection)
+        except client.ApiException as e:
+            print("Exception when calling ConnectionApi->post_connection: %s\n" % e)
+            raise e
+
+        return _api_response
+
+    def create_breeder(api_client, content):
         api_instance = dag_run_api.DAGRunApi(api_client)
         breeder_id = content.get('breeder').get('name')
         breeder_config = dict(content)
@@ -157,12 +182,17 @@ def breeders_post(content):  # noqa: E501
 
         try:
             # Trigger a new DAG run
-            api_response = api_instance.post_dag_run(breeder_id, dag_run)
+            _api_response = api_instance.post_dag_run(breeder_id, dag_run)
         except client.ApiException as e:
             print("Exception when calling DAGRunApi->post_dag_run: %s\n" % e)
             raise e
+        return _api_response
 
-    return api_response.to_dict()
+    with client.ApiClient(configuration) as api_client:
+        api_response['connection'] = create_connection(api_client, content).to_dict()
+        api_response['breeder'] = create_breeder(api_client, content)
+
+    return api_response
 
 
 def breeders_put(content):  # noqa: E501
