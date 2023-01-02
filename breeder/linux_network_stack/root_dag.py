@@ -25,9 +25,9 @@ from airflow.models import Variable
 from airflow.utils.dates import days_ago
 
 import optuna
-import joblib
-import dask.distributed
-import dask_optuna
+from optuna.storages import InMemoryStorage
+from optuna.integration import DaskStorage
+from distributed import Client, wait
 
 DEFAULTS = {
     'owner': 'airflow',
@@ -87,14 +87,17 @@ def create_dag(dag_id):
                 x = trial.suggest_uniform("x", -10, 10)
                 return (x - 2) ** 2
 
-            with dask.distributed.Client(address="godon_dask_scheduler_1:8786") as client:
+            with Client(address="godon_dask_scheduler_1:8786") as client:
                 # Create a study using Dask-compatible storage
-                storage = dask_optuna.DaskStorage()
+                storage = DaskStorage(InMemoryStorage())
                 study = optuna.create_study(storage=storage)
                 # Optimize in parallel on your Dask cluster
-                with joblib.parallel_backend("dask"):
-                    study.optimize(objective, n_trials=10, n_jobs=-1)
-                    print(f"best_params = {study.best_params}")
+                futures = [
+                    client.submit(study.optimize, objective, n_trials=10, pure=False)
+                    for i in range(10)
+                ]
+                wait(futures)
+                print(f"Best params: {study.best_params}")
 
         optimization_step = run_optimization()
 

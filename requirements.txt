@@ -1,5 +1,4 @@
-optuna == 3.0.5
+optuna == 3.1.0b0
 joblib == 1.2.0
-dask_optuna == 0.0.2
 dask == 2022.12.1
 distributed == 2022.12.1
