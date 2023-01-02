@@ -96,6 +96,7 @@ def create_dag(dag_id):
                     study.optimize(objective, n_trials=10, n_jobs=-1)
                     print(f"best_params = {study.best_params}")
 
+        optimization_step = run_optimization()
 
         ## perform config effectuation at target instance
         _ssh_hook = SSHHook(
