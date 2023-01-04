@@ -74,7 +74,23 @@
     ];
   };
 
-  virtualisation = { docker.enable = true; };
+  virtualisation = {
+    docker.enable = true;
+    oci-containers = {
+      containers = {
+        prometheus-ss-exporter = {
+          autoStart = true;
+          image = "ghcr.io/cherusk/prometheus_ss_exporter:1.0.0";
+          environment = {
+            PORT = "8090";
+            CONFIG_FILE = "/prometheus-ss-exporter/example/config.yml";
+          };
+          ports = [ "8090:8090" ];
+          extraOptions = [ "--network=host" "--pid=host" "--privileged" ];
+        };
+      };
+    };
+  };
 
   security = {
     sudo.wheelNeedsPassword = false; # for automatic use
