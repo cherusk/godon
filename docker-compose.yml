@@ -48,15 +48,21 @@ services:
           - 127.0.0.1:9000:8080
     # for optuna parallel metaheuristics execution on dask
     dask_scheduler:
-      image: daskdev/dask:2022.12.1-py3.9
+      build:
+          context: ./
+          dockerfile: ./Dockerfile-dask
       hostname: dask-scheduler
       ports:
         - "8786:8786"
         - "8787:8787"
       command: ["dask-scheduler"]
     dask_worker1:
-      image: daskdev/dask:2022.12.1-py3.9
+      build:
+        context: ./
+        dockerfile: ./Dockerfile-dask
       command: ["dask-worker", "tcp://dask_scheduler:8786"]
     dask_worker2:
-      image: daskdev/dask:2022.12.1-py3.9
+      build:
+        context: ./
+        dockerfile: ./Dockerfile-dask
       command: ["dask-worker", "tcp://dask_scheduler:8786"]
