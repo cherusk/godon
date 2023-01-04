@@ -53,11 +53,10 @@ services:
       ports:
         - "8786:8786"
         - "8787:8787"
-        - "8788:8788"
       command: ["dask-scheduler"]
     dask_worker1:
       image: daskdev/dask:2022.12.1-py3.9
-      command: ["dask-worker", "tcp://scheduler:8786"]
+      command: ["dask-worker", "tcp://dask_scheduler:8786"]
     dask_worker2:
       image: daskdev/dask:2022.12.1-py3.9
-      command: ["dask-worker", "tcp://scheduler:8788"]
+      command: ["dask-worker", "tcp://dask_scheduler:8786"]
