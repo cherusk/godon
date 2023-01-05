@@ -66,3 +66,9 @@ services:
         context: ./
         dockerfile: ./Dockerfile-dask
       command: ["dask-worker", "tcp://dask_scheduler:8786"]
+    prometheus:
+      image: prom/prometheus
+      volumes:
+        - ./testing/prometheus.yml:/etc/prometheus/prometheus.yml
+      ports:
+          - 9090:9090
