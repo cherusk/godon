@@ -83,14 +83,55 @@
           image = "ghcr.io/cherusk/prometheus_ss_exporter:1.0.1";
           environment = {
             PORT = "8090";
-            CONFIG_FILE = "/prometheus-ss-exporter/example/config.yml";
+            CONFIG_FILE = "/etc/ss_exporter_config";
           };
           ports = [ "8090:8090" ];
-          extraOptions = [ "--network=host" "--pid=host" "--privileged" ];
+          extraOptions = [ "--volume=/etc/ss_exporter_config:/etc/ss_exporter_config" "--network=host" "--pid=host" "--privileged" ];
         };
       };
     };
   };
+
+  environment.etc.ss_exporter_config.text = ''
+      ---
+      logic:
+          metrics: # Metrics to collect
+              histograms:
+                  active: True
+                  latency:
+                      active: True
+                      bucket_bounds: # ms
+                                  - .10
+                                  - .50
+                                  - 1.00
+                                  - 5.00
+                                  - 10.00
+                                  - 50.00
+                                  - 100.00
+                                  - 200.00
+                                  - 500.00
+              gauges:
+                  active: True
+                  rtt:
+                      active: True
+                  cwnd:
+                      active: True
+                  delivery_rate:
+                      active: True
+              counters:
+                  active: True
+                  data_segs_in:
+                      active: True
+                  data_segs_out:
+                      active: True
+          compression: # Compressing collected flow data
+              label_folding:
+                  origin: "pid_condensed"
+          selection:
+              peering:
+                 networks:
+                  - 169.254.0.0/16
+  '';
 
   security = {
     sudo.wheelNeedsPassword = false; # for automatic use
