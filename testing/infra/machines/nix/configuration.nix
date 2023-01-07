@@ -80,7 +80,7 @@
       containers = {
         prometheus-ss-exporter = {
           autoStart = true;
-          image = "ghcr.io/cherusk/prometheus_ss_exporter:1.0.1";
+          image = "ghcr.io/cherusk/prometheus_ss_exporter:1.1.0";
           environment = {
             PORT = "8090";
             CONFIG_FILE = "/etc/ss_exporter_config";
