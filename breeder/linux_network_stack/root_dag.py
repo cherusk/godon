@@ -29,6 +29,10 @@ from optuna.storages import InMemoryStorage
 from optuna.integration import DaskStorage
 from distributed import Client, wait
 
+from prometheus_api_client import PrometheusConnect
+from prometheus_api_client.utils import parse_datetime
+from datetime import timedelta
+
 DEFAULTS = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -71,12 +75,27 @@ def create_dag(dag_id):
 
         # Conceptual outline
 
-        ## perform reconnaisance at target instance
-        #recon_step = BashOperator(
-        #    task_id='reconnaisance',
-        #    bash_command='echo noop',
-        #    dag=net_stack_dag,
-        #)
+        @dag.task(task_id="recon_step")
+        def run_reconnaissance():
+            prom_conn = PrometheusConnect(url ="godon_prometheus_1:9090", disable_ssl=True)
+
+            start_time = parse_datetime("2m")
+            end_time = parse_datetime("now")
+            chunk_size = timedelta(minutes=1)
+
+            metric_data = prom.get_metric_range_data(
+                    "tcp_rtt",
+                    start_time=start_time,
+                    end_time=end_time,
+                    chunk_size=chunk_size,
+                    )
+
+            metric_object_list = MetricsList(metric_data)
+
+            for item in metric_object_list:
+                print(item.metric_name, item.label_config, "\n")
+
+        recon_step = run_reconnaissance()
 
         ## perform optimiziation run
         @dag.task(task_id="optimization_step")
@@ -125,7 +144,7 @@ def create_dag(dag_id):
             dag=net_dag,
         )
 
-        dump_config >> optimization_step >> effectuation_step
+        dump_config >> recon_step  >> optimization_step >> effectuation_step
 
     return dag
 
