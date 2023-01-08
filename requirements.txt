@@ -2,3 +2,4 @@ optuna == 3.1.0b0
 joblib == 1.2.0
 dask == 2022.12.1
 distributed == 2022.12.1
+prometheus-api-client == 0.5.2
