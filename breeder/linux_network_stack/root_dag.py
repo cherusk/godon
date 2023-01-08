@@ -77,14 +77,14 @@ def create_dag(dag_id):
 
         @dag.task(task_id="recon_step")
         def run_reconnaissance():
-            prom_conn = PrometheusConnect(url ="godon_prometheus_1:9090", disable_ssl=True)
+            prom_conn = PrometheusConnect(url ="http://godon_prometheus_1:9090", disable_ssl=True)
 
             start_time = parse_datetime("2m")
             end_time = parse_datetime("now")
             chunk_size = timedelta(minutes=1)
 
-            metric_data = prom.get_metric_range_data(
-                    "tcp_rtt",
+            metric_data = prom_conn.get_metric_range_data(
+                    metric_name="tcp_rtt",
                     start_time=start_time,
                     end_time=end_time,
                     chunk_size=chunk_size,
