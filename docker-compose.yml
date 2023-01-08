@@ -69,6 +69,6 @@ services:
     prometheus:
       image: prom/prometheus
       volumes:
-        - ./testing/prometheus.yml:/etc/prometheus/prometheus.yml
+        - ./testing/:/etc/prometheus/
       ports:
           - 9090:9090
