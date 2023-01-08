@@ -29,7 +29,7 @@ from optuna.storages import InMemoryStorage
 from optuna.integration import DaskStorage
 from distributed import Client, wait
 
-from prometheus_api_client import PrometheusConnect
+from prometheus_api_client import PrometheusConnect, MetricsList, Metric
 from prometheus_api_client.utils import parse_datetime
 from datetime import timedelta
 
