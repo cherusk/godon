@@ -144,7 +144,27 @@ def create_dag(dag_id):
             dag=net_dag,
         )
 
-        dump_config >> recon_step  >> optimization_step >> effectuation_step
+        @task.branch(task_id="stopping_decision_step")
+        def stopping_decision(ti):
+            def is_stop_criteria_reached():
+                return True
+
+            if is_stop_criteria_reached:
+                return "stop_step"
+            else:
+                return "continue_step"
+
+        stopping_conditional_step = stopping_decision()
+
+        continue_step = TriggerDagRunOperator(
+                task_id='continue_step',
+                trigger_dag_id=net_dag.dag_id,
+                dag=net_dag
+                )
+
+        stop_step = EmptyOperator(task_id="stop_task", dag=net_dag)
+
+        dump_config >> recon_step  >> optimization_step >> effectuation_step >> stopping_conditional_step >> [continue_step, stop_step]
 
     return dag
 
