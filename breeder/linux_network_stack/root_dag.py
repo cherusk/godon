@@ -19,6 +19,8 @@
 
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
+from airflow.operators.dagrun_operator import TriggerDagRunOperator
+from airflow.operators.empty import EmptyOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
 from airflow.models import Variable
@@ -32,6 +34,8 @@ from distributed import Client, wait
 from prometheus_api_client import PrometheusConnect, MetricsList, Metric
 from prometheus_api_client.utils import parse_datetime
 from datetime import timedelta
+
+from airflow.decorators import task
 
 DEFAULTS = {
     'owner': 'airflow',
@@ -145,7 +149,7 @@ def create_dag(dag_id, config):
         )
 
         @task.branch(task_id="stopping_decision_step")
-        def stopping_decision(ti):
+        def stopping_decision():
             def is_stop_criteria_reached():
                 return True
 
