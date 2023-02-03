@@ -171,6 +171,15 @@ def create_dag(dag_id, config):
 
     return dag
 
+###
+
 config = {{ breeder }}
-dag_id = 'linux_network_stack_breeder'
-globals()[dag_id] = create_dag(dag_id, config)
+
+parallel_runs = config.get('run').get('parallel')
+breeder_name = config.get('name')
+
+for run_id in range(0, parallel_runs):
+    for dag in config.get('dags'):
+        dag_name = dag.get('name')
+        dag_id = f'{dag_name}_run_id'
+        globals()[dag_id] = create_dag(breeder_name, dag_id, config)

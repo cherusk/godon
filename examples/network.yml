@@ -20,7 +20,7 @@ breeder:
               lower: 4096
               upper: 6291456
   run:
-    parallel: 3
+    parallel: 1
     iterations:
       min: 10
       max: 1000
