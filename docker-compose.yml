@@ -33,8 +33,8 @@ services:
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"
         volumes:
-            - ./breeder/linux_network_stack/:/opt/airflow/dags
             - ./testing/infra/credentials/ssh/:/opt/airflow/credentials/
+            - ./breeder/dags:/opt/airflow/dags/
         ports:
             - 127.0.0.1:8080:8080
     api:
@@ -44,6 +44,9 @@ services:
         restart: always
         environment:
           - AIRFLOW__URL=http://control_loop:8080
+        volumes:
+            - ./breeder/linux_network_stack/:/usr/src/app/openapi_server/templates/
+            - ./breeder/dags:/usr/src/app/openapi_server/dags/
         ports:
           - 127.0.0.1:9000:8080
     # for optuna parallel metaheuristics execution on dask
