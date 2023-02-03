@@ -20,6 +20,7 @@
 
 import requests
 import os
+import time
 from pprint import pprint
 from dateutil.parser import parse as dateutil_parser
 
@@ -35,10 +36,15 @@ from airflow_client.client.model.connection import Connection
 
 from flask import abort
 
+from jinja2 import Environment, FileSystemLoader
+
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
 AIRFLOW_API_AUTH_USER = "airflow"
 AIRFLOW_API_AUTH_PW = "airflow"
+
+DAG_TEMPLATES_DIR = "/usr/src/app/openapi_server/templates/"
+DAG_DIR = "/usr/src/app/openapi_server/dags/"
 
 breeders_db = dict()
 
@@ -175,6 +181,17 @@ def breeders_post(content):  # noqa: E501
         api_instance = dag_run_api.DAGRunApi(api_client)
         breeder_id = content.get('breeder').get('name')
         breeder_config = dict(content)
+
+        # templating related
+        environment = Environment(loader=FileSystemLoader(DAG_TEMPLATES_DIR))
+        template = environment.get_template("root_dag.py")
+        filename = f"{DAG_DIR}/root_dag.py"
+        rendered_dag = template.render(breeder_config)
+
+        with open(filename, mode="w", encoding="utf-8") as dag_file:
+            dag_file.write(rendered_dag)
+
+        time.sleep(2) # wait as workaround until synchronous reload of dags implemented
 
         dag_run = DAGRun(
             dag_run_id=breeder_id ,
