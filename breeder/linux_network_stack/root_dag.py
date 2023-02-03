@@ -57,7 +57,7 @@ DEFAULTS = {
     }
 
 
-def create_dag(dag_id):
+def create_dag(dag_id, config):
 
     dag = DAG(dag_id,
               default_args=DEFAULTS,
@@ -69,7 +69,7 @@ def create_dag(dag_id):
         dump_config = BashOperator(
             task_id='print_config',
             bash_command='echo ${config}',
-            env={"config": '{{ dag_run.conf }}'},
+            env={"config": config},
             dag=net_dag,
         )
 
@@ -168,5 +168,6 @@ def create_dag(dag_id):
 
     return dag
 
+config = {{ breeder }}
 dag_id = 'linux_network_stack_breeder'
-globals()[dag_id] = create_dag(dag_id)
+globals()[dag_id] = create_dag(dag_id, config)
