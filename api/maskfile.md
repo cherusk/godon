@@ -48,4 +48,5 @@ docker run --rm -v "${MASKFILE_DIR}:/local" openapitools/openapi-generator-cli g
 cp "${MASKFILE_DIR}"/controller.py ./flask/openapi_server/controllers/controller.py
 
 echo "apache-airflow-client == 2.3.0" >> ./flask/requirements.txt
+echo "Jinja2 == 3.1.2" >> ./flask/requirements.txt
 ~~~
