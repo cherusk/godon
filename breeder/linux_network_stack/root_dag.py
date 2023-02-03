@@ -148,7 +148,7 @@ def create_dag(dag_id, config):
         )
 
         @task.branch(task_id="stopping_decision_step")
-        def stopping_decision():
+        def stopping_decision(max_iterations):
             def is_stop_criteria_reached():
                 return True
 
@@ -157,7 +157,7 @@ def create_dag(dag_id, config):
             else:
                 return "continue_step"
 
-        stopping_conditional_step = stopping_decision()
+        stopping_conditional_step = stopping_decision(config.get('run').get('iterations').get('max'))
 
         continue_step = TriggerDagRunOperator(
                 task_id='continue_step',
