@@ -3,14 +3,12 @@ meta:
   version: "0.1"
 breeder:
   name: "linux_network_stack_breeder"
-  dags:
-    - name: lnx_net_stack
-      settings:
-        sysctl:
-          net.ipv4.tcp_mem:
-            constraints:
-              lower: 188760
-              upper: 377520
+  settings:
+    sysctl:
+      net.ipv4.tcp_mem:
+        constraints:
+          lower: 188760
+          upper: 377520
           net.ipv4.tcp_rmem:
             constraints:
               lower: 4096
