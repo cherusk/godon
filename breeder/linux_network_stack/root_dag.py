@@ -147,12 +147,22 @@ def create_dag(dag_id, config):
             dag=net_dag,
         )
 
-        @task.branch(task_id="stopping_decision_step")
-        def stopping_decision(max_iterations):
-            def is_stop_criteria_reached():
-                return True
+        @dag.task(task_id="run_iter_count_step")
+        def run_iter_count(ti=None):
+            last_iteration =  ti.xcom_pull(task_ids="run_iter_count_step")
+            current_iteration = last_iteration + 1 if last_iteration else 0
+            return current_iteration
 
-            if is_stop_criteria_reached:
+        @task.branch(task_id="stopping_decision_step")
+        def stopping_decision(max_iterations, ti=None):
+            current_iteration = ti.xcom_pull(task_ids="run_iter_count_step")
+            def is_stop_criteria_reached(iteration):
+                if iteration >= max_iterations:
+                    return True
+                else:
+                    return False
+
+            if is_stop_criteria_reached(current_iteration):
                 return "stop_step"
             else:
                 return "continue_step"
@@ -167,7 +177,7 @@ def create_dag(dag_id, config):
 
         stop_step = EmptyOperator(task_id="stop_task", dag=net_dag)
 
-        dump_config >> recon_step  >> optimization_step >> effectuation_step >> stopping_conditional_step >> [continue_step, stop_step]
+        dump_config >> recon_step  >> optimization_step >> effectuation_step >> run_iter_count >> stopping_conditional_step >> [continue_step, stop_step]
 
     return dag
 
