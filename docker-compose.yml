@@ -49,6 +49,13 @@ services:
             - ./breeder/dags:/usr/src/app/openapi_server/dags/
         ports:
           - 127.0.0.1:9000:8080
+    nats: # queueing system for decoupling dags
+        image: nats:2.9.14-linux
+        restart: always
+        command: "--name nats_server"
+        ports:
+          - 127.0.0.1:4222:4222
+          - 127.0.0.1:8222:8222
     # for optuna parallel metaheuristics execution on dask
     dask_scheduler:
       build:
