@@ -62,14 +62,13 @@ DEFAULTS = {
     }
 
 
-def create_dag(dag_id, config):
+def create_target_interaction_dag(dag_id, config):
 
     dag = DAG(dag_id,
               default_args=DEFAULTS,
-              description='breeder geared to optimizing \
-                    linux network stack dynamics')
+              description='breeder subdag for interacting with targets')
 
-    with dag as net_dag:
+    with dag as interaction:
 
         dump_config = BashOperator(
             task_id='print_config',
@@ -77,8 +76,6 @@ def create_dag(dag_id, config):
             env={"config": config},
             dag=net_dag,
         )
-
-        # Conceptual outline
 
         @dag.task(task_id="recon_step")
         def run_reconnaissance():
@@ -101,49 +98,6 @@ def create_dag(dag_id, config):
                 print(item.metric_name, item.label_config, "\n")
 
         recon_step = run_reconnaissance()
-
-        ## perform optimiziation run
-        @dag.task(task_id="optimization_step")
-        def run_optimization():
-
-            NATS_SERVER = "127.0.0.1:4222"
-
-            async def do_effectuation():
-                # Connect to NATS Server.
-                nc = await nats.connect(NATS_SERVER)
-                await nc.publish('effectuation', b'{ "settings": {} }')
-                await nc.flush()
-                await nc.close()
-
-            async def gather_recon():
-                # Connect to NATS Server.
-                nc = await nats.connect(NATS_SERVER)
-                sub = nc.subscribe('recon')
-                msg = await sub.next_msg(timeout=60)
-                print(msg)
-                await nc.close()
-
-            def objective(trial):
-                x = trial.suggest_uniform("x", -10, 10)
-
-                asyncio.run(do_effectuation)
-                asyncio.run(gather_recon)
-
-                return x
-
-            with Client(address="godon_dask_scheduler_1:8786") as client:
-                # Create a study using Dask-compatible storage
-                storage = DaskStorage(InMemoryStorage())
-                study = optuna.create_study(storage=storage)
-                # Optimize in parallel on your Dask cluster
-                futures = [
-                    client.submit(study.optimize, objective, n_trials=10, pure=False)
-                    for i in range(10)
-                ]
-                wait(futures)
-                print(f"Best params: {study.best_params}")
-
-        optimization_step = run_optimization()
 
         ## perform config effectuation at target instance
         _ssh_hook = SSHHook(
@@ -198,7 +152,71 @@ def create_dag(dag_id, config):
 
         stop_step = EmptyOperator(task_id="stop_task", dag=net_dag)
 
-        dump_config >> recon_step  >> optimization_step >> effectuation_step >> run_iter_count >> stopping_conditional_step >> [continue_step, stop_step]
+        dump_config >> effectuation_step >> recon_step >> run_iter_count >> stopping_conditional_step >> [continue_step, stop_step]
+
+    return dag
+
+
+def create_optimization_dag(dag_id, config):
+
+    dag = DAG(dag_id,
+              default_args=DEFAULTS,
+              description='breeder subdag for optimizing \
+                    linux network stack dynamics')
+
+    with dag as net_dag:
+
+        dump_config = BashOperator(
+            task_id='print_config',
+            bash_command='echo ${config}',
+            env={"config": config},
+            dag=net_dag,
+        )
+
+        ## perform optimiziation run
+        @dag.task(task_id="optimization_step")
+        def run_optimization():
+
+            NATS_SERVER = "127.0.0.1:4222"
+
+            async def do_effectuation():
+                # Connect to NATS Server.
+                nc = await nats.connect(NATS_SERVER)
+                await nc.publish('effectuation', b'{ "settings": {} }')
+                await nc.flush()
+                await nc.close()
+
+            async def gather_recon():
+                # Connect to NATS Server.
+                nc = await nats.connect(NATS_SERVER)
+                sub = nc.subscribe('recon')
+                msg = await sub.next_msg(timeout=60)
+                print(msg)
+                await nc.close()
+
+            def objective(trial):
+                x = trial.suggest_uniform("x", -10, 10)
+
+                asyncio.run(do_effectuation)
+                asyncio.run(gather_recon)
+
+                return x
+
+            with Client(address="godon_dask_scheduler_1:8786") as client:
+                # Create a study using Dask-compatible storage
+                storage = DaskStorage(InMemoryStorage())
+                study = optuna.create_study(storage=storage)
+                # Optimize in parallel on your Dask cluster
+                futures = [
+                    client.submit(study.optimize, objective, n_trials=10, pure=False)
+                    for i in range(10)
+                ]
+                wait(futures)
+                print(f"Best params: {study.best_params}")
+
+        optimization_step = run_optimization()
+
+        dump_config >> optimization_step
 
     return dag
 
@@ -212,5 +230,6 @@ breeder_name = config.get('name')
 for run_id in range(0, parallel_runs):
     for dag in config.get('dags'):
         dag_name = dag.get('name')
-        dag_id = f'{dag_name}_run_id'
-        globals()[dag_id] = create_dag(breeder_name, dag_id, config)
+        dag_id = f'{dag_name}_{run_id}'
+        globals()[f'{dag_id}_optimization'] = create_optimization_dag(breeder_name, dag_id, config)
+        globals()[f'{dag_id}_target_interaction'] = create_target_interaction_dag(breeder_name, dag_id, config)
