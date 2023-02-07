@@ -77,6 +77,41 @@ def create_target_interaction_dag(dag_id, config):
             dag=net_dag,
         )
 
+        @dag.task(task_id="pull_optimization_step")
+        def run_pull_optimization():
+            NATS_SERVER = "127.0.0.1:4222"
+
+            async def gather_instruction():
+                # Connect to NATS Server.
+                nc = await nats.connect(NATS_SERVER)
+                sub = nc.subscribe('effectuation')
+                msg = await sub.next_msg(timeout=60)
+                await nc.close()
+                return msg
+
+            msg = asyncio.run(gather_instruction)
+
+            return msg
+
+        pull_step = run_pull_optimization()
+
+        @dag.task(task_id="push_optimization_step")
+        def run_push_optimization():
+            NATS_SERVER = "127.0.0.1:4222"
+
+            async def deliver_probe():
+                # Connect to NATS Server.
+                nc = await nats.connect(NATS_SERVER)
+                await nc.publish('recon', b'{ "metric": {} }')
+                await nc.flush()
+                await nc.close()
+
+            msg = asyncio.run(deliver_probe)
+
+            return msg
+
+        push_step = run_push_optimization()
+
         @dag.task(task_id="recon_step")
         def run_reconnaissance():
             prom_conn = PrometheusConnect(url ="http://godon_prometheus_1:9090", disable_ssl=True)
@@ -152,7 +187,7 @@ def create_target_interaction_dag(dag_id, config):
 
         stop_step = EmptyOperator(task_id="stop_task", dag=net_dag)
 
-        dump_config >> effectuation_step >> recon_step >> run_iter_count >> stopping_conditional_step >> [continue_step, stop_step]
+        dump_config >> pull_step >> effectuation_step >> recon_step >> push_step >> run_iter_count >> stopping_conditional_step >> [continue_step, stop_step]
 
     return dag
 
