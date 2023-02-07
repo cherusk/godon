@@ -34,6 +34,7 @@ from distributed import Client, wait
 from prometheus_api_client import PrometheusConnect, MetricsList, Metric
 from prometheus_api_client.utils import parse_datetime
 from datetime import timedelta
+import asyncio
 
 from airflow.decorators import task
 
@@ -104,11 +105,31 @@ def create_dag(dag_id, config):
         ## perform optimiziation run
         @dag.task(task_id="optimization_step")
         def run_optimization():
-            # boilerplate from https://jrbourbeau.github.io/dask-optuna/
+
+            NATS_SERVER = "127.0.0.1:4222"
+
+            async def do_effectuation():
+                # Connect to NATS Server.
+                nc = await nats.connect(NATS_SERVER)
+                await nc.publish('effectuation', b'{ "settings": {} }')
+                await nc.flush()
+                await nc.close()
+
+            async def gather_recon():
+                # Connect to NATS Server.
+                nc = await nats.connect(NATS_SERVER)
+                sub = nc.subscribe('recon')
+                msg = await sub.next_msg(timeout=60)
+                print(msg)
+                await nc.close()
 
             def objective(trial):
                 x = trial.suggest_uniform("x", -10, 10)
-                return (x - 2) ** 2
+
+                asyncio.run(do_effectuation)
+                asyncio.run(gather_recon)
+
+                return x
 
             with Client(address="godon_dask_scheduler_1:8786") as client:
                 # Create a study using Dask-compatible storage
