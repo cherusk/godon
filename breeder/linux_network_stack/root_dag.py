@@ -163,6 +163,8 @@ def create_target_interaction_dag(dag_id, config):
             current_iteration = last_iteration + 1 if last_iteration else 0
             return current_iteration
 
+        run_iter_count_step = run_iter_count()
+
         @task.branch(task_id="stopping_decision_step")
         def stopping_decision(max_iterations, ti=None):
             current_iteration = ti.xcom_pull(task_ids="run_iter_count_step")
@@ -187,7 +189,7 @@ def create_target_interaction_dag(dag_id, config):
 
         stop_step = EmptyOperator(task_id="stop_task", dag=interaction_dag)
 
-        dump_config >> pull_step >> effectuation_step >> recon_step >> push_step >> run_iter_count >> stopping_conditional_step >> [continue_step, stop_step]
+        dump_config >> pull_step >> effectuation_step >> recon_step >> push_step >> run_iter_count_step >> stopping_conditional_step >> [continue_step, stop_step]
 
     return dag
 
