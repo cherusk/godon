@@ -73,7 +73,7 @@ def create_target_interaction_dag(dag_id, config):
         dump_config = BashOperator(
             task_id='print_config',
             bash_command='echo ${config}',
-            env={"config": config},
+            env={"config": str(config)},
             dag=interaction_dag,
         )
 
@@ -206,7 +206,7 @@ def create_optimization_dag(dag_id, config):
         dump_config = BashOperator(
             task_id='print_config',
             bash_command='echo ${config}',
-            env={"config": config},
+            env={"config": str(config)},
             dag=optimization_dag,
         )
 
