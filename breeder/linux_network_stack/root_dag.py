@@ -89,7 +89,7 @@ def create_target_interaction_dag(dag_id, config):
                 await nc.close()
                 return msg
 
-            msg = asyncio.run(gather_instruction)
+            msg = asyncio.run(asyncio.coroutine(gather_instruction))
 
             return msg
 
@@ -106,7 +106,7 @@ def create_target_interaction_dag(dag_id, config):
                 await nc.flush()
                 await nc.close()
 
-            msg = asyncio.run(deliver_probe)
+            msg = asyncio.run(asyncio.coroutine(deliver_probe))
 
             return msg
 
@@ -234,8 +234,8 @@ def create_optimization_dag(dag_id, config):
             def objective(trial):
                 x = trial.suggest_uniform("x", -10, 10)
 
-                asyncio.run(do_effectuation)
-                asyncio.run(gather_recon)
+                asyncio.run(asyncio.coroutine(do_effectuation))
+                asyncio.run(asyncio.coroutine(gather_recon))
 
                 return x
 
