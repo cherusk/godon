@@ -260,10 +260,9 @@ def create_optimization_dag(dag_id, config):
 config = {{ breeder }}
 
 parallel_runs = config.get('run').get('parallel')
-breeder_name = config.get('name')
+dag_name = config.get('name')
 
 for run_id in range(0, parallel_runs):
-    dag_name = config.get('name')
     dag_id = f'{dag_name}_{run_id}'
-    globals()[f'{dag_id}_optimization'] = create_optimization_dag(breeder_name, dag_id, config)
-    globals()[f'{dag_id}_target_interaction'] = create_target_interaction_dag(breeder_name, dag_id, config)
+    globals()[f'{dag_id}_optimization'] = create_optimization_dag(dag_id, config)
+    globals()[f'{dag_id}_target_interaction'] = create_target_interaction_dag(dag_id, config)
