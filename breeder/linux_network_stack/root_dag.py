@@ -61,6 +61,38 @@ DEFAULTS = {
     # 'sla_miss_callback': yet_another_function,
     }
 
+## coroutines
+# interaction
+async def gather_instruction():
+    # Connect to NATS Server.
+    nc = await nats.connect(NATS_SERVER)
+    sub = nc.subscribe('effectuation')
+    msg = await sub.next_msg(timeout=60)
+    await nc.close()
+    return msg
+
+async def deliver_probe():
+    # Connect to NATS Server.
+    nc = await nats.connect(NATS_SERVER)
+    await nc.publish('recon', b'{ "metric": {} }')
+    await nc.flush()
+    await nc.close()
+# optimization
+async def do_effectuation():
+    # Connect to NATS Server.
+    nc = await nats.connect(NATS_SERVER)
+    await nc.publish('effectuation', b'{ "settings": {} }')
+    await nc.flush()
+    await nc.close()
+
+async def gather_recon():
+    # Connect to NATS Server.
+    nc = await nats.connect(NATS_SERVER)
+    sub = nc.subscribe('recon')
+    msg = await sub.next_msg(timeout=60)
+    print(msg)
+    await nc.close()
+
 
 def create_target_interaction_dag(dag_id, config):
 
@@ -81,15 +113,7 @@ def create_target_interaction_dag(dag_id, config):
         def run_pull_optimization():
             NATS_SERVER = "127.0.0.1:4222"
 
-            async def gather_instruction():
-                # Connect to NATS Server.
-                nc = await nats.connect(NATS_SERVER)
-                sub = nc.subscribe('effectuation')
-                msg = await sub.next_msg(timeout=60)
-                await nc.close()
-                return msg
-
-            msg = asyncio.run(asyncio.coroutine(gather_instruction))
+            msg = asyncio.run(gather_instruction)
 
             return msg
 
@@ -99,14 +123,7 @@ def create_target_interaction_dag(dag_id, config):
         def run_push_optimization():
             NATS_SERVER = "127.0.0.1:4222"
 
-            async def deliver_probe():
-                # Connect to NATS Server.
-                nc = await nats.connect(NATS_SERVER)
-                await nc.publish('recon', b'{ "metric": {} }')
-                await nc.flush()
-                await nc.close()
-
-            msg = asyncio.run(asyncio.coroutine(deliver_probe))
+            msg = asyncio.run(deliver_probe)
 
             return msg
 
@@ -216,26 +233,11 @@ def create_optimization_dag(dag_id, config):
 
             NATS_SERVER = "127.0.0.1:4222"
 
-            async def do_effectuation():
-                # Connect to NATS Server.
-                nc = await nats.connect(NATS_SERVER)
-                await nc.publish('effectuation', b'{ "settings": {} }')
-                await nc.flush()
-                await nc.close()
-
-            async def gather_recon():
-                # Connect to NATS Server.
-                nc = await nats.connect(NATS_SERVER)
-                sub = nc.subscribe('recon')
-                msg = await sub.next_msg(timeout=60)
-                print(msg)
-                await nc.close()
-
             def objective(trial):
                 x = trial.suggest_uniform("x", -10, 10)
 
-                asyncio.run(asyncio.coroutine(do_effectuation))
-                asyncio.run(asyncio.coroutine(gather_recon))
+                asyncio.run(do_effectuation)
+                asyncio.run(gather_recon)
 
                 return x
 
