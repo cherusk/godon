@@ -68,13 +68,13 @@ def create_target_interaction_dag(dag_id, config):
               default_args=DEFAULTS,
               description='breeder subdag for interacting with targets')
 
-    with dag as interaction:
+    with dag as interaction_dag:
 
         dump_config = BashOperator(
             task_id='print_config',
             bash_command='echo ${config}',
             env={"config": config},
-            dag=net_dag,
+            dag=interaction_dag,
         )
 
         @dag.task(task_id="pull_optimization_step")
@@ -154,7 +154,7 @@ def create_target_interaction_dag(dag_id, config):
                     sudo sysctl -w net.core.netdev_budget=300;
                     sudo sysctl -w net.core.netdev_max_backlog=1000;
                     """,
-            dag=net_dag,
+            dag=interaction_dag,
         )
 
         @dag.task(task_id="run_iter_count_step")
@@ -181,11 +181,11 @@ def create_target_interaction_dag(dag_id, config):
 
         continue_step = TriggerDagRunOperator(
                 task_id='continue_step',
-                trigger_dag_id=net_dag.dag_id,
-                dag=net_dag
+                trigger_dag_id=interaction_dag.dag_id,
+                dag=interaction_dag
                 )
 
-        stop_step = EmptyOperator(task_id="stop_task", dag=net_dag)
+        stop_step = EmptyOperator(task_id="stop_task", dag=interaction_dag)
 
         dump_config >> pull_step >> effectuation_step >> recon_step >> push_step >> run_iter_count >> stopping_conditional_step >> [continue_step, stop_step]
 
@@ -199,13 +199,13 @@ def create_optimization_dag(dag_id, config):
               description='breeder subdag for optimizing \
                     linux network stack dynamics')
 
-    with dag as net_dag:
+    with dag as optimization_dag:
 
         dump_config = BashOperator(
             task_id='print_config',
             bash_command='echo ${config}',
             env={"config": config},
-            dag=net_dag,
+            dag=optimization_dag,
         )
 
         ## perform optimiziation run
