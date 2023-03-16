@@ -113,7 +113,7 @@ def create_target_interaction_dag(dag_id, config):
         def run_pull_optimization():
             NATS_SERVER = "127.0.0.1:4222"
 
-            msg = asyncio.run(gather_instruction)
+            msg = asyncio.run(gather_instruction())
 
             return msg
 
@@ -123,7 +123,7 @@ def create_target_interaction_dag(dag_id, config):
         def run_push_optimization():
             NATS_SERVER = "127.0.0.1:4222"
 
-            msg = asyncio.run(deliver_probe)
+            msg = asyncio.run(deliver_probe())
 
             return msg
 
@@ -236,8 +236,8 @@ def create_optimization_dag(dag_id, config):
             def objective(trial):
                 x = trial.suggest_uniform("x", -10, 10)
 
-                asyncio.run(do_effectuation)
-                asyncio.run(gather_recon)
+                asyncio.run(do_effectuation())
+                asyncio.run(gather_recon())
 
                 return x
 
