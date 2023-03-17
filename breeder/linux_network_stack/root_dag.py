@@ -64,11 +64,11 @@ DEFAULTS = {
     }
 
 ## coroutines
-NATS_SERVER = "127.0.0.1:4222"
+NATS_SERVER_URL = "http://godon_nats_1:4222"
 # interaction
 async def gather_instruction():
     # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER)
+    nc = await nats.connect(NATS_SERVER_URL)
     sub = nc.subscribe('effectuation')
     msg = await sub.next_msg(timeout=60)
     await nc.close()
@@ -76,21 +76,21 @@ async def gather_instruction():
 
 async def deliver_probe():
     # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER)
+    nc = await nats.connect(NATS_SERVER_URL)
     await nc.publish('recon', b'{ "metric": {} }')
     await nc.flush()
     await nc.close()
 # optimization
 async def do_effectuation():
     # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER)
+    nc = await nats.connect(NATS_SERVER_URL)
     await nc.publish('effectuation', b'{ "settings": {} }')
     await nc.flush()
     await nc.close()
 
 async def gather_recon():
     # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER)
+    nc = await nats.connect(NATS_SERVER_URL)
     sub = nc.subscribe('recon')
     msg = await sub.next_msg(timeout=60)
     print(msg)
