@@ -70,7 +70,8 @@ async def gather_instruction():
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
     sub = await nc.subscribe('effectuation')
-    msg = await sub.next_msg(timeout=60)
+    msg = await sub.next_msg(timeout=300)
+    print(msg)
     await nc.close()
     return msg
 
@@ -92,9 +93,10 @@ async def gather_recon():
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
     sub = await nc.subscribe('recon')
-    msg = await sub.next_msg(timeout=60)
+    msg = await sub.next_msg(timeout=300)
     print(msg)
     await nc.close()
+    return msg
 
 
 def create_target_interaction_dag(dag_id, config):
