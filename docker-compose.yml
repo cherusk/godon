@@ -25,6 +25,9 @@ services:
         restart: always
         environment:
             - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
+            - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+            - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
             - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
             - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
             - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
@@ -37,6 +40,19 @@ services:
             - ./breeder/dags:/opt/airflow/dags/
         ports:
             - 127.0.0.1:8080:8080
+    db:
+      image: postgres:13
+      environment:
+        POSTGRES_USER: airflow
+        POSTGRES_PASSWORD: airflow
+        POSTGRES_DB: airflow
+      volumes:
+          - postgres-db-volume:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "airflow"]
+        interval: 5s
+        retries: 5
+      restart: always
     api:
         build:
           context: ./api/flask/
@@ -82,3 +98,6 @@ services:
         - ./testing/:/etc/prometheus/
       ports:
           - 9090:9090
+
+volumes:
+  postgres-db-volume:
