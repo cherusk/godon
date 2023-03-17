@@ -25,6 +25,7 @@ from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
 from airflow.models import Variable
 from airflow.utils.dates import days_ago
+from airflow.decorators import task
 
 import optuna
 from optuna.storages import InMemoryStorage
@@ -36,7 +37,8 @@ from prometheus_api_client.utils import parse_datetime
 from datetime import timedelta
 import asyncio
 
-from airflow.decorators import task
+import nats
+
 
 DEFAULTS = {
     'owner': 'airflow',
