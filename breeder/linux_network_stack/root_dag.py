@@ -69,7 +69,7 @@ NATS_SERVER_URL = "nats://godon_nats_1:4222"
 async def gather_instruction():
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
-    sub = nc.subscribe('effectuation')
+    sub = await nc.subscribe('effectuation')
     msg = await sub.next_msg(timeout=60)
     await nc.close()
     return msg
@@ -91,7 +91,7 @@ async def do_effectuation():
 async def gather_recon():
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
-    sub = nc.subscribe('recon')
+    sub = await nc.subscribe('recon')
     msg = await sub.next_msg(timeout=60)
     print(msg)
     await nc.close()
