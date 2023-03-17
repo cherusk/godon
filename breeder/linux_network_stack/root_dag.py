@@ -64,6 +64,7 @@ DEFAULTS = {
     }
 
 ## coroutines
+NATS_SERVER = "127.0.0.1:4222"
 # interaction
 async def gather_instruction():
     # Connect to NATS Server.
@@ -113,7 +114,6 @@ def create_target_interaction_dag(dag_id, config):
 
         @dag.task(task_id="pull_optimization_step")
         def run_pull_optimization():
-            NATS_SERVER = "127.0.0.1:4222"
 
             msg = asyncio.run(gather_instruction())
 
@@ -123,7 +123,6 @@ def create_target_interaction_dag(dag_id, config):
 
         @dag.task(task_id="push_optimization_step")
         def run_push_optimization():
-            NATS_SERVER = "127.0.0.1:4222"
 
             msg = asyncio.run(deliver_probe())
 
@@ -232,8 +231,6 @@ def create_optimization_dag(dag_id, config):
         ## perform optimiziation run
         @dag.task(task_id="optimization_step")
         def run_optimization():
-
-            NATS_SERVER = "127.0.0.1:4222"
 
             def objective(trial):
                 x = trial.suggest_uniform("x", -10, 10)
