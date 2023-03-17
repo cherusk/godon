@@ -64,7 +64,7 @@ DEFAULTS = {
     }
 
 ## coroutines
-NATS_SERVER_URL = "http://godon_nats_1:4222"
+NATS_SERVER_URL = "nats://godon_nats_1:4222"
 # interaction
 async def gather_instruction():
     # Connect to NATS Server.
