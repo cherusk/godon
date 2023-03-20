@@ -24,6 +24,7 @@ services:
           dockerfile: ./Dockerfile-airflow
         restart: always
         environment:
+            - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=true
             - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
             - AIRFLOW__CORE__EXECUTOR=LocalExecutor
             - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@db/airflow
