@@ -73,7 +73,7 @@ async def gather_instruction():
     msg = await sub.next_msg(timeout=300)
     print(msg)
     await nc.close()
-    return msg
+    return msg.data.decode()
 
 async def deliver_probe():
     # Connect to NATS Server.
@@ -96,7 +96,7 @@ async def gather_recon():
     msg = await sub.next_msg(timeout=300)
     print(msg)
     await nc.close()
-    return msg
+    return msg.data.decode()
 
 
 def create_target_interaction_dag(dag_id, config):
