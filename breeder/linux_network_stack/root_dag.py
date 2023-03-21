@@ -38,6 +38,7 @@ from datetime import timedelta
 import asyncio
 
 import nats
+import time
 
 
 DEFAULTS = {
@@ -72,20 +73,37 @@ async def gather_instruction():
     sub = await nc.subscribe('effectuation')
     msg = await sub.next_msg(timeout=300)
     print(msg)
+    await msg.respond(b'OK')
     await nc.close()
     return msg.data.decode()
 
 async def deliver_probe():
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
-    await nc.publish('recon', b'{ "metric": {} }')
+    while True:
+        try:
+            response = await nc.request('recon', b'{ "metric": {} }')
+            print('Response:', response )
+        except nats.errors.NoRespondersError:
+            time.sleep(2)
+            continue
+        except:
+            break
     await nc.flush()
     await nc.close()
 # optimization
 async def do_effectuation():
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
-    await nc.publish('effectuation', b'{ "settings": {} }')
+    while True:
+        try:
+            response = await nc.request('effectuation', b'{ "settings": {} }')
+            print('Response:', response )
+        except nats.errors.NoRespondersError:
+            time.sleep(2)
+            continue
+        except:
+            break
     await nc.flush()
     await nc.close()
 
@@ -95,6 +113,7 @@ async def gather_recon():
     sub = await nc.subscribe('recon')
     msg = await sub.next_msg(timeout=300)
     print(msg)
+    await msg.respond(b'OK')
     await nc.close()
     return msg.data.decode()
 
