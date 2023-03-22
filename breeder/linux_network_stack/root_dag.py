@@ -85,6 +85,7 @@ async def deliver_probe():
         try:
             response = await nc.request('recon', b'{ "metric": {} }')
             print('Response:', response )
+            break
         except nats.errors.NoRespondersError:
             time.sleep(2)
             continue
@@ -100,6 +101,7 @@ async def do_effectuation():
         try:
             response = await nc.request('effectuation', b'{ "settings": {} }')
             print('Response:', response )
+            break
         except nats.errors.NoRespondersError:
             time.sleep(2)
             continue
