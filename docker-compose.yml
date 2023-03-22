@@ -67,7 +67,7 @@ services:
         ports:
           - 127.0.0.1:9000:8080
     nats: # queueing system for decoupling dags
-        image: nats:2.9.14-linux
+        image: nats:2.9.15
         restart: always
         command: "--name nats_server"
         ports:
