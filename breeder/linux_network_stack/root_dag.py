@@ -271,7 +271,6 @@ def create_optimization_dag(dag_id, config):
                 # Optimize in parallel on your Dask cluster
                 futures = [
                     client.submit(study.optimize, objective, n_trials=10, pure=False)
-                    for i in range(10)
                 ]
                 wait(futures, timeout=7200)
                 print(f"Best params: {study.best_params}")
