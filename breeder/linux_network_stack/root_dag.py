@@ -44,9 +44,10 @@ import time
 DEFAULTS = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': days_ago(2),
+    'start_date': days_ago(1),
     'retries': 0,
-    'trigger_rule': 'all_success'
+    'trigger_rule': 'all_success',
+    'schedule_interval': None
     # 'email': ['airflow@example.com'],
     # 'email_on_failure': False,
     # 'email_on_retry': False,
