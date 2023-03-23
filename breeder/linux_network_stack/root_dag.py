@@ -40,6 +40,8 @@ import asyncio
 import nats
 import time
 
+import random
+
 
 DEFAULTS = {
     'owner': 'airflow',
@@ -78,12 +80,13 @@ async def gather_instruction():
     await nc.close()
     return msg.data.decode()
 
-async def deliver_probe():
+async def deliver_probe(metric_value):
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
+    metric_data = f'{ "metric": {metric_value} }'
     while True:
         try:
-            response = await nc.request('recon', b'{ "metric": {} }')
+            response = await nc.request('recon', bytes(metric_data))
             print('Response:', response )
             break
         except nats.errors.NoRespondersError:
@@ -94,12 +97,13 @@ async def deliver_probe():
     await nc.flush()
     await nc.close()
 # optimization
-async def do_effectuation():
+async def do_effectuation(settings):
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
+    settings_data = f'{ "settings": {settings}}'
     while True:
         try:
-            response = await nc.request('effectuation', b'{ "settings": {} }')
+            response = await nc.request('effectuation', bytes(settings_data))
             print('Response:', response )
             break
         except nats.errors.NoRespondersError:
@@ -140,15 +144,17 @@ def create_target_interaction_dag(dag_id, config):
         def run_pull_optimization():
 
             msg = asyncio.run(gather_instruction())
+            settings = dict(msg).get('settings')
 
-            return msg
+            return settings
 
         pull_step = run_pull_optimization()
 
         @dag.task(task_id="push_optimization_step")
         def run_push_optimization():
+            metric_value = int(ti.xcom_pull(task_ids="recon_step"))
 
-            msg = asyncio.run(deliver_probe())
+            msg = asyncio.run(deliver_probe(metric_value))
 
             return msg
 
@@ -174,10 +180,11 @@ def create_target_interaction_dag(dag_id, config):
             for item in metric_object_list:
                 print(item.metric_name, item.label_config, "\n")
 
+            return random.randint(0, 10)
+
         recon_step = run_reconnaissance()
 
-        ## perform config effectuation at target instance
-        _ssh_hook = SSHHook(
+        ssh_hook = SSHHook(
             remote_host=config.get('effectuation').get('target'),
             username=config.get('effectuation').get('user'),
             key_file=config.get('effectuation').get('key_file'),
@@ -190,11 +197,7 @@ def create_target_interaction_dag(dag_id, config):
             task_id='effectuation',
             timeout=30,
             command="""
-                    sudo sysctl -w net.ipv4.tcp_mem="188760 251683	377520";
-                    sudo sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
-                    sudo sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
-                    sudo sysctl -w net.core.netdev_budget=300;
-                    sudo sysctl -w net.core.netdev_max_backlog=1000;
+                    {{ ti.xcom_pull(task_ids='pull_optimization_step') }}
                     """,
             dag=interaction_dag,
         )
@@ -259,10 +262,18 @@ def create_optimization_dag(dag_id, config):
             def objective(trial):
                 x = trial.suggest_uniform("x", -10, 10)
 
-                asyncio.run(do_effectuation())
-                asyncio.run(gather_recon())
+                settings = """
+                    sudo sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
+                    sudo sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
+                    sudo sysctl -w net.core.netdev_budget=300;
+                    sudo sysctl -w net.core.netdev_max_backlog=1000;
+                """
 
-                return x
+                asyncio.run(do_effectuation(settings))
+                metric = dict(asyncio.run(gather_recon()))
+                metric_value = metric.get('metric')
+
+                return metric_value
 
             with Client(address="godon_dask_scheduler_1:8786") as client:
                 # Create a study using Dask-compatible storage
