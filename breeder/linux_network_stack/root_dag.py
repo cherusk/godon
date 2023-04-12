@@ -39,6 +39,7 @@ import asyncio
 
 import nats
 import time
+import sys
 
 import random
 import logging
@@ -100,7 +101,9 @@ async def deliver_probe(metric_value):
             time.sleep(2)
             continue
         except:
-            break
+            logger.warning('unexpted exception')
+            logger.warning(sys.exc_info()[0])
+            raise
     await nc.flush()
     await nc.close()
 {% endraw %}
