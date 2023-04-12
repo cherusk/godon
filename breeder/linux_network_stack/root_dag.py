@@ -41,7 +41,10 @@ import nats
 import time
 
 import random
+import logging
 
+
+task_logger = logging.getLogger("airflow.task")
 
 DEFAULTS = {
     'owner': 'airflow',
@@ -142,9 +145,12 @@ def create_target_interaction_dag(dag_id, config):
 
         @dag.task(task_id="pull_optimization_step")
         def run_pull_optimization():
+            task_logger.debug("Entering")
 
             msg = asyncio.run(gather_instruction())
             settings = dict(msg).get('settings')
+
+            task_logger.debug(f"Settings: f{settings}")
 
             return settings
 
@@ -152,9 +158,15 @@ def create_target_interaction_dag(dag_id, config):
 
         @dag.task(task_id="push_optimization_step")
         def run_push_optimization():
+            task_logger.debug("Entering")
+
             metric_value = int(ti.xcom_pull(task_ids="recon_step"))
 
+            task_logger.debug(f"Settings: f{settings}")
+
             msg = asyncio.run(deliver_probe(metric_value))
+
+            task_logger.debug("Done")
 
             return msg
 
@@ -162,6 +174,7 @@ def create_target_interaction_dag(dag_id, config):
 
         @dag.task(task_id="recon_step")
         def run_reconnaissance():
+            task_logger.debug("Entering")
             prom_conn = PrometheusConnect(url ="http://godon_prometheus_1:9090", disable_ssl=True)
 
             start_time = parse_datetime("2m")
@@ -180,6 +193,7 @@ def create_target_interaction_dag(dag_id, config):
             for item in metric_object_list:
                 print(item.metric_name, item.label_config, "\n")
 
+            task_logger.debug("Done")
             return random.randint(0, 10)
 
         recon_step = run_reconnaissance()
@@ -212,6 +226,7 @@ def create_target_interaction_dag(dag_id, config):
 
         @task.branch(task_id="stopping_decision_step")
         def stopping_decision(max_iterations, ti=None):
+            task_logger.debug("Entering")
             current_iteration = ti.xcom_pull(task_ids="run_iter_count_step")
             def is_stop_criteria_reached(iteration):
                 if iteration >= max_iterations:
@@ -219,6 +234,7 @@ def create_target_interaction_dag(dag_id, config):
                 else:
                     return False
 
+            task_logger.debug("Done")
             if is_stop_criteria_reached(current_iteration):
                 return "stop_step"
             else:
@@ -260,6 +276,10 @@ def create_optimization_dag(dag_id, config):
         def run_optimization():
 
             def objective(trial):
+                import logging
+                logger = logging.getLogger('objective')
+                logger.setLevel(logging.DEBUG)
+
                 x = trial.suggest_uniform("x", -10, 10)
 
                 settings = """
@@ -268,10 +288,14 @@ def create_optimization_dag(dag_id, config):
                     sudo sysctl -w net.core.netdev_budget=300;
                     sudo sysctl -w net.core.netdev_max_backlog=1000;
                 """
+                logger.debug('entering')
 
+                logger.debug('doing effectuation')
                 asyncio.run(do_effectuation(settings))
+                logger.debug('gathering recon')
                 metric = dict(asyncio.run(gather_recon()))
                 metric_value = metric.get('metric')
+                logger.debug(f'metric received {metric_value}')
 
                 return metric_value
 
