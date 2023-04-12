@@ -42,9 +42,11 @@ import time
 
 import random
 import logging
+import json
 
 
 task_logger = logging.getLogger("airflow.task")
+task_logger.setLevel(logging.DEBUG)
 
 DEFAULTS = {
     'owner': 'airflow',
@@ -83,13 +85,15 @@ async def gather_instruction():
     await nc.close()
     return msg.data.decode()
 
+{% raw %}
 async def deliver_probe(metric_value):
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
-    metric_data = f'{ "metric": {metric_value} }'
+    metric_data = dict(metric=metric_value)
+    transmit_data = bytes(json.dumps(metric_data), encoding='utf8')
     while True:
         try:
-            response = await nc.request('recon', bytes(metric_data))
+            response = await nc.request('recon', transmit_data)
             print('Response:', response )
             break
         except nats.errors.NoRespondersError:
@@ -99,33 +103,8 @@ async def deliver_probe(metric_value):
             break
     await nc.flush()
     await nc.close()
+{% endraw %}
 # optimization
-async def do_effectuation(settings):
-    # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER_URL)
-    settings_data = f'{ "settings": {settings}}'
-    while True:
-        try:
-            response = await nc.request('effectuation', bytes(settings_data))
-            print('Response:', response )
-            break
-        except nats.errors.NoRespondersError:
-            time.sleep(2)
-            continue
-        except:
-            break
-    await nc.flush()
-    await nc.close()
-
-async def gather_recon():
-    # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER_URL)
-    sub = await nc.subscribe('recon')
-    msg = await sub.next_msg(timeout=300)
-    print(msg)
-    await msg.respond(b'OK')
-    await nc.close()
-    return msg.data.decode()
 
 
 def create_target_interaction_dag(dag_id, config):
@@ -148,7 +127,7 @@ def create_target_interaction_dag(dag_id, config):
             task_logger.debug("Entering")
 
             msg = asyncio.run(gather_instruction())
-            settings = dict(msg).get('settings')
+            settings = json.loads(msg).get('settings')
 
             task_logger.debug(f"Settings: f{settings}")
 
@@ -157,12 +136,12 @@ def create_target_interaction_dag(dag_id, config):
         pull_step = run_pull_optimization()
 
         @dag.task(task_id="push_optimization_step")
-        def run_push_optimization():
+        def run_push_optimization(ti=None):
             task_logger.debug("Entering")
 
             metric_value = int(ti.xcom_pull(task_ids="recon_step"))
 
-            task_logger.debug(f"Settings: f{settings}")
+            task_logger.debug(f"Metric : f{metric_value}")
 
             msg = asyncio.run(deliver_probe(metric_value))
 
@@ -198,7 +177,7 @@ def create_target_interaction_dag(dag_id, config):
 
         recon_step = run_reconnaissance()
 
-        ssh_hook = SSHHook(
+        _ssh_hook = SSHHook(
             remote_host=config.get('effectuation').get('target'),
             username=config.get('effectuation').get('user'),
             key_file=config.get('effectuation').get('key_file'),
@@ -206,6 +185,7 @@ def create_target_interaction_dag(dag_id, config):
             keepalive_interval=10
         )
 
+{% raw %}
         effectuation_step = SSHOperator(
             ssh_hook=_ssh_hook,
             task_id='effectuation',
@@ -215,6 +195,7 @@ def create_target_interaction_dag(dag_id, config):
                     """,
             dag=interaction_dag,
         )
+{% endraw %}
 
         @dag.task(task_id="run_iter_count_step")
         def run_iter_count(ti=None):
@@ -279,6 +260,41 @@ def create_optimization_dag(dag_id, config):
                 import logging
                 logger = logging.getLogger('objective')
                 logger.setLevel(logging.DEBUG)
+{% raw %}
+                async def do_effectuation(settings):
+                    import time
+                    import nats
+                    import sys
+                    # Connect to NATS Server.
+                    nc = await nats.connect(NATS_SERVER_URL)
+                    settings_data = dict(settings=settings)
+                    transmit_data = bytes(json.dumps(settings_data), encoding='utf8')
+                    while True:
+                        try:
+                            response = await nc.request('effectuation', transmit_data)
+                            print('Response:', response )
+                            break
+                        except nats.errors.NoRespondersError:
+                            time.sleep(2)
+                            continue
+                        except:
+                            logger.warning('unexpted exception')
+                            logger.warning(sys.exc_info()[0])
+                            raise
+                    await nc.flush()
+                    await nc.close()
+{% endraw %}
+
+                async def gather_recon():
+                    # Connect to NATS Server.
+                    nc = await nats.connect(NATS_SERVER_URL)
+                    sub = await nc.subscribe('recon')
+                    msg = await sub.next_msg(timeout=300)
+                    print(msg)
+                    await msg.respond(b'OK')
+                    await nc.close()
+                    return msg.data.decode()
+
 
                 x = trial.suggest_uniform("x", -10, 10)
 
@@ -288,14 +304,15 @@ def create_optimization_dag(dag_id, config):
                     sudo sysctl -w net.core.netdev_budget=300;
                     sudo sysctl -w net.core.netdev_max_backlog=1000;
                 """
-                logger.debug('entering')
+                logger.warning('entering')
 
-                logger.debug('doing effectuation')
+                logger.warning('doing effectuation')
                 asyncio.run(do_effectuation(settings))
-                logger.debug('gathering recon')
-                metric = dict(asyncio.run(gather_recon()))
+                logger.warning('gathering recon')
+                metric = json.loads(asyncio.run(gather_recon()))
                 metric_value = metric.get('metric')
-                logger.debug(f'metric received {metric_value}')
+                logger.warning(f'metric received {metric_value}')
+                logger.warning('Done')
 
                 return metric_value
 
