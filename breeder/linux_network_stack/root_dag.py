@@ -310,7 +310,7 @@ def create_optimization_dag(dag_id, config):
                 logger.warning(f'metric received {metric_value}')
                 logger.warning('Done')
 
-                return metric_value
+                return metric_value[0] - metric_value[1]
 
             with Client(address="godon_dask_scheduler_1:8786") as client:
                 # Create a study using Dask-compatible storage
