@@ -163,20 +163,11 @@ def create_target_interaction_dag(dag_id, config):
             end_time = parse_datetime("now")
             chunk_size = timedelta(minutes=1)
 
-            metric_data = prom_conn.get_metric_range_data(
-                    metric_name="tcp_rtt",
-                    start_time=start_time,
-                    end_time=end_time,
-                    chunk_size=chunk_size,
-                    )
-
-            metric_object_list = MetricsList(metric_data)
-
-            for item in metric_object_list:
-                print(item.metric_name, item.label_config, "\n")
+            metric_data = prom_conn.get_current_metric_value(metric_name="tcp_rtt")
 
             task_logger.debug("Done")
-            return random.randint(0, 10)
+
+            return metric_data[0]
 
         recon_step = run_reconnaissance()
 
