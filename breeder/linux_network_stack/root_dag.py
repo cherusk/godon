@@ -163,7 +163,7 @@ def create_target_interaction_dag(dag_id, config):
             end_time = parse_datetime("now")
             chunk_size = timedelta(minutes=1)
 
-            metric_data = prom_conn.get_current_metric_value(metric_name="tcp_rtt")
+            metric_data = prom_conn.custom_query("quantile(0.5, tcp_rtt)") # get median
 
             task_logger.debug("Done")
 
