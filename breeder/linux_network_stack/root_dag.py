@@ -163,11 +163,13 @@ def create_target_interaction_dag(dag_id, config):
             end_time = parse_datetime("now")
             chunk_size = timedelta(minutes=1)
 
-            metric_data = prom_conn.custom_query("quantile(0.5, tcp_rtt)") # get median
+             # get median of metrics
+            metric_data_rtt = prom_conn.custom_query("quantile(0.5, tcp_rtt)")
+            metric_data_delivery_rate = prom_conn.custom_query("quantile(0.5, tcp_delivery_rate_bytes)")
 
             task_logger.debug("Done")
 
-            return metric_data[0]
+            return (metric_data_rtt[0], metric_data_delivery_rate[0])
 
         recon_step = run_reconnaissance()
 
