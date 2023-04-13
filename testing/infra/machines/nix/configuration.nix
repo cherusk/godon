@@ -124,9 +124,9 @@
                       active: True
                   data_segs_out:
                       active: True
-          compression: # Compressing collected flow data
+          compression: # Not Compressing collected flow data
               label_folding:
-                  origin: "pid_condensed"
+                  origin: "raw_endpoint"
           selection:
               peering:
                  networks:
