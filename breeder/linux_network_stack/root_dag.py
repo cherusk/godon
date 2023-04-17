@@ -168,7 +168,8 @@ def create_target_interaction_dag(dag_id, config):
                 query_name = query.get('name')
                 query_string = query.get('query')
                 query_result = prom_conn.custom_query(query_string)
-                metric_data[query_name] = query_result.get('value')[-1]
+                metric_value = query_result[0]
+                metric_data[query_name] = metric_value.get('value')[1]
 
             task_logger.debug("Done")
 
