@@ -311,8 +311,8 @@ def create_optimization_dag(dag_id, config):
                 logger.warning('gathering recon')
                 metric = json.loads(asyncio.run(gather_recon()))
                 metric_value = metric.get('metric')
-                rtt = int(metric_value['tcp_rtt'])
-                delivery_rate = int(metric_value['tcp_delivery_rate_bytes'])
+                rtt = float(metric_value['tcp_rtt'])
+                delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
                 logger.warning(f'metric received {metric_value}')
                 logger.warning('Done')
 
