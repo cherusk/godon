@@ -163,13 +163,15 @@ def create_target_interaction_dag(dag_id, config):
             end_time = parse_datetime("now")
             chunk_size = timedelta(minutes=1)
 
-             # get median of metrics
-            metric_data_rtt = prom_conn.custom_query("quantile(0.5, tcp_rtt)")
-            metric_data_delivery_rate = prom_conn.custom_query("quantile(0.5, tcp_delivery_rate_bytes)")
+            metric_data = dict()
+            for query in config.get('recon').get('prometheus'):
+                query_name = query.get('name')
+                query_string = query.get('query')
+                metric_data[query_name] = prom_conn.custom_query(query_string)
 
             task_logger.debug("Done")
 
-            return (metric_data_rtt[0], metric_data_delivery_rate[0])
+            return metric_data
 
         recon_step = run_reconnaissance()
 
@@ -307,8 +309,8 @@ def create_optimization_dag(dag_id, config):
                 logger.warning('gathering recon')
                 metric = json.loads(asyncio.run(gather_recon()))
                 metric_value = metric.get('metric')
-                rtt = metric_value[0]
-                delivery_rate = metric_value[1]
+                rtt = metric_value['tcp_rtt'][0]
+                delivery_rate = metric_value['tcp_delivery_rate_bytes'][0]
                 logger.warning(f'metric received {metric_value}')
                 logger.warning('Done')
 
