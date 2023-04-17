@@ -167,7 +167,8 @@ def create_target_interaction_dag(dag_id, config):
             for query in config.get('recon').get('prometheus'):
                 query_name = query.get('name')
                 query_string = query.get('query')
-                metric_data[query_name] = prom_conn.custom_query(query_string)
+                query_result = prom_conn.custom_query(query_string)
+                metric_data[query_name] = query_result.get('value')[-1]
 
             task_logger.debug("Done")
 
@@ -309,8 +310,8 @@ def create_optimization_dag(dag_id, config):
                 logger.warning('gathering recon')
                 metric = json.loads(asyncio.run(gather_recon()))
                 metric_value = metric.get('metric')
-                rtt = metric_value['tcp_rtt'][0]
-                delivery_rate = metric_value['tcp_delivery_rate_bytes'][0]
+                rtt = metric_value['tcp_rtt']
+                delivery_rate = metric_value['tcp_delivery_rate_bytes']
                 logger.warning(f'metric received {metric_value}')
                 logger.warning('Done')
 
