@@ -142,7 +142,7 @@ def create_target_interaction_dag(dag_id, config):
         def run_push_optimization(ti=None):
             task_logger.debug("Entering")
 
-            metric_value = int(ti.xcom_pull(task_ids="recon_step"))
+            metric_value = ti.xcom_pull(task_ids="recon_step")
 
             task_logger.debug(f"Metric : f{metric_value}")
 
