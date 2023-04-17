@@ -307,10 +307,12 @@ def create_optimization_dag(dag_id, config):
                 logger.warning('gathering recon')
                 metric = json.loads(asyncio.run(gather_recon()))
                 metric_value = metric.get('metric')
+                rtt = metric_value[0]
+                delivery_rate = metric_value[1]
                 logger.warning(f'metric received {metric_value}')
                 logger.warning('Done')
 
-                return metric_value[0] - metric_value[1]
+                return rtt - delivery_rate
 
             with Client(address="godon_dask_scheduler_1:8786") as client:
                 # Create a study using Dask-compatible storage
