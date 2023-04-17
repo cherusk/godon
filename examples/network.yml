@@ -27,9 +27,11 @@ breeder:
       end: 10d
       interval: 60
   recon:
-    # prometheus:
-    prober:
-      - name: linux_net_latency
+    prometheus:
+      - name: "tcp_rtt"
+        query: "quantile(0.5, tcp_rtt)" # median
+      - name: "tcp_delivery_rate_bytes"
+        query: "quantile(0.5, tcp_delivery_rate_bytes)" # median
   effectuation:
     user: godon_robot
     target: "10.0.5.53"
