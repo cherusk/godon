@@ -5,18 +5,26 @@ breeder:
   name: "linux_network_stack_breeder"
   settings:
     sysctl:
-      net.ipv4.tcp_mem:
+      net.ipv4.tcp_rmem:
         constraints:
-          lower: 188760
-          upper: 377520
-          net.ipv4.tcp_rmem:
-            constraints:
-              lower: 4096
-              upper: 6291456
-          net.ipv4.tcp_wmem:
-            constraints:
-              lower: 4096
-              upper: 6291456
+          lower: 4096
+          upper: 6291456
+      net.ipv4.tcp_wmem:
+        constraints:
+          lower: 4096
+          upper: 6291456
+      net.core.netdev_budget:
+        constraints:
+          lower: 10
+          upper: 2000
+      net.core.netdev_max_backlog:
+        constraints:
+          lower: 10
+          upper: 5000
+      net.core.dev_weight:
+        constraints:
+          lower: 10
+          upper: 2000
   run:
     parallel: 1
     iterations:
