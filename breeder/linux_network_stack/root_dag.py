@@ -295,16 +295,18 @@ def create_optimization_dag(dag_id, config):
                     await nc.close()
                     return msg.data.decode()
 
-
-                x = trial.suggest_uniform("x", -10, 10)
-
-                settings = """
-                    sudo sysctl -w net.ipv4.tcp_rmem="4096	131072	6291456";
-                    sudo sysctl -w net.ipv4.tcp_wmem="4096	131072	6291456";
-                    sudo sysctl -w net.core.netdev_budget=300;
-                    sudo sysctl -w net.core.netdev_max_backlog=1000;
-                """
                 logger.warning('entering')
+
+                settings = []
+                for setting_name, setting_config in config.get('settings').get('sysctl').items():
+                    constraints = setting_config.get('constraints')
+                    suggested_value = trial.suggest_int(setting_name, constraints.get('lower') , constraints.get('upper') )
+                    if setting_name in ['net.ipv4.tcp_rmem', 'net.ipv4.tcp_wmem']:
+                        settings.append("sudo sysctl -w {setting_name}='4096 131072 {suggested_value}';")
+                    else:
+                        settings.append("sudo sysctl -w {setting_name}='{suggested_value}';")
+
+                settings = '\n'.join(settings)
 
                 logger.warning('doing effectuation')
                 asyncio.run(do_effectuation(settings))
