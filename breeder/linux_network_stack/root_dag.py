@@ -302,9 +302,9 @@ def create_optimization_dag(dag_id, config):
                     constraints = setting_config.get('constraints')
                     suggested_value = trial.suggest_int(setting_name, constraints.get('lower') , constraints.get('upper') )
                     if setting_name in ['net.ipv4.tcp_rmem', 'net.ipv4.tcp_wmem']:
-                        settings.append("sudo sysctl -w {setting_name}='4096 131072 {suggested_value}';")
+                        settings.append(f"sudo sysctl -w {setting_name}='4096 131072 {suggested_value}';")
                     else:
-                        settings.append("sudo sysctl -w {setting_name}='{suggested_value}';")
+                        settings.append(f"sudo sysctl -w {setting_name}='{suggested_value}';")
 
                 settings = '\n'.join(settings)
 
