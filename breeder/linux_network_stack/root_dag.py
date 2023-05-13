@@ -318,12 +318,12 @@ def create_optimization_dag(dag_id, config):
                 logger.warning(f'metric received {metric_value}')
                 logger.warning('Done')
 
-                return rtt - delivery_rate
+                return rtt, delivery_rate
 
             with Client(address="godon_dask_scheduler_1:8786") as client:
                 # Create a study using Dask-compatible storage
                 storage = DaskStorage(InMemoryStorage())
-                study = optuna.create_study(storage=storage)
+                study = optuna.create_study(directions=["minimize", "maximize"], storage=storage)
                 # Optimize in parallel on your Dask cluster
                 futures = [
                     client.submit(study.optimize, objective, n_trials=10, pure=False)
