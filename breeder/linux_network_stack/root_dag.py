@@ -91,5 +91,5 @@ for target in targets:
     identifier = str(abs(hash(target.get('address'))))[0:6]
     for run_id in range(0, parallel_runs):
         dag_id = f'{dag_name}_{run_id}'
-        globals()[f'{dag_id}_optimization'] = create_optimization_dag(f'{dag_id}_optimization', config, identifier)
-        globals()[f'{dag_id}_target_interaction'] = create_target_interaction_dag(f'{dag_id}_target_interaction', config, identifier)
+        globals()[f'{dag_id}_optimization_{identifier}'] = create_optimization_dag(f'{dag_id}_optimization_{identifier}', config, identifier)
+        globals()[f'{dag_id}_target_{identifier}'] = create_target_interaction_dag(f'{dag_id}_target_interaction_{identifier}', config, target, identifier)
