@@ -84,9 +84,12 @@ NATS_SERVER_URL = "nats://godon_nats_1:4222"
 config = {{ breeder }}
 
 parallel_runs = config.get('run').get('parallel')
+targets = config.get('effectuation').get('targets')
 dag_name = config.get('name')
 
-for run_id in range(0, parallel_runs):
-    dag_id = f'{dag_name}_{run_id}'
-    globals()[f'{dag_id}_optimization'] = create_optimization_dag(f'{dag_id}_optimization', config)
-    globals()[f'{dag_id}_target_interaction'] = create_target_interaction_dag(f'{dag_id}_target_interaction', config)
+for target in targets:
+    identifier = str(abs(hash(target.get('address'))))[0:6]
+    for run_id in range(0, parallel_runs):
+        dag_id = f'{dag_name}_{run_id}'
+        globals()[f'{dag_id}_optimization'] = create_optimization_dag(f'{dag_id}_optimization', config, identifier)
+        globals()[f'{dag_id}_target_interaction'] = create_target_interaction_dag(f'{dag_id}_target_interaction', config, identifier)
