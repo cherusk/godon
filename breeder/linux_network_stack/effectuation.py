@@ -1,36 +1,6 @@
 
-### --- coroutines --- ###
-async def gather_instruction():
-    # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER_URL)
-    sub = await nc.subscribe('effectuation')
-    msg = await sub.next_msg(timeout=300)
-    print(msg)
-    await msg.respond(b'OK')
-    await nc.close()
-    return msg.data.decode()
-
-{% raw %}
-async def deliver_probe(metric_value):
-    # Connect to NATS Server.
-    nc = await nats.connect(NATS_SERVER_URL)
-    metric_data = dict(metric=metric_value)
-    transmit_data = bytes(json.dumps(metric_data), encoding='utf8')
-    while True:
-        try:
-            response = await nc.request('recon', transmit_data)
-            print('Response:', response )
-            break
-        except nats.errors.NoRespondersError:
-            time.sleep(2)
-            continue
-        except:
-            logger.warning('unexpted exception')
-            logger.warning(sys.exc_info()[0])
-            raise
-    await nc.flush()
-    await nc.close()
-{% endraw %}
+### --- definition coroutines --- ###
+{% include 'nats_coroutines.py' %}
 ### --- end coroutines --- ###
 
 def create_target_interaction_dag(dag_id, config):
@@ -52,7 +22,7 @@ def create_target_interaction_dag(dag_id, config):
         def run_pull_optimization():
             task_logger.debug("Entering")
 
-            msg = asyncio.run(gather_instruction())
+            msg = asyncio.run(receive_msg_via_nats(subject='effectuation'))
             settings = json.loads(msg).get('settings')
 
             task_logger.debug(f"Settings: f{settings}")
@@ -69,7 +39,8 @@ def create_target_interaction_dag(dag_id, config):
 
             task_logger.debug(f"Metric : f{metric_value}")
 
-            msg = asyncio.run(deliver_probe(metric_value))
+            metric_data = dict(metric=metric_value)
+            msg = asyncio.run(send_msg_via_nats(subject='recon', data_dict=metric_data))
 
             task_logger.debug("Done")
 
