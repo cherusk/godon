@@ -1,6 +1,5 @@
 
-## coroutines
-# interaction
+### --- coroutines --- ###
 async def gather_instruction():
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
@@ -32,8 +31,7 @@ async def deliver_probe(metric_value):
     await nc.flush()
     await nc.close()
 {% endraw %}
-# optimization
-
+### --- end coroutines --- ###
 
 def create_target_interaction_dag(dag_id, config):
 
