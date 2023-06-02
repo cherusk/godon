@@ -4,7 +4,8 @@ def objective(trial):
 ###--- definition coroutines ---###
 ### We have to keep to coroutines in the objective function,
 ### otherwise the workers do not know about those until we preinstall those.
-    {% include 'nats_coroutines.py' %}
+    {% macro local_coroutines_include() %}{% include 'nats_coroutines.py' %}{% endmacro %}
+    {{ local_coroutines_include()|indent }} # default is indent of 4 spaces!
 ###--- end coroutines ---###
 
     import logging
