@@ -41,6 +41,10 @@ breeder:
       - name: "tcp_delivery_rate_bytes"
         query: "quantile(0.5, tcp_delivery_rate_bytes)" # median
   effectuation:
-    user: godon_robot
-    target: "10.0.5.53"
-    key_file: "/opt/airflow/credentials/id_rsa"
+    targets:
+      - user: godon_robot
+        key_file: "/opt/airflow/credentials/id_rsa"
+        address: "10.0.5.53"
+      - user: godon_robot
+        key_file: "/opt/airflow/credentials/id_rsa"
+        address: "10.0.5.54"
