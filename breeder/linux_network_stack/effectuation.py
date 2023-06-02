@@ -3,7 +3,7 @@
 {% include 'nats_coroutines.py' %}
 ### --- end coroutines --- ###
 
-def create_target_interaction_dag(dag_id, config):
+def create_target_interaction_dag(dag_id, config, identifier):
 
     dag = DAG(dag_id,
               default_args=DEFAULTS,
@@ -22,7 +22,7 @@ def create_target_interaction_dag(dag_id, config):
         def run_pull_optimization():
             task_logger.debug("Entering")
 
-            msg = asyncio.run(receive_msg_via_nats(subject='effectuation'))
+            msg = asyncio.run(receive_msg_via_nats(subject=f'effectuation_{identifier}'))
             settings = json.loads(msg).get('settings')
 
             task_logger.debug(f"Settings: f{settings}")
@@ -40,7 +40,7 @@ def create_target_interaction_dag(dag_id, config):
             task_logger.debug(f"Metric : f{metric_value}")
 
             metric_data = dict(metric=metric_value)
-            msg = asyncio.run(send_msg_via_nats(subject='recon', data_dict=metric_data))
+            msg = asyncio.run(send_msg_via_nats(subject=f'recon_{identifier}', data_dict=metric_data))
 
             task_logger.debug("Done")
 

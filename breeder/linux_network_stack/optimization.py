@@ -1,5 +1,5 @@
 
-def objective(trial):
+def objective(trial, identifier):
 
 ###--- definition coroutines ---###
 ### We have to keep to coroutines in the objective function,
@@ -27,10 +27,10 @@ def objective(trial):
 
     logger.warning('doing effectuation')
     settings_data = dict(settings=settings)
-    asyncio.run(send_msg_via_nats(subject='effectuation', data_dict=settings_data))
+    asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))
 
     logger.warning('gathering recon')
-    metric = json.loads(asyncio.run(receive_msg_via_nat(subject='recon')))
+    metric = json.loads(asyncio.run(receive_msg_via_nat(subject=f'recon_{identifier}')))
     metric_value = metric.get('metric')
     rtt = float(metric_value['tcp_rtt'])
     delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
@@ -42,7 +42,7 @@ def objective(trial):
 
 
 
-def create_optimization_dag(dag_id, config):
+def create_optimization_dag(dag_id, config, identifier):
 
     dag = DAG(dag_id,
               default_args=DEFAULTS,
@@ -66,9 +66,10 @@ def create_optimization_dag(dag_id, config):
                 # Create a study using Dask-compatible storage
                 storage = DaskStorage(InMemoryStorage())
                 study = optuna.create_study(directions=["minimize", "maximize"], storage=storage)
+                objective_wrapped = lambda trial: objective(trial, identifier)
                 # Optimize in parallel on your Dask cluster
                 futures = [
-                    client.submit(study.optimize, objective, n_trials=10, pure=False)
+                    client.submit(study.optimize, objective_wrapped, n_trials=10, pure=False)
                 ]
                 wait(futures, timeout=7200)
                 print(f"Best params: {study.best_params}")
