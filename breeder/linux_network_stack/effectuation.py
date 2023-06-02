@@ -3,7 +3,7 @@
 {% include 'nats_coroutines.py' %}
 ### --- end coroutines --- ###
 
-def create_target_interaction_dag(dag_id, config, identifier):
+def create_target_interaction_dag(dag_id, config, target, identifier):
 
     dag = DAG(dag_id,
               default_args=DEFAULTS,
@@ -72,9 +72,9 @@ def create_target_interaction_dag(dag_id, config, identifier):
         recon_step = run_reconnaissance()
 
         _ssh_hook = SSHHook(
-            remote_host=config.get('effectuation').get('target'),
-            username=config.get('effectuation').get('user'),
-            key_file=config.get('effectuation').get('key_file'),
+            remote_host=target.get('address'),
+            username=target.get('user'),
+            key_file=target.get('key_file'),
             timeout=30,
             keepalive_interval=10
         )
