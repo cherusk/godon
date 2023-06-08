@@ -35,6 +35,7 @@ from airflow_client.client.api import connection_api
 from airflow_client.client.model.connection import Connection
 
 from flask import abort
+from flask import Response
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -193,19 +194,22 @@ def breeders_post(content):  # noqa: E501
 
         time.sleep(2) # wait as workaround until synchronous reload of dags implemented
 
-        dag_run = DAGRun(
-            dag_run_id=breeder_id ,
-            #state=DagState("queued"),
-            conf=breeder_config,
-        ) # DAGRun |
+        # Stop calling the API for now until decided
+        # if we template the breeder dags only or we really want to instrument the API.
 
-        try:
-            # Trigger a new DAG run
-            _api_response = api_instance.post_dag_run(breeder_id, dag_run)
-        except client.ApiException as e:
-            print("Exception when calling DAGRunApi->post_dag_run: %s\n" % e)
-            raise e
-        return _api_response
+        #dag_run = DAGRun(
+        #    dag_run_id=breeder_id ,
+        #    #state=DagState("queued"),
+        #    conf=breeder_config,
+        #) # DAGRun |
+
+        #try:
+        #    # Trigger a new DAG run
+        #    _api_response = api_instance.post_dag_run(breeder_id, dag_run)
+        #except client.ApiException as e:
+        #    print("Exception when calling DAGRunApi->post_dag_run: %s\n" % e)
+        #    raise e
+        #return _api_response
 
     with client.ApiClient(configuration) as api_client:
         # Do not create connection dynamically for now
@@ -213,7 +217,7 @@ def breeders_post(content):  # noqa: E501
         api_response['breeder'] = create_breeder(api_client, content).to_dict()
 
 
-    return api_response
+    return Response(dict(), status=200, mimetype='application/json')
 
 
 def breeders_put(content):  # noqa: E501
