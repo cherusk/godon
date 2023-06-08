@@ -32,4 +32,3 @@ jobs:
         - name: do post checkout
           run: >
             pushd api && mask api generate && popd;
-            chown -R github-runner:users *
