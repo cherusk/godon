@@ -18,44 +18,17 @@
 ##
 on:
   pull_request:
-    types: [ ready_for_review ]
+    types: [ labeled ]
     branches:
       - master
 
-env:
-    RUN_CONTAINMENT_BASE: "/srv/"
-    INSTANCE_NAME: "ci_runner"
-    OS_AUTH_URL: https://oprod-controller1.osuosl.org:5000/v3
-    OS_PROJECT_NAME: "godon"
-    OS_USER_DOMAIN_NAME: "Default"
-    OS_PROJECT_DOMAIN_ID: "default"
-    OS_REGION_NAME: "RegionOne"
-    OS_IDENTITY_API_VERSION: 3
-    OS_INTERFACE: public
-    OS_USERNAME: ${{ secrets.osuosl_openstack_user }}
-    OS_PASSWORD: ${{ secrets.osuosl_openstack_pw }}
 
 jobs:
-    pre_controller:
-        runs-on: ubuntu-20.04
-        steps:
-            - name: install
-              run: >
-                   sudo apt-get update;
-                   sudo apt-get install ansible python3-openstackclient jq;
-            - name: start runner
-              run: >
-                   openstack server list  -f yaml | grep -q "Status: ACTIVE" ||
-                   openstack server start "${INSTANCE_NAME}";
-    ###
-    testing:
-        runs-on: [self-hosted, linux] # only unique osuosl instance
-        needs: [ pre_controller ]
-        steps:
-            - uses: actions/checkout@v2
-            # FIXME needs rework
-            #- name: perform test run
-            #  run: >
-            #       mask --maskfile "${MASK_FILE}" testing perform;
-            #env:
-            #    MASK_FILE: testing/maskfile.md
+  testing:
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'checkout') }}
+    runs-on: [self-hosted, linux] # only unique osuosl instance
+    steps:
+        - uses: actions/checkout@v2
+        - name: do post checkout
+          run: >
+            echo "to be defined"
