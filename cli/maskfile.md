@@ -76,7 +76,7 @@ __api_version="${api_version:-v0}"
 __file="${file}"
 __temp_file_json_tranfer="$(mktemp)"
 
-cat "${__file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
+cat "${__file}" | python -c 'import sys, yaml, json; json.dump(yaml.safe_load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
 
 curl --request POST \
      -H 'Content-Type: application/json' \
@@ -146,7 +146,7 @@ set -eEux
 __api_version="${api_version:-v0}"
 __temp_file_json_tranfer="$(mktemp)"
 
-cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
+cat "${file}" | python -c 'import sys, yaml, json; json.dump(yaml.safe_load(sys.stdin), sys.stdout, indent=4)' > "${__temp_file_json_tranfer}"
 
 curl --request PUT \
      -H 'Content-Type: application/json' \
