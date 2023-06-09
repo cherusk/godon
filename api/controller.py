@@ -214,8 +214,8 @@ def breeders_post(content):  # noqa: E501
     with client.ApiClient(configuration) as api_client:
         # Do not create connection dynamically for now
         # api_response['connection'] = create_connection(api_client, content).to_dict()
-        api_response['breeder'] = create_breeder(api_client, content).to_dict()
-
+        #api_response['breeder'] = create_breeder(api_client, content).to_dict()
+        create_breeder(api_client, content)
 
     return Response(dict(), status=200, mimetype='application/json')
 
