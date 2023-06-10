@@ -83,16 +83,13 @@ services:
         - "8786:8786"
         - "8787:8787"
       command: ["dask-scheduler"]
-    dask_worker1:
+    dask_worker:
       build:
         context: ./
         dockerfile: ./Dockerfile-dask
       command: ["dask-worker", "tcp://dask_scheduler:8786"]
-    dask_worker2:
-      build:
-        context: ./
-        dockerfile: ./Dockerfile-dask
-      command: ["dask-worker", "tcp://dask_scheduler:8786"]
+      deploy:
+        replicas: 2
     prometheus:
       image: prom/prometheus
       volumes:
