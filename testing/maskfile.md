@@ -99,7 +99,8 @@ link_instance_to_switch() {
                         --persistent
 }
 
-ip link add veth_port_0 type veth peer name veth_port_1
+id
+strace ip link add veth_port_0 type veth peer name veth_port_1
 
 for switch_number in $(seq 0 1)
 do
