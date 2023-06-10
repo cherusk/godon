@@ -44,7 +44,6 @@ jobs:
       image_pool_dir: "/srv/"
       nix_config_path: "testing/infra/machines/nix/configuration.nix"
     steps:
-      - uses: actions/checkout@v2
       - name: build test instance nixos configuration
         run: >
              mkdir -p "${image_pool_dir}";
@@ -62,7 +61,6 @@ jobs:
     env:
       MASK_FILE: testing/maskfile.md
     steps:
-      - uses: actions/checkout@v2
       - name: cleanup former stack
         run: >
              source /etc/bashrc;
