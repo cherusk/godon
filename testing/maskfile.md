@@ -94,27 +94,27 @@ link_instance_to_switch() {
     envsubst < "${__link_template}" > "${__link_definition}"
 
 
-    sudo virsh attach-device --domain "${__instance}" \
-                             --file "${__link_definition}" \
-                             --persistent
+    virsh attach-device --domain "${__instance}" \
+                        --file "${__link_definition}" \
+                        --persistent
 }
 
-sudo ip link add veth_port_0 type veth peer name veth_port_1
+ip link add veth_port_0 type veth peer name veth_port_1
 
 for switch_number in $(seq 0 1)
 do
     switch_name="switch_${switch_number}"
 
     # connect 
-    sudo ovs-vsctl add-br "${switch_name}"
-    sudo ovs-vsctl add-port "${switch_name}" "veth_port_${switch_number}"
+    ovs-vsctl add-br "${switch_name}"
+    ovs-vsctl add-port "${switch_name}" "veth_port_${switch_number}"
 
     # activate
-    sudo ip link set "${switch_name}" up
-    sudo ip link set "veth_port_${switch_number}" up
+    ip link set "${switch_name}" up
+    ip link set "veth_port_${switch_number}" up
 done
 
-sudo tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
+tc qdisc add dev veth_port_0 root netem rate 10mbit delay 4ms
 
 link_instance_to_switch "source_vm" "switch_0" "source_vm_port"
 link_instance_to_switch "sink_vm" "switch_1" "sink_vm_port"
@@ -146,10 +146,10 @@ set -eEux
 for switch_number in $(seq 0 1)
 do
     switch_name="switch_${switch_number}"
-    sudo ovs-vsctl del-br "${switch_name}" || exit 0
+    ovs-vsctl del-br "${switch_name}" || exit 0
 done
 
-sudo ip link del veth_port_0 || exit 0
+ip link del veth_port_0 || exit 0
 
 ~~~
 
