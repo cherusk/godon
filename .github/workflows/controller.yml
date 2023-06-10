@@ -24,7 +24,7 @@ on:
 
 
 jobs:
-  testing:
+  checkout:
     if: ${{ contains(github.event.pull_request.labels.*.name, 'checkout') }}
     runs-on: [self-hosted, linux] # only unique osuosl instance
     steps:
