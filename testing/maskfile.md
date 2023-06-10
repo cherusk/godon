@@ -40,7 +40,7 @@ ${__kcli_cmd} "create plan -f ./infra/machines/plan.yml ${__plan_name}"
 ${__kcli_cmd} "list plan"
 ${__kcli_cmd} "list vm"
 
-sleep 10
+sleep 30
 
 # generate prometheus target config
 __target_ip_addresses_array=($(${__kcli_cmd} "list vm" | grep 'micro_stack' | awk -F\| '{ print $4 }' | xargs))
