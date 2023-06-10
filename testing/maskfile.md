@@ -182,9 +182,9 @@ set -eEux
 
 svc_name=control_loop
 
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" up -d
+docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" up -d
 
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T --user root "${svc_name}" \
+docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T --user root "${svc_name}" \
                        chown -R airflow:airflow /opt/airflow/credentials/
 
 ~~~
@@ -244,12 +244,12 @@ set -eEux
 container_name="quay.io/karmab/kcli"
 pool_dir="/srv/"
 
-sudo docker run --net host --rm \
-                -t -a stdout -a stderr \
-                -v ${pool_dir}:${pool_dir} \
-                -v /var/run/libvirt:/var/run/libvirt \
-                -v  ${MASKFILE_DIR}:/workdir \
-                ${container_name} ${cmd}
+docker run --net host --rm \
+           -t -a stdout -a stderr \
+           -v ${pool_dir}:${pool_dir} \
+           -v /var/run/libvirt:/var/run/libvirt \
+           -v  ${MASKFILE_DIR}:/workdir \
+           ${container_name} ${cmd}
 
 ~~~
 
