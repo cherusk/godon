@@ -73,3 +73,17 @@ jobs:
              sleep 30;
              mask --maskfile "${MASK_FILE}" config generate prometheus;
              mask --maskfile "${MASK_FILE}" infra create network;
+  godon_recreate:
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'godon') && contains(github.event.pull_request.labels.*.name, 'recreate') }}
+    runs-on: [self-hosted, linux] # only unique osuosl instance
+    env:
+      MASK_FILE: testing/maskfile.md
+    steps:
+      - name: cleanup former stack
+        run: >
+             source /etc/bashrc;
+             mask --maskfile "${MASK_FILE}" godon cleanup;
+      - name: reerrect stack
+        run: >
+             source /etc/bashrc;
+             mask --maskfile "${MASK_FILE}" godon create;
