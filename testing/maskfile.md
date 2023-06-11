@@ -24,12 +24,14 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 
 ### config generate
 
-### config generate prometheus
+#### config generate prometheus
 
 > config generator for prometheus monitored targets
 
 ~~~bash
 set -eEux
+
+__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
 
  ## generate prometheus target config
 __target_ip_addresses_array=($(${__kcli_cmd} "list vm" | grep 'micro_stack' | awk -F\| '{ print $4 }' | xargs))
@@ -58,6 +60,33 @@ cat << EOF > targets.json
 EOF
 
 ~~~
+
+#### config generate breeder (output_file)
+
+> config generator for breeder test run
+
+~~~bash
+set -eEux
+
+__template_file="${MASKFILE_DIR}/../examples/network.yml"
+__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
+
+ ## generate breeder test run config from running instances
+__target_ip_addresses_array=($(${__kcli_cmd} "list vm" | grep 'micro_stack' | awk -F\| '{ print $4 }' | xargs))
+
+
+  ## empty existing targets
+cat "${__template_file}" | yq '.breeder.effectuation.targets |= []'  | yq --yaml-output > ${output_file}
+
+for __target_ip_address in ${__target_ip_addresses_array}
+do
+  targets_object="{ "user": "godon_robot", "key_file": "/opt/airflow/credentials/id_rsa", "address": "${__target_ip_address}" }"
+  cat "${__template_file}" | yq '.breeder.effectuation.targets += $ENV.targets_object' | yq --yaml-output > ${output_file}
+done
+
+~~~
+
+
 
 ## infra
 
