@@ -18,31 +18,20 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 -->
 # Godon Test Session Coordinator
 
-## infra
+## config
 
-> micro infrastructure stack related logic
+> config generation auxiliary logic
 
-### infra create
+### config generate
 
-#### infra create machines
+### config generate prometheus
 
-> Instanciate Micro Test Infra Stack machines based on kcli/libvirt
+> config generator for prometheus monitored targets
 
 ~~~bash
 set -eEux
 
-__plan_name=micro_stack
-__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
-
-echo "instanciating machines"
-${__kcli_cmd} "create plan -f ./infra/machines/plan.yml ${__plan_name}"
-
-${__kcli_cmd} "list plan"
-${__kcli_cmd} "list vm"
-
-sleep 30
-
-# generate prometheus target config
+ ## generate prometheus target config
 __target_ip_addresses_array=($(${__kcli_cmd} "list vm" | grep 'micro_stack' | awk -F\| '{ print $4 }' | xargs))
 
 cat << EOF > targets.json
@@ -67,6 +56,30 @@ cat << EOF > targets.json
 ]
 
 EOF
+
+~~~
+
+## infra
+
+> micro infrastructure stack related logic
+
+### infra create
+
+#### infra create machines
+
+> Instanciate Micro Test Infra Stack machines based on kcli/libvirt
+
+~~~bash
+set -eEux
+
+__plan_name=micro_stack
+__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
+
+echo "instanciating machines"
+${__kcli_cmd} "create plan -f ./infra/machines/plan.yml ${__plan_name}"
+
+${__kcli_cmd} "list plan"
+${__kcli_cmd} "list vm"
 
 ~~~
 
