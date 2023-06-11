@@ -186,30 +186,25 @@ echo "provisioning infra instances"
 
 > Mngnt logic for the godon stack 
 
-### godon setup 
+### godon create
 
-> Errect the parts of godon
+> Create godon services
 
 ~~~bash
 set -eEux
 
-svc_name=control_loop
-
-docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" up -d
-
-docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T --user root "${svc_name}" \
-                       chown -R airflow:airflow /opt/airflow/credentials/
+docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up -d
 
 ~~~
 
-### godon deplete 
+### godon cleanup
 
-> Deplete parts of godon
+> Cleanup godon services
 
 ~~~bash
 set -eEux
 
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" down 
+docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" down
 
 ~~~
 
