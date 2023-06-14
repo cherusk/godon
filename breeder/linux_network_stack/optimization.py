@@ -18,7 +18,8 @@ def objective(trial, identifier):
     settings = []
     for setting_name, setting_config in config.get('settings').get('sysctl').items():
         constraints = setting_config.get('constraints')
-        suggested_value = trial.suggest_int(setting_name, constraints.get('lower') , constraints.get('upper') )
+        step_width = setting_config.get('step')
+        suggested_value = trial.suggest_int(setting_name, constraints.get('lower') , constraints.get('upper'), step_width)
         if setting_name in ['net.ipv4.tcp_rmem', 'net.ipv4.tcp_wmem']:
             settings.append(f"sudo sysctl -w {setting_name}='4096 131072 {suggested_value}';")
         else:
