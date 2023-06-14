@@ -279,7 +279,7 @@ sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}
 set -eEux
 
 container_name="quay.io/karmab/kcli"
-pool_dir="/srv/"
+pool_dir="/github-runner/artifacts/"
 
 docker run --net host --rm \
            -t -a stdout -a stderr \
