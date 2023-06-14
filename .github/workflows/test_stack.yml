@@ -41,7 +41,7 @@ jobs:
     if: ${{ contains(github.event.pull_request.labels.*.name, 'teststack') && contains(github.event.pull_request.labels.*.name, 'rebuild') }}
     runs-on: [self-hosted, linux] # only unique osuosl instance
     env:
-      image_pool_dir: "/srv/"
+      image_pool_dir: "/github-runner/artifacts"
       nix_config_path: "testing/infra/machines/nix/configuration.nix"
     steps:
       - name: build test instance nixos configuration
