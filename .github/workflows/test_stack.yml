@@ -46,8 +46,8 @@ jobs:
     steps:
       - name: build test instance nixos configuration
         run: >
-             mkdir -p "${image_pool_dir}";
              source /etc/bashrc;
+             export NIXPKGS_ALLOW_INSECURE=1
              image="$(nixos-generate -f qcow -c "${nix_config_path}" | tail -n 2 | grep qcow2)";
              echo "image=${image}" >> $GITHUB_ENV
       - name: update image in pool
