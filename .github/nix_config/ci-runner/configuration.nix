@@ -46,7 +46,7 @@
   };
 
   # create github-runner work dir
-  systemd.tmpfiles.rules = [ "d /github-runner/ 0755 root root -" ];
+  systemd.tmpfiles.rules = [ "d /github-runner/ 0755 root root -" "d /github-runner/artifacts 0755 root root -" ];
 
   environment.systemPackages = let pythonModules = pythonPackages: with pythonPackages; [ pyyaml ];
   in with pkgs; [
