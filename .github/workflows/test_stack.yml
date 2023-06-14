@@ -72,7 +72,7 @@ jobs:
              mask --maskfile "${MASK_FILE}" infra create machines;
              sleep 30;
              mask --maskfile "${MASK_FILE}" config generate prometheus;
-             mask --maskfile "${MASK_FILE}" config generate breeder "${MASK_FILE}/examples/network_gen.yml";
+             mask --maskfile "${MASK_FILE}" config generate breeder "./examples/network_gen.yml";
              mask --maskfile "${MASK_FILE}" infra create network;
   godon_recreate:
     if: ${{ contains(github.event.pull_request.labels.*.name, 'godon') && contains(github.event.pull_request.labels.*.name, 'recreate') }}
