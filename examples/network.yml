@@ -6,22 +6,27 @@ breeder:
   settings:
     sysctl:
       net.ipv4.tcp_rmem:
+        step: 100
         constraints:
           lower: 4096
           upper: 6291456
       net.ipv4.tcp_wmem:
+        step: 100
         constraints:
           lower: 4096
           upper: 6291456
       net.core.netdev_budget:
+        step: 10
         constraints:
           lower: 10
           upper: 2000
       net.core.netdev_max_backlog:
+        step: 10
         constraints:
           lower: 10
           upper: 5000
       net.core.dev_weight:
+        step: 10
         constraints:
           lower: 10
           upper: 2000
