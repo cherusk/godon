@@ -20,7 +20,7 @@
 
 image_pool:
   type: pool
-  path: /srv/
+  path: /github-runner/artifacts
 
 oob:
  type: network
