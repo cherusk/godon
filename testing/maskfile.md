@@ -76,12 +76,12 @@ __target_ip_addresses_array=($(${__kcli_cmd} "list vm" | grep 'micro_stack' | aw
 
 
   ## empty existing targets
-cat "${__template_file}" | yq '.breeder.effectuation.targets |= []'  | yq --yaml-output > ${output_file}
+cat "${__template_file}" | yq '.breeder.effectuation.targets |= []' - > ${output_file}
 
-for __target_ip_address in ${__target_ip_addresses_array}
+for __target_ip_address in ${__target_ip_addresses_array[@]}
 do
-  targets_object="{ "user": "godon_robot", "key_file": "/opt/airflow/credentials/id_rsa", "address": "${__target_ip_address}" }"
-  cat "${__template_file}" | yq '.breeder.effectuation.targets += $ENV.targets_object' | yq --yaml-output > ${output_file}
+  export targets_object="{ "user": "godon_robot", "key_file": "/opt/airflow/credentials/id_rsa", "address": "${__target_ip_address}" }"
+  yq -i '.breeder.effectuation.targets += env(target_object)' "${output_file}"
 done
 
 ~~~
