@@ -34,7 +34,7 @@
       url = "https://github.com/cherusk/godon";
       tokenFile = "/srv/gh_runner.token";
       extraLabels = [ "nixos" "osuosl" ];
-      extraPackages = with pkgs; [ nixos-generators mask docker ];
+      extraPackages = with pkgs; [ nixos-generators mask docker iproute2 jq yq-go ];
       workDir = "/github-runner/";
       serviceOverrides = {
         PrivateUsers = false;
@@ -67,6 +67,7 @@
     iperf3
     iproute2
     jq
+    yq-go
     killall
     mask
     nmap
