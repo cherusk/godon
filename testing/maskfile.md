@@ -289,17 +289,3 @@ docker run --net host --rm \
            ${container_name} ${cmd}
 
 ~~~
-
-#### util kcli inventory
-
-> Dump dynamic ansible inventory
-
-~~~bash
-set -eEu
-
-sudo docker run --security-opt label:disable \
-                -t -a stdout -a stderr \
-                -v /var/run/libvirt:/var/run/libvirt \
-                --entrypoint=/usr/bin/klist.py karmab/kcli --list
-
-~~~
