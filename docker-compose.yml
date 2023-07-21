@@ -96,6 +96,20 @@ services:
         - ./testing/:/etc/prometheus/
       ports:
           - 9090:9090
+    archive_db:
+      image: yugabytedb/yugabyte:2.18.0.0
+      container_name: "${DB_CONTAINER_NAME:-yugabytedb}"
+      ports:
+        - ${DB_YSQL_PORT:-5433}:5433
+        - ${DB_YCQL_PORT:-9042}:9042
+        # Admin UI
+        - ${DB_MASTER_PORT:-7001}:7000
+        - ${DB_TSERVER_PORT:-9000}:9000
+      command: [
+        "bin/yugabyted", "start",
+        "--base_dir=/home/yugabyte/yb_data",
+        "--daemon=false"
+        ]
 
 volumes:
   postgres-db-volume:
