@@ -65,7 +65,7 @@ services:
             - ./breeder/linux_network_stack/:/usr/src/app/openapi_server/templates/
             - ./breeder/dags:/usr/src/app/openapi_server/dags/
         ports:
-          - 127.0.0.1:9000:8080
+          - 127.0.0.1:9100:8080
     nats: # queueing system for decoupling dags
         image: nats:2.9.15
         restart: always
