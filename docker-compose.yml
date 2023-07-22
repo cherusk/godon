@@ -97,7 +97,7 @@ services:
       ports:
           - 9090:9090
     archive_db:
-      image: yugabytedb/yugabyte:2.18.0.0
+      image: yugabytedb/yugabyte:2.18.1.0-b84
       container_name: "${DB_CONTAINER_NAME:-yugabytedb}"
       ports:
         - ${DB_YSQL_PORT:-5433}:5433
