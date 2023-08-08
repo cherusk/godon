@@ -61,6 +61,7 @@ services:
         restart: always
         environment:
           - AIRFLOW__URL=http://control_loop:8080
+          - ARCHIVE_DB_URL=http://archive_db:5433
         volumes:
             - ./breeder/linux_network_stack/:/usr/src/app/openapi_server/templates/
             - ./breeder/dags:/usr/src/app/openapi_server/dags/
