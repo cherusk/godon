@@ -47,6 +47,8 @@ AIRFLOW_API_AUTH_PW = "airflow"
 DAG_TEMPLATES_DIR = "/usr/src/app/openapi_server/templates/"
 DAG_DIR = "/usr/src/app/openapi_server/dags/"
 
+ARCHIVE_DB_BASE_URL= os.environ.get('ARCHIVE_DB_URL')
+
 breeders_db = dict()
 
 configuration = client.Configuration(
