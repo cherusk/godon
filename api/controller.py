@@ -39,6 +39,8 @@ from flask import Response
 
 from jinja2 import Environment, FileSystemLoader
 
+import archive_db
+
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
 AIRFLOW_API_AUTH_USER = "airflow"
@@ -47,7 +49,10 @@ AIRFLOW_API_AUTH_PW = "airflow"
 DAG_TEMPLATES_DIR = "/usr/src/app/openapi_server/templates/"
 DAG_DIR = "/usr/src/app/openapi_server/dags/"
 
-ARCHIVE_DB_BASE_URL= os.environ.get('ARCHIVE_DB_URL')
+ARCHIVE_DB_CONFIG = dict(user="yugabyte",
+                         password="yugabyte",
+                         host=os.environ.get('ARCHIVE_DB_HOSTNAME'),
+                         port=os.environ.get('ARCHIVE_DB_PORT'))
 
 breeders_db = dict()
 
@@ -170,6 +175,12 @@ def breeders_post(content):  # noqa: E501
             dag_file.write(rendered_dag)
 
         time.sleep(2) # wait as workaround until synchronous reload of dags implemented
+
+        # set dbname to work with to breeder_id
+        db_config = ARCHIVE_DB_CONFIG.copy()
+        db_config.update(dict(dbname=breeder_id))
+
+        archive_db.__execute(db_info=db_config, statement="")
 
         # Stop calling the API for now until decided
         # if we template the breeder dags only or we really want to instrument the API.
