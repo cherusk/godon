@@ -32,3 +32,4 @@ jobs:
         - name: do post checkout
           run: >
             pushd api && mask api generate && popd;
+            chmod 0744 requirements.txt;
