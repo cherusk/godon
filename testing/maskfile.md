@@ -222,7 +222,7 @@ echo "provisioning infra instances"
 ~~~bash
 set -eEux
 
-docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up -d
+docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up --build -d
 
 ~~~
 
