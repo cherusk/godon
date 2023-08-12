@@ -50,5 +50,5 @@ cp "${MASKFILE_DIR}"/archive_db.py ./flask/openapi_server/controllers/archive_db
 
 echo "apache-airflow-client == 2.3.0" >> ./flask/requirements.txt
 echo "Jinja2 == 3.1.2" >> ./flask/requirements.txt
-echo "psycopg2-yugabytedb == 2.9.3.post0" >> ./flask/requirements.txt
+echo "psycopg2-binary == 2.9.7" >> ./flask/requirements.txt
 ~~~
