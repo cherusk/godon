@@ -37,13 +37,13 @@ class queries():
 
         return query
 
-    def create_trigger(trigger_name=None, table_name=None, function_name=None):
+    def create_trigger(trigger_name=None, table_name=None, procedure_name=None):
         query = f"""
         CREATE TRIGGER {trigger_name}
         AFTER INSERT ON {table_name}
         FOR EACH ROW
         EXECUTE
-        FUNCTION {function_name}
+        procedure{procedure_name}
         );
         """
 
