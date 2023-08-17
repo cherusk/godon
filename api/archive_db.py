@@ -44,7 +44,25 @@ class queries():
         FOR EACH ROW
         EXECUTE
         procedure{procedure_name}
-        );
+        """
+
+        return query
+
+    def create_procedure(procedure_name=None, probability=1.0, trigger_name=None, table_name=None):
+        query = f"""
+        CREATE OR REPLACE PROCEDURE {procedure_name}
+        LANGUAGE plpgsql
+        AS $body$
+        BEGIN
+
+          random_value := random();
+
+          IF {random_value} < {probability} THEN
+            RAISE NOTICE 'Not implemented yet'
+          END IF;
+
+        END;
+        $body$;
         """
 
         return query
