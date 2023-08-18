@@ -185,7 +185,7 @@ def breeders_post(content):  # noqa: E501
         dag_name = breeder_config.get('name')
 
         __query = archive.queries.create_breeder_table(table_name=dag_name)
-        archive.archive_db.__execute(db_info=db_config, query=query)
+        archive.archive_db.__execute(db_info=db_config, query=__query)
 
         for target in targets:
             identifier = str(abs(hash(target.get('address'))))[0:6]
@@ -193,17 +193,17 @@ def breeders_post(content):  # noqa: E501
                 dag_id = f'{dag_name}_{run_id}_{identifier}'
 
                 __query = archive.queries.create_breeder_table(table_name=dag_id)
-                archive.archive_db.__execute(db_info=db_config, query=query)
+                archive.archive_db.__execute(db_info=db_config, query=__query)
 
                 __query = archive.queries.create_procedure(procedure_name=f"{dag_id}_procedure",
                                                            probability="from_config",
                                                            table_name=dag_id)
-                archive.archive_db.__execute(db_info=db_config, query=query)
+                archive.archive_db.__execute(db_info=db_config, query=__query)
 
                 __query = archive.queries.create_trigger(trigger_name="{dag_id}_trigger",
                                                          table_name=dag_id,
                                                          procedure_name="{dag_id}_procedure")
-                archive.archive_db.__execute(db_info=db_config, query=query)
+                archive.archive_db.__execute(db_info=db_config, query=__query)
 
         # Stop calling the API for now until decided
         # if we template the breeder dags only or we really want to instrument the API.
