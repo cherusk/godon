@@ -33,6 +33,11 @@ services:
             - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
             - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
             - 'AIRFLOW_CONN_LINUX_NETWORK_STACK_BREEDER_SSH={ "conn_type": "ssh", "login": "godon_robot", "host": "10.0.5.53", "port": 22, "extra": { "key_file": "/opt/airflow/credentials/id_rsa" } }'
+            - ARCHIVE_DB_USER=yugabyte
+            - ARCHIVE_DB_PASSWORD=yugabyte
+            - ARCHIVE_DB_HOST=archive_db
+            - ARCHIVE_DB_PORT=5433
+            - ARCHIVE_DB_DATABASE=archive-db
         # minimum of setup steps
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"

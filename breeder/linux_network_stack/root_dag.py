@@ -32,6 +32,8 @@ from optuna.storages import InMemoryStorage
 from optuna.integration import DaskStorage
 from distributed import Client, wait
 
+from sqlalchemy import create_engine
+
 from prometheus_api_client import PrometheusConnect, MetricsList, Metric
 from prometheus_api_client.utils import parse_datetime
 from datetime import timedelta
@@ -74,6 +76,9 @@ DEFAULTS = {
     }
 
 NATS_SERVER_URL = "nats://godon_nats_1:4222"
+
+
+ARCHIVE_DB_ENGINE = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
 
 ###
 
