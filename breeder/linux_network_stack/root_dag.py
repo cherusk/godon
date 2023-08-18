@@ -33,6 +33,7 @@ from optuna.integration import DaskStorage
 from distributed import Client, wait
 
 from sqlalchemy import create_engine
+from sqlalchemy import text
 
 from prometheus_api_client import PrometheusConnect, MetricsList, Metric
 from prometheus_api_client.utils import parse_datetime
