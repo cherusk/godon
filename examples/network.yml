@@ -39,6 +39,9 @@ breeder:
       # start: 1m
       end: 10d
       interval: 60
+  cooperation:
+    consolidation:
+      probability: 0.8
   recon:
     prometheus:
       - name: "tcp_rtt"

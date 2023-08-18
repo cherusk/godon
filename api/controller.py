@@ -182,6 +182,7 @@ def breeders_post(content):  # noqa: E501
 
         parallel_runs = breeder_config.get('run').get('parallel')
         targets = breeder_config.get('effectuation').get('targets')
+        consolidation_probability = breeder_config.get('cooperation').get('consolidation').get('probability')
         dag_name = breeder_config.get('name')
 
         __query = archive.queries.create_breeder_table(table_name=dag_name)
@@ -196,7 +197,7 @@ def breeders_post(content):  # noqa: E501
                 archive.archive_db.__execute(db_info=db_config, query=__query)
 
                 __query = archive.queries.create_procedure(procedure_name=f"{dag_id}_procedure",
-                                                           probability="from_config",
+                                                           probability=consolidation_probability,
                                                            table_name=dag_id)
                 archive.archive_db.__execute(db_info=db_config, query=__query)
 
