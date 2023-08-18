@@ -180,14 +180,30 @@ def breeders_post(content):  # noqa: E501
         db_config = ARCHIVE_DB_CONFIG.copy()
         db_config.update(dict(dbname=breeder_id))
 
-        __query = archive.queries.create_breeder_table(table_name="per_dag_id")
+        parallel_runs = breeder_config.get('run').get('parallel')
+        targets = breeder_config.get('effectuation').get('targets')
+        dag_name = breeder_config.get('name')
+
+        __query = archive.queries.create_breeder_table(table_name=dag_name)
         archive.archive_db.__execute(db_info=db_config, query=query)
 
-        __query = archive.queries.create_procedure(procedure_name="per_dag_id_procedure", probability="from_config", table_name="per_dag_id")
-        archive.archive_db.__execute(db_info=db_config, query=query)
+        for target in targets:
+            identifier = str(abs(hash(target.get('address'))))[0:6]
+            for run_id in range(0, parallel_runs):
+                dag_id = f'{dag_name}_{run_id}_{identifier}'
 
-        __query = archive.queries.create_trigger(trigger_name="per_dag_id_procedure", table_name="per_dag_id", procedure_name="per_dag_id_procedure")
-        archive.archive_db.__execute(db_info=db_config, query=query)
+                __query = archive.queries.create_breeder_table(table_name=dag_id)
+                archive.archive_db.__execute(db_info=db_config, query=query)
+
+                __query = archive.queries.create_procedure(procedure_name=f"{dag_id}_procedure",
+                                                           probability="from_config",
+                                                           table_name=dag_id)
+                archive.archive_db.__execute(db_info=db_config, query=query)
+
+                __query = archive.queries.create_trigger(trigger_name="{dag_id}_trigger",
+                                                         table_name=dag_id,
+                                                         procedure_name="{dag_id}_procedure")
+                archive.archive_db.__execute(db_info=db_config, query=query)
 
         # Stop calling the API for now until decided
         # if we template the breeder dags only or we really want to instrument the API.
