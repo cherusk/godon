@@ -39,7 +39,7 @@ from flask import Response
 
 from jinja2 import Environment, FileSystemLoader
 
-import archive_db
+import archive_db as archive
 
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
@@ -180,7 +180,14 @@ def breeders_post(content):  # noqa: E501
         db_config = ARCHIVE_DB_CONFIG.copy()
         db_config.update(dict(dbname=breeder_id))
 
-        archive_db.__execute(db_info=db_config, query="")
+        __query = archive.queries.create_breeder_table(table_name="per_dag_id")
+        archive.archive_db.__execute(db_info=db_config, query=query)
+
+        __query = archive.queries.create_procedure(procedure_name="per_dag_id_procedure", probability="from_config", table_name="per_dag_id")
+        archive.archive_db.__execute(db_info=db_config, query=query)
+
+        __query = archive.queries.create_trigger(trigger_name="per_dag_id_procedure", table_name="per_dag_id", procedure_name="per_dag_id_procedure")
+        archive.archive_db.__execute(db_info=db_config, query=query)
 
         # Stop calling the API for now until decided
         # if we template the breeder dags only or we really want to instrument the API.
