@@ -101,6 +101,8 @@ services:
     archive_db:
       image: yugabytedb/yugabyte:2.18.1.0-b84
       container_name: "${DB_CONTAINER_NAME:-yugabytedb}"
+      environment:
+        - "YSQL_DB=archive-db"
       ports:
         - ${DB_YSQL_PORT:-5433}:5433
         - ${DB_YCQL_PORT:-9042}:9042
