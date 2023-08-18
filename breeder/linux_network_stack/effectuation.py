@@ -36,11 +36,25 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
             task_logger.debug("Entering")
 
             metric_value = ti.xcom_pull(task_ids="recon_step")
+            settings_full = ti.xcom_pull(task_ids="pull_optimization_step")
+
+            setting_id = str(abs(hash(settings_full)))
 
             task_logger.debug(f"Metric : f{metric_value}")
 
             metric_data = dict(metric=metric_value)
             msg = asyncio.run(send_msg_via_nats(subject=f'recon_{identifier}', data_dict=metric_data))
+
+
+            breeder_table_name = f"from_dag_name" # TBD local dag id based name
+
+            query  = text("INSERT INTO :table_name VALUES (:setting_id, :setting_full, :setting_result )")
+            query = query.bindparams(bindparam("table_name", breeder_table_name, type_=String),
+                                     bindparam("setting_id", setting_id, type_=String),
+                                     bindparam("setting_full", settings_full, type_=String),
+                                     bindparam("setting_result", metric_data, type_=String))
+
+            ARCHIVE_DB_ENGINE.execute(query)
 
             task_logger.debug("Done")
 
