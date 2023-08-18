@@ -198,7 +198,8 @@ def breeders_post(content):  # noqa: E501
 
                 __query = archive.queries.create_procedure(procedure_name=f"{dag_id}_procedure",
                                                            probability=consolidation_probability,
-                                                           table_name=dag_id)
+                                                           source_table_name=dag_id,
+                                                           target_table_name=dag_name)
                 archive.archive_db.__execute(db_info=db_config, query=__query)
 
                 __query = archive.queries.create_trigger(trigger_name="{dag_id}_trigger",

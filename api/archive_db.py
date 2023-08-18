@@ -52,17 +52,20 @@ class queries():
         return query
 
     @classmethod
-    def create_procedure(procedure_name=None, probability=1.0, table_name=None):
+    def create_procedure(procedure_name=None, probability=1.0, source_table_name=None, target_table_name=None):
         query = f"""
         CREATE OR REPLACE PROCEDURE {procedure_name}
         LANGUAGE plpgsql
         AS $body$
         BEGIN
 
-          random_value := random();
+          random_value real := random();
 
-          IF {random_value} < {probability} THEN
-            RAISE NOTICE 'Not implemented yet'
+          IF random_value < {probability} THEN
+            INSERT INTO {target_table_name} (target_table_setting_id, target_table_setting_full, target_table_setting_result)
+            SELECT source_table_setting_id, source_table_setting_full, source_table_setting_result FROM {source_table_name}
+            ON CONFLICT
+            DO UPDATE SET target_table_setting_result = source_table_setting_result WHERE  target_table_setting_result < source_table_setting_result;
           END IF;
 
         END;
