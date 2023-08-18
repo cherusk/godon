@@ -180,7 +180,7 @@ def breeders_post(content):  # noqa: E501
         db_config = ARCHIVE_DB_CONFIG.copy()
         db_config.update(dict(dbname=breeder_id))
 
-        archive_db.__execute(db_info=db_config, statement="")
+        archive_db.__execute(db_info=db_config, query="")
 
         # Stop calling the API for now until decided
         # if we template the breeder dags only or we really want to instrument the API.

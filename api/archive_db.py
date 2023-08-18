@@ -3,7 +3,7 @@ import psycopg2
 
 class archive_db():
 
-    def __execute(db_info=None, statement=""):
+    def __execute(db_info=None, query=""):
         """ Function wrapping the curoser execute with
             a dedicated connection for the execution."""
 
@@ -12,7 +12,7 @@ class archive_db():
             with psycopg2.connect(**db_info) as db_connection:
                 # Create table
                 with db_connection.cursor() as db_cursor:
-                    db_cursor.execute(statement)
+                    db_cursor.execute(query)
 
         except OperationalError as Error:
             print(f"Error connecting to the database : {Error}")
