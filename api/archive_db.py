@@ -52,7 +52,7 @@ class queries():
         return query
 
     @classmethod
-    def create_procedure(procedure_name=None, probability=1.0, trigger_name=None, table_name=None):
+    def create_procedure(procedure_name=None, probability=1.0, table_name=None):
         query = f"""
         CREATE OR REPLACE PROCEDURE {procedure_name}
         LANGUAGE plpgsql
