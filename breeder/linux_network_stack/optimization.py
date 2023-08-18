@@ -26,16 +26,33 @@ def objective(trial, identifier):
             settings.append(f"sudo sysctl -w {setting_name}='{suggested_value}';")
     settings = '\n'.join(settings)
 
-    logger.warning('doing effectuation')
-    settings_data = dict(settings=settings)
-    asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))
+    is_setting_explored = False
+    setting_id = str(abs(hash(settings)))
 
-    logger.warning('gathering recon')
-    metric = json.loads(asyncio.run(receive_msg_via_nat(subject=f'recon_{identifier}')))
-    metric_value = metric.get('metric')
-    rtt = float(metric_value['tcp_rtt'])
-    delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
-    logger.warning(f'metric received {metric_value}')
+    breeder_table_name = f"from_breeder_name" # TBD global knowledge db table nam
+    query = text("SELECT * FROM :table_name WHERE :table_name.setting_id == :setting_id")
+
+    query = query.bindparams(bindparam("table_name", breeder_table_name, type_=String),
+                             bindparam("setting_id", setting_id, type_=String))
+
+    archive_db_data = ARCHIVE_DB_ENGINE.execute(query).fetchall()
+
+    if archive_db_data:
+        is_setting_explored = True
+        rtt = archive_db_data[0].get('setting_result').get('rtt')
+        delivery_rate = archive_db_data[0].get('setting_result').get('delivery_rate')
+
+    if not is_setting_explored:
+        logger.warning('doing effectuation')
+        settings_data = dict(settings=settings)
+        asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))
+
+        logger.warning('gathering recon')
+        metric = json.loads(asyncio.run(receive_msg_via_nat(subject=f'recon_{identifier}')))
+        metric_value = metric.get('metric')
+        rtt = float(metric_value['tcp_rtt'])
+        delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
+        logger.warning(f'metric received {metric_value}')
 
     logger.warning('Done')
 
