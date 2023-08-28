@@ -40,6 +40,7 @@ breeder:
       end: 10d
       interval: 60
   cooperation:
+    active: true
     consolidation:
       probability: 0.8
   recon:
