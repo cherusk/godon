@@ -34,13 +34,23 @@
       url = "https://github.com/cherusk/godon";
       tokenFile = "/srv/gh_runner.token";
       extraLabels = [ "nixos" "osuosl" ];
-      extraPackages = with pkgs; [ nixos-generators mask docker iproute2 jq yq-go ];
+      extraPackages = let
+        old_pkgs = import (builtins.fetchTarball {
+          url = "https://github.com/NixOS/nixpkgs/archive/d1c3fea7ecbed758168787fe4e4a3157e52bc808.tar.gz";
+        }) { };
+
+        docker_old = old_pkgs.docker-client;
+        docker_compose_old = old_pkgs.docker-compose;
+
+      in with pkgs; [ nixos-generators mask docker_old docker_compose_old iproute2 jq yq-go ];
       workDir = "/github-runner/";
       serviceOverrides = {
         PrivateUsers = false;
         DynamicUser = false;
         PrivateDevices = false;
         PrivateMounts = false;
+        AmbientCapabilities = [ "CAP_NET_ADMIN" ];
+        CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
       };
     };
   };
@@ -48,7 +58,13 @@
   # create github-runner work dir
   systemd.tmpfiles.rules = [ "d /github-runner/ 0755 root root -" "d /github-runner/artifacts 0755 root root -" ];
 
-  environment.systemPackages = let pythonModules = pythonPackages: with pythonPackages; [ pyyaml ];
+  environment.systemPackages = let
+    pythonModules = pythonPackages: with pythonPackages; [ pyyaml ];
+    old_pkgs = import (builtins.fetchTarball {
+      url = "https://github.com/NixOS/nixpkgs/archive/d1c3fea7ecbed758168787fe4e4a3157e52bc808.tar.gz";
+    }) { };
+    docker_old = old_pkgs.docker-client;
+    docker_compose_old = old_pkgs.docker-compose;
   in with pkgs; [
     (python3.withPackages pythonModules)
     ansible
@@ -57,8 +73,8 @@
     clang
     ctags
     curl
-    docker
-    docker-compose
+    docker_old
+    docker_compose_old
     ethtool
     git
     git-crypt
@@ -98,7 +114,7 @@
   users.users.github-runner-nixos = {
     isNormalUser = true;
     home = "/home/github-runner-nixos/";
-    extraGroups = [ "wheel" "docker" "libvirtd" ];
+    extraGroups = [ "wheel" "docker" "libvirtd" "systemd-network" ];
     openssh.authorizedKeys.keys = [
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDLt7w6tl++WJT/Bn1HsOep25KpgL867SuZAnK5ifOgd6wS0PxHGiCD/4A0RSHdHZTXMv37DGlC36rhlWJUdsncI5O1F5Ay2d626fPg+REaGi8R7Hox/qInkDs9/NS2IbZvQaYIdeDK151McagWijRFCxTEMYftpslXWKiN5ckP/KjFdUkS7fKcGwqk+UFy7ehMF42i8MUOdkZMJwy8Yc2y4FTdzlrh8VELkMxCePcU9LrvwY5sSh9j65Q5IcIBlma36JMJZQLuEWi7oEGAASehUNeMXs9WFkbyCCWdR1PjHNfbrgZUpgw71SkiQrM8+9/jcfyl5kfkn+GUECQcWBDQnbi809re1ZVmOSUrDBAoEAevFO8qHLgz0d9H0Zs/EOghyN+a4eBLB3et46F733GYGGO4AMMvRSibeyHCLINCLeV19FkHXSxD5iXTRt6WXo3vhKC/tw0XN0yNSOc1nHC+azAJxG6zOxzUzXjC9c1wxaWmGReeanlefQTHVRcMtBfm1NAOwaD0DubSTEBeRRMHfW2ZRs3nV0l73HJWh9J8+5MTpCOK7BGzC0LILMsSqpltUTLI3YmFO5Ly9RokUbcFmnn4Yu4IreTITMmn73CuLNkjZIKwucWmJkWNmWc1hrLRO12Yad/aQS+rczKcQFoNXl+bBmIAOWYJ1C6mSKG/Hw== ci_runner@gh"
     ];
