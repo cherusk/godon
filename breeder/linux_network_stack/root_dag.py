@@ -92,6 +92,7 @@ config = {{ breeder }}
 parallel_runs = config.get('run').get('parallel')
 targets = config.get('effectuation').get('targets')
 dag_name = config.get('name')
+is_cooperative = config.get('cooperation').get('active')
 
 for target in targets:
     identifier = str(abs(hash(target.get('address'))))[0:6]
