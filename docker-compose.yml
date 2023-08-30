@@ -59,6 +59,19 @@ services:
         interval: 5s
         retries: 5
       restart: always
+    locks_db:
+      image: postgres:13
+      environment:
+        POSTGRES_USER: locking
+        POSTGRES_PASSWORD: locking
+        POSTGRES_DB: distributed_locking
+      volumes:
+          - postgres-locking-db-volume:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "locking"]
+        interval: 5s
+        retries: 5
+      restart: always
     api:
         build:
           context: ./api/flask/
@@ -122,3 +135,4 @@ services:
 
 volumes:
   postgres-db-volume:
+  postgres-locking-db-volume:
