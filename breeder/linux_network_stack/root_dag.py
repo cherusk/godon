@@ -40,6 +40,8 @@ from prometheus_api_client.utils import parse_datetime
 from datetime import timedelta
 import asyncio
 
+import pals
+
 import nats
 import time
 import sys
@@ -81,6 +83,9 @@ NATS_SERVER_URL = "nats://godon_nats_1:4222"
 
 
 ARCHIVE_DB_ENGINE = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
+
+DLM_DB_CONNECTION = 'postgresql://{DLM_DB_USER}:{DLM_DB_PASSWORD}@{DLM_DB_HOST}/{DLM_DB_DATABASE}'
+LOCKER = pals.Locker('network_breeder_effectuation', DLM_DB_CONNECTION)
 
 ###
 
