@@ -36,7 +36,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
         def run_aquire_lock():
             task_logger.debug("Entering")
 
-            dlm_lock = locker.lock(target)
+            dlm_lock = LOCKER.lock(target)
 
             if not dlm_lock.acquire(acquire_timeout=600):
                 task_logger.debug("Could not aquire lock for {target}")

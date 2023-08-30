@@ -38,6 +38,10 @@ services:
             - ARCHIVE_DB_HOST=archive_db
             - ARCHIVE_DB_PORT=5433
             - ARCHIVE_DB_DATABASE=archive-db
+            - DLM_DB_USER=
+            - DLM_DB_PASSWORD=
+            - DLM_DB_HOST=locks_db
+            - DLM_DB_DATABASE=distributed_locking
         # minimum of setup steps
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"
