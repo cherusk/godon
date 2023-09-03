@@ -79,11 +79,16 @@ def create_optimization_dag(dag_id, config, identifier):
         ## perform optimiziation run
         @dag.task(task_id="optimization_step")
         def run_optimization():
+            __directions = list()
+
+            for objective in config.get('objectvices'):
+                direction = objective.get('direction')
+                __directions.append(direction)
 
             with Client(address="godon_dask_scheduler_1:8786") as client:
                 # Create a study using Dask-compatible storage
                 storage = DaskStorage(InMemoryStorage())
-                study = optuna.create_study(directions=["minimize", "maximize"], storage=storage)
+                study = optuna.create_study(directions=__directions, storage=storage)
                 objective_wrapped = lambda trial: objective(trial, identifier)
                 # Optimize in parallel on your Dask cluster
                 futures = [
