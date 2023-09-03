@@ -100,12 +100,19 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
             chunk_size = timedelta(minutes=1)
 
             metric_data = dict()
-            for query in config.get('recon').get('prometheus'):
-                query_name = query.get('name')
-                query_string = query.get('query')
-                query_result = prom_conn.custom_query(query_string)
-                metric_value = query_result[0]
-                metric_data[query_name] = metric_value.get('value')[1]
+            for objective in config.get('objectives'):
+                recon_service_type = objective.get('reconaissance').get('service')
+
+                if recon_service_type == 'prometheus':
+                    recon_query = objective.get('reconaissance').get('query')
+                    query_name = objective.get('reconaissance').get('name')
+                    query_string = query.get('query')
+
+                    query_result = prom_conn.custom_query(query_string)
+                    metric_value = query_result[0]
+                    metric_data[query_name] = metric_value.get('value')[1]
+                else:
+                    raise Exception("Reconnaisance service type {recon_service_type} not supported yet.")
 
             task_logger.debug("Done")
 

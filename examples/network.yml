@@ -43,11 +43,16 @@ breeder:
     active: true
     consolidation:
       probability: 0.8
-  recon:
-    prometheus:
-      - name: "tcp_rtt"
+  objectives:
+    - name: "tcp_rtt"
+      direction: minimize
+      reconaissance:
+        service: prometheus
         query: "quantile(0.5, tcp_rtt)" # median
-      - name: "tcp_delivery_rate_bytes"
+    - name: "tcp_delivery_rate_bytes"
+      direction: maximize
+      reconaissance:
+        service: prometheus
         query: "quantile(0.5, tcp_delivery_rate_bytes)" # median
   effectuation:
     targets:
