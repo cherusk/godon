@@ -85,7 +85,7 @@ def create_optimization_dag(dag_id, config, identifier):
                 direction = objective.get('direction')
                 __directions.append(direction)
 
-            with Client(address="godon_dask_scheduler_1:8786") as client:
+            with Client(address=DASK_SERVER_ENDPOINT) as client:
                 # Create a study using Dask-compatible storage
                 storage = DaskStorage(InMemoryStorage())
                 study = optuna.create_study(directions=__directions, storage=storage)
