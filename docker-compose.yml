@@ -42,6 +42,7 @@ services:
             - DLM_DB_PASSWORD=
             - DLM_DB_HOST=locks_db
             - DLM_DB_DATABASE=distributed_locking
+            - DASK_ENDPOINT=dask_scheduler:8786
         # minimum of setup steps
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"
