@@ -41,6 +41,7 @@ from datetime import timedelta
 import asyncio
 
 import pals
+import urllib3
 
 import nats
 import time

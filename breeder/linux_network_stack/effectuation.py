@@ -93,7 +93,9 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
         @dag.task(task_id="recon_step")
         def run_reconnaissance():
             task_logger.debug("Entering")
-            prom_conn = PrometheusConnect(url=PROMETHEUS_URL, disable_ssl=True)
+            prom_conn = PrometheusConnect(url=PROMETHEUS_URL,
+                                          retry=urllib3.util.retry.Retry(total=3, raise_on_status=True, backoff_factor=0.5),
+                                          disable_ssl=True)
 
             start_time = parse_datetime("2m")
             end_time = parse_datetime("now")
