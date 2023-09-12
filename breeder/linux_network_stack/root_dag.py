@@ -79,7 +79,7 @@ DEFAULTS = {
     # 'sla_miss_callback': yet_another_function,
     }
 
-NATS_SERVER_URL = "nats://godon_nats_1:4222"
+NATS_SERVER_URL = "{NATS_SERVER_URL}"
 
 DASK_SERVER_ENDPOINT = "{DASK_ENDPOINT}"
 
