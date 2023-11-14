@@ -213,24 +213,6 @@ def breeders_post(content):  # noqa: E501
                 archive.archive_db.__execute(db_info=db_config, query=__query)
 
 
-        
-        # Stop calling the API for now until decided
-        # if we template the breeder dags only or we really want to instrument the API.
-
-        #dag_run = DAGRun(
-        #    dag_run_id=breeder_id ,
-        #    #state=DagState("queued"),
-        #    conf=breeder_config,
-        #) # DAGRun |
-
-        #try:
-        #    # Trigger a new DAG run
-        #    _api_response = api_instance.post_dag_run(breeder_id, dag_run)
-        #except client.ApiException as e:
-        #    print("Exception when calling DAGRunApi->post_dag_run: %s\n" % e)
-        #    raise e
-        #return _api_response
-
     with client.ApiClient(configuration) as api_client:
         # Do not create connection dynamically for now
         #api_response['breeder'] = create_breeder(api_client, content).to_dict()
