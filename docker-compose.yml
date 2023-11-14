@@ -38,6 +38,9 @@ services:
             - ARCHIVE_DB_HOST=archive_db
             - ARCHIVE_DB_PORT=5433
             - ARCHIVE_DB_DATABASE=archive-db
+            - POSTGRES_USER=meta_data
+            - POSTGRES_PASSWORD=meta_data
+            - POSTGRES_DB=meta_data
             - DLM_DB_USER=
             - DLM_DB_PASSWORD=
             - DLM_DB_HOST=locks_db
@@ -53,6 +56,19 @@ services:
             - ./breeder/dags:/opt/airflow/dags/
         ports:
             - 127.0.0.1:8080:8080
+    meta_data_db:
+      image: postgres:13
+      environment:
+        POSTGRES_USER: meta_data
+        POSTGRES_PASSWORD: meta_data
+        POSTGRES_DB: meta_data
+      volumes:
+        - postgres-meta-data-db-volume:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "meta_data"]
+        interval: 5s
+        retries: 5
+      restart: always
     db:
       image: postgres:13
       environment:
@@ -143,3 +159,4 @@ services:
 volumes:
   postgres-db-volume:
   postgres-locking-db-volume:
+  postgres-meta-data-db-volume:
