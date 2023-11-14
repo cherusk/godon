@@ -40,8 +40,8 @@ services:
             - ARCHIVE_DB_DATABASE=archive-db
             - META_DB_USER=meta_data
             - META_DB_PASSWORD=meta_data
-            - META_DB_HOSTNAME=meta_data
-            - META_DB_PORT=meta_data
+            - META_DB_HOSTNAME=meta_data_db
+            - META_DB_PORT=5433
             - DLM_DB_USER=
             - DLM_DB_PASSWORD=
             - DLM_DB_HOST=locks_db
