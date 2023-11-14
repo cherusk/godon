@@ -79,7 +79,7 @@ services:
       volumes:
           - postgres-db-volume:/var/lib/postgresql/data
       healthcheck:
-        test: ["CMD", "pg_isready", "-U", "airflow"]
+        test: ["CMD", "pg_isready", "-U", "airflow", "-d", "airflow"]
         interval: 5s
         retries: 5
       restart: always
@@ -92,7 +92,7 @@ services:
       volumes:
           - postgres-locking-db-volume:/var/lib/postgresql/data
       healthcheck:
-        test: ["CMD", "pg_isready", "-U", "locking"]
+        test: ["CMD", "pg_isready", "-U", "locking", "-d", "distributed_locking"]
         interval: 5s
         retries: 5
       restart: always
