@@ -54,6 +54,11 @@ ARCHIVE_DB_CONFIG = dict(user="yugabyte",
                          host=os.environ.get('ARCHIVE_DB_HOSTNAME'),
                          port=os.environ.get('ARCHIVE_DB_PORT'))
 
+META_DB_CONFIG = dict(user="meta_data",
+                      password="meta_data",
+                      host=os.environ.get('META_DB_HOSTNAME'),
+                      port=os.environ.get('META_DB_PORT'))
+
 breeders_db = dict()
 
 configuration = client.Configuration(
@@ -207,6 +212,8 @@ def breeders_post(content):  # noqa: E501
                                                          procedure_name="{dag_id}_procedure")
                 archive.archive_db.__execute(db_info=db_config, query=__query)
 
+
+        
         # Stop calling the API for now until decided
         # if we template the breeder dags only or we really want to instrument the API.
 
