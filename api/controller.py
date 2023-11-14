@@ -21,6 +21,7 @@
 import requests
 import os
 import time
+import datetime
 from pprint import pprint
 from dateutil.parser import parse as dateutil_parser
 
@@ -40,6 +41,7 @@ from flask import Response
 from jinja2 import Environment, FileSystemLoader
 
 import archive_db as archive
+import meta_data_db as meta_data
 
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
@@ -181,14 +183,18 @@ def breeders_post(content):  # noqa: E501
 
         time.sleep(2) # wait as workaround until synchronous reload of dags implemented
 
-        # set dbname to work with to breeder_id
-        db_config = ARCHIVE_DB_CONFIG.copy()
-        db_config.update(dict(dbname=breeder_id))
 
+        # extract config from request
         parallel_runs = breeder_config.get('run').get('parallel')
         targets = breeder_config.get('effectuation').get('targets')
         consolidation_probability = breeder_config.get('cooperation').get('consolidation').get('probability')
         dag_name = breeder_config.get('name')
+
+        ## create knowledge archive db relevant state
+
+        # set dbname to work with to breeder_id
+        db_config = ARCHIVE_DB_CONFIG.copy()
+        db_config.update(dict(dbname=breeder_id))
 
         __query = archive.queries.create_breeder_table(table_name=dag_name)
         archive.archive_db.__execute(db_info=db_config, query=__query)
@@ -211,6 +217,19 @@ def breeders_post(content):  # noqa: E501
                                                          table_name=dag_id,
                                                          procedure_name="{dag_id}_procedure")
                 archive.archive_db.__execute(db_info=db_config, query=__query)
+
+        ## create and fill breeder meta data db
+        db_config = META_DB_CONFIG.copy()
+        db_config.update(dict(dbname=breeder_id))
+        db_table_name = 'breeder_meta_data'
+
+        __query = meta_data.queries.create_meta_breeder_table(table_name=db_table_name)
+        archive.archive_db.__execute(db_info=db_config, query=__query)
+
+        __query = meta_data.queries.insert_breeder_meta(table_name=db_table_name,
+                                                      creation_ts=datetime.datetime.now(),
+                                                      meta_state=breeder_config)
+        archive.archive_db.__execute(db_info=db_config, query=__query)
 
 
     with client.ApiClient(configuration) as api_client:
