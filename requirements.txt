@@ -4,7 +4,7 @@ dask == 2022.12.1
 distributed == 2022.12.1
 prometheus-api-client == 0.5.2
 nats-py == 2.2.0
-SQLAlchemy == 2.0.20
+SQLAlchemy == 1.4.50
 psycopg2-binary == 2.9.7
 PALs == 0.3.5
 urllib3 == 2.0.4
