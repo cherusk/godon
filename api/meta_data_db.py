@@ -1,7 +1,7 @@
 
 class queries():
 
-    @classmethod
+    @staticmethod
     def create_meta_breeder_table(table_name=None):
         query = f"""
         CREATE TABLE IF NOT EXISTS {table_name}
@@ -13,7 +13,7 @@ class queries():
 
         return query
 
-    @classmethod
+    @staticmethod
     def insert_breeder_meta(table_name=None, creation_ts=None, meta_state=None):
         query = f"""
         INSERT INTO {table_name} (creation_tsz, definition)
