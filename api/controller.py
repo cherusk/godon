@@ -169,8 +169,8 @@ def breeders_post(content):  # noqa: E501
 
     def create_breeder(api_client, content):
         api_instance = dag_run_api.DAGRunApi(api_client)
-        breeder_id = content.get('breeder').get('name')
-        breeder_config = dict(content)
+        breeder_config = dict(content.get('breeder'))
+        breeder_id = breeder_config.get('name')
 
         # templating related
         environment = Environment(loader=FileSystemLoader(DAG_TEMPLATES_DIR))
