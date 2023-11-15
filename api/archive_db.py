@@ -15,7 +15,7 @@ class archive_db():
                 with db_connection.cursor() as db_cursor:
                     db_cursor.execute(query)
 
-        except OperationalError as Error:
+        except psycopg2.OperationalError as Error:
             print(f"Error connecting to the database : {Error}")
 
         finally:
