@@ -3,7 +3,7 @@ import psycopg2
 
 class archive_db():
 
-    @classmethod
+    @staticmethod
     def __execute(db_info=None, query=""):
         """ Function wrapping the curoser execute with
             a dedicated connection for the execution."""
@@ -25,7 +25,7 @@ class archive_db():
 
 class queries():
 
-    @classmethod
+    @staticmethod
     def create_breeder_table(table_name=None):
         query = f"""
         CREATE TABLE IF NOT EXISTS {table_name}
@@ -39,7 +39,7 @@ class queries():
 
         return query
 
-    @classmethod
+    @staticmethod
     def create_trigger(trigger_name=None, table_name=None, procedure_name=None):
         query = f"""
         CREATE TRIGGER {trigger_name}
@@ -51,7 +51,7 @@ class queries():
 
         return query
 
-    @classmethod
+    @staticmethod
     def create_procedure(procedure_name=None, probability=1.0, source_table_name=None, target_table_name=None):
         query = f"""
         CREATE OR REPLACE PROCEDURE {procedure_name}
