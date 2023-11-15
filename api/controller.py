@@ -194,7 +194,7 @@ def breeders_post(content):  # noqa: E501
 
         # set dbname to work with to breeder_id
         db_config = ARCHIVE_DB_CONFIG.copy()
-        db_config.update(dict(dbname=breeder_id))
+        db_config.update(dict(dbname="archive_db"))
 
         __query = archive.queries.create_breeder_table(table_name=dag_name)
         archive.archive_db.execute(db_info=db_config, query=__query)
