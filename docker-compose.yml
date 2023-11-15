@@ -39,7 +39,7 @@ services:
             - ARCHIVE_DB_DATABASE=archive_db
             - META_DB_USER=meta_data
             - META_DB_PASSWORD=meta_data
-            - META_DB_HOSTNAME=meta_data_db
+            - META_DB_HOSTNAME=meta-data-db
             - META_DB_PORT=5433
             - DLM_DB_USER=
             - DLM_DB_PASSWORD=
@@ -57,6 +57,7 @@ services:
         ports:
             - 127.0.0.1:8080:8080
     meta_data_db:
+      hostname: meta-data-db
       image: postgres:13
       environment:
         POSTGRES_USER: meta_data
