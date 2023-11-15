@@ -220,7 +220,7 @@ def breeders_post(content):  # noqa: E501
 
         ## create and fill breeder meta data db
         db_config = META_DB_CONFIG.copy()
-        db_config.update(dict(dbname=breeder_id))
+        db_config.update(dict(dbname='meta_data'))
         db_table_name = 'breeder_meta_data'
 
         __query = meta_data.queries.create_meta_breeder_table(table_name=db_table_name)
