@@ -4,7 +4,7 @@ import psycopg2
 class archive_db():
 
     @staticmethod
-    def __execute(db_info=None, query=""):
+    def execute(db_info=None, query=""):
         """ Function wrapping the curoser execute with
             a dedicated connection for the execution."""
 

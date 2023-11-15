@@ -197,7 +197,7 @@ def breeders_post(content):  # noqa: E501
         db_config.update(dict(dbname=breeder_id))
 
         __query = archive.queries.create_breeder_table(table_name=dag_name)
-        archive.archive_db.__execute(db_info=db_config, query=__query)
+        archive.archive_db.execute(db_info=db_config, query=__query)
 
         for target in targets:
             identifier = str(abs(hash(target.get('address'))))[0:6]
@@ -205,18 +205,18 @@ def breeders_post(content):  # noqa: E501
                 dag_id = f'{dag_name}_{run_id}_{identifier}'
 
                 __query = archive.queries.create_breeder_table(table_name=dag_id)
-                archive.archive_db.__execute(db_info=db_config, query=__query)
+                archive.archive_db.execute(db_info=db_config, query=__query)
 
                 __query = archive.queries.create_procedure(procedure_name=f"{dag_id}_procedure",
                                                            probability=consolidation_probability,
                                                            source_table_name=dag_id,
                                                            target_table_name=dag_name)
-                archive.archive_db.__execute(db_info=db_config, query=__query)
+                archive.archive_db.execute(db_info=db_config, query=__query)
 
                 __query = archive.queries.create_trigger(trigger_name="{dag_id}_trigger",
                                                          table_name=dag_id,
                                                          procedure_name="{dag_id}_procedure")
-                archive.archive_db.__execute(db_info=db_config, query=__query)
+                archive.archive_db.execute(db_info=db_config, query=__query)
 
         ## create and fill breeder meta data db
         db_config = META_DB_CONFIG.copy()
@@ -224,12 +224,12 @@ def breeders_post(content):  # noqa: E501
         db_table_name = 'breeder_meta_data'
 
         __query = meta_data.queries.create_meta_breeder_table(table_name=db_table_name)
-        archive.archive_db.__execute(db_info=db_config, query=__query)
+        archive.archive_db.execute(db_info=db_config, query=__query)
 
         __query = meta_data.queries.insert_breeder_meta(table_name=db_table_name,
                                                       creation_ts=datetime.datetime.now(),
                                                       meta_state=breeder_config)
-        archive.archive_db.__execute(db_info=db_config, query=__query)
+        archive.archive_db.execute(db_info=db_config, query=__query)
 
 
     with client.ApiClient(configuration) as api_client:
