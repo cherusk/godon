@@ -40,8 +40,8 @@ from flask import Response
 
 from jinja2 import Environment, FileSystemLoader
 
-import archive_db as archive
-import meta_data_db as meta_data
+import openapi_server.controllers.archive_db as archive
+import openapi_server.controllers.meta_data_db as meta_data
 
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
