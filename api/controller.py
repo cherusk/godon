@@ -237,7 +237,7 @@ def breeders_post(content):  # noqa: E501
         #api_response['breeder'] = create_breeder(api_client, content).to_dict()
         create_breeder(api_client, content)
 
-    return Response(dict(), status=200, mimetype='application/json')
+    return Response(dict(), status=204, mimetype='application/json')
 
 
 def breeders_put(content):  # noqa: E501
