@@ -19,9 +19,7 @@
 version: '3.4'
 services:
     control_loop:
-        build:
-          context: ./
-          dockerfile: ./Dockerfile-airflow
+        image: apache/airflow:2.4.3-python3.9
         restart: always
         environment:
             - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=true
@@ -32,7 +30,7 @@ services:
             - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
             - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
             - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
-            - AIRFLOW__DASK_CLUSTER_ADDRESS=tcp://dask_scheduler_airflow:8786
+            - AIRFLOW__DASK_CLUSTER_ADDRESS=tcp://dask-scheduler-airflow:8786
             - 'AIRFLOW_CONN_LINUX_NETWORK_STACK_BREEDER_SSH={ "conn_type": "ssh", "login": "godon_robot", "host": "10.0.5.53", "port": 22, "extra": { "key_file": "/opt/airflow/credentials/id_rsa" } }'
             - ARCHIVE_DB_USER=yugabyte
             - ARCHIVE_DB_PASSWORD=yugabyte
@@ -123,16 +121,16 @@ services:
       build:
           context: ./
           dockerfile: ./Dockerfile-dask
-      hostname: dask-scheduler
+      hostname: dask-scheduler-airflow
       ports:
-        - "8786:8786"
-        - "8787:8787"
+        - 127.0.0.10:8786:8786
+        - 127.0.0.10:8787:8787
       command: ["dask-scheduler"]
     dask_worker_airflow:
       build:
         context: ./
         dockerfile: ./Dockerfile-dask
-      command: ["dask_scheduler_airflow", "tcp://dask_scheduler:8786"]
+      command: ["dask-worker", "tcp://dask-scheduler-airflow:8786"]
       deploy:
         replicas: 2
     # for optuna parallel metaheuristics execution on dask
@@ -142,8 +140,8 @@ services:
           dockerfile: ./Dockerfile-dask
       hostname: dask-scheduler
       ports:
-        - "8786:8786"
-        - "8787:8787"
+        - 127.0.0.11:8786:8786
+        - 127.0.0.11:8787:8787
       command: ["dask-scheduler"]
     dask_worker:
       build:
