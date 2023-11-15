@@ -34,9 +34,9 @@ services:
             - 'AIRFLOW_CONN_LINUX_NETWORK_STACK_BREEDER_SSH={ "conn_type": "ssh", "login": "godon_robot", "host": "10.0.5.53", "port": 22, "extra": { "key_file": "/opt/airflow/credentials/id_rsa" } }'
             - ARCHIVE_DB_USER=yugabyte
             - ARCHIVE_DB_PASSWORD=yugabyte
-            - ARCHIVE_DB_HOST=archive_db
+            - ARCHIVE_DB_HOST=archive-db
             - ARCHIVE_DB_PORT=5433
-            - ARCHIVE_DB_DATABASE=archive-db
+            - ARCHIVE_DB_DATABASE=archive_db
             - META_DB_USER=meta_data
             - META_DB_PASSWORD=meta_data
             - META_DB_HOSTNAME=meta_data_db
@@ -102,7 +102,7 @@ services:
         restart: always
         environment:
           - AIRFLOW__URL=http://control_loop:8080
-          - ARCHIVE_DB_HOSTNAME=archive_db
+          - ARCHIVE_DB_HOSTNAME=archive-db
           - ARCHIVE_DB_PORT=5433
         volumes:
             - ./breeder/linux_network_stack/:/usr/src/app/openapi_server/templates/
@@ -158,9 +158,9 @@ services:
           - 9090:9090
     archive_db:
       image: yugabytedb/yugabyte:2.18.1.0-b84
-      container_name: "${DB_CONTAINER_NAME:-yugabytedb}"
+      hostname: archive-db
       environment:
-        - "YSQL_DB=archive-db"
+        - "YSQL_DB=archive_db"
       ports:
         - ${DB_YSQL_PORT:-5433}:5433
         - ${DB_YCQL_PORT:-9042}:9042
