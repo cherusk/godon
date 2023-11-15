@@ -54,9 +54,7 @@ class queries():
     @staticmethod
     def create_procedure(procedure_name=None, probability=1.0, source_table_name=None, target_table_name=None):
         query = f"""
-        CREATE OR REPLACE PROCEDURE {procedure_name}()
-        LANGUAGE plpgsql
-        AS $body$
+        CREATE OR REPLACE FUNCTION {procedure_name}() RETURNS TRIGGER AS $$
         DECLARE
           random_value real;
         BEGIN
@@ -71,7 +69,7 @@ class queries():
           END IF;
 
         END;
-        $body$;
+        $$ LANGUAGE plpgsql;
         """
 
         return query
