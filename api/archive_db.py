@@ -46,8 +46,7 @@ class queries():
         CREATE TRIGGER {trigger_name}
         AFTER INSERT ON {table_name}
         FOR EACH ROW
-        EXECUTE
-        procedure{procedure_name}
+        EXECUTE PROCEDURE {procedure_name} ();
         """
 
         return query

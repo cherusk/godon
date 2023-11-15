@@ -207,15 +207,15 @@ def breeders_post(content):  # noqa: E501
                 __query = archive.queries.create_breeder_table(table_name=dag_id)
                 archive.archive_db.execute(db_info=db_config, query=__query)
 
-                __query = archive.queries.create_procedure(procedure_name=f"{dag_id}_procedure",
+                __query = archive.queries.create_procedure(procedure_name=f'{dag_id}_procedure',
                                                            probability=consolidation_probability,
                                                            source_table_name=dag_id,
                                                            target_table_name=dag_name)
                 archive.archive_db.execute(db_info=db_config, query=__query)
 
-                __query = archive.queries.create_trigger(trigger_name="{dag_id}_trigger",
+                __query = archive.queries.create_trigger(trigger_name=f'f{dag_id}_trigger',
                                                          table_name=dag_id,
-                                                         procedure_name="{dag_id}_procedure")
+                                                         procedure_name=f'{dag_id}_procedure')
                 archive.archive_db.execute(db_info=db_config, query=__query)
 
         ## create and fill breeder meta data db
