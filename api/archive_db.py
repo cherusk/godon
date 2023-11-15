@@ -1,5 +1,6 @@
 
 import psycopg2
+import logging
 
 class archive_db():
 
@@ -16,7 +17,7 @@ class archive_db():
                     db_cursor.execute(query)
 
         except psycopg2.OperationalError as Error:
-            print(f"Error connecting to the database : {Error}")
+            logging.error(f"Error connecting to the database : {Error}")
 
         finally:
             if db_connection:
