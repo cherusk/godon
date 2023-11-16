@@ -86,8 +86,15 @@ paths:
                 name:
                   type: string
       responses:
-        '204':
+        '200':
            description: Successfully purged the breeder
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   message:
+                     type: string
         '400':
            description: Invalid request
            content:
