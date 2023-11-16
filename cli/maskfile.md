@@ -112,9 +112,7 @@ set -eEux
 __api_version="${api_version:-v0}"
 
 curl --request DELETE \
-     -H 'Content-Type: application/json' \
-     --data "{ \"name\": \"${name}\" }" \
-     "http://${hostname}:${port}/${__api_version}/breeders"
+     "http://${hostname}:${port}/${__api_version}/breeders/${name}"
 ~~~
 
 ### breeder update

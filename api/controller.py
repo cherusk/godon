@@ -70,14 +70,12 @@ configuration = client.Configuration(
 )
 
 
-def breeders_delete(content):  # noqa: E501
+def breeders_name_delete(breeder_name):  # noqa: E501
     """breeders_delete
 
     Purge a breeder # noqa: E501
 
     """
-
-    breeder_name = content.get('name')
 
     # cleanup dag definition config file
     filename = f"{DAG_DIR}/root_dag.py"
