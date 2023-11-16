@@ -43,6 +43,8 @@ from jinja2 import Environment, FileSystemLoader
 import openapi_server.controllers.archive_db as archive
 import openapi_server.controllers.meta_data_db as meta_data
 
+import logging
+
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
 AIRFLOW_API_AUTH_USER = "airflow"
@@ -94,27 +96,21 @@ def breeders_name_delete(breeder_name):  # noqa: E501
     __query = archive.queries.delete_breeder_table(table_name=breeder_name)
     archive.archive_db.execute(db_info=db_config, query=__query)
 
-
     __query = archive.queries.fetch_procedures(breeder_name=breeder_name)
     procedures = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     for procedure_name in procedures:
-        __query = archive.queries.delete_procedure(procedure_name=f'{dag_id}_procedure')
-        archive.archive_db.execute(db_info=db_config, query=__query)
-
-    __query = archive.queries.fetch_triggers(breeder_name=breeder_name, )
-    triggers = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
-
-    for trigger_name in triggers:
-        __query = archive.queries.delete_trigger(trigger_name=trigger_name,
-                                                 table_name=dag_id)
+        logging.error(type(procedure_name))
+        logging.error(procedure_name)
+        __query = archive.queries.delete_procedure(procedure_name=procedure_name[0])
         archive.archive_db.execute(db_info=db_config, query=__query)
 
     __query = archive.queries.fetch_tables(breeder_name=breeder_name)
     archive_tables = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     for table_name in archive_tables:
-        __query = archive.queries.delete_breeder_table(table_name=table_name )
+        logging.error(table_name)
+        __query = archive.queries.delete_breeder_table(table_name=table_name[0])
         archive.archive_db.execute(db_info=db_config, query=__query)
 
 
@@ -251,7 +247,7 @@ def breeders_post(content):  # noqa: E501
                                                            target_table_name=dag_name)
                 archive.archive_db.execute(db_info=db_config, query=__query)
 
-                __query = archive.queries.create_trigger(trigger_name=f'f{dag_id}_trigger',
+                __query = archive.queries.create_trigger(trigger_name=f'{dag_id}_trigger',
                                                          table_name=dag_id,
                                                          procedure_name=f'{dag_id}_procedure')
                 archive.archive_db.execute(db_info=db_config, query=__query)

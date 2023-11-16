@@ -47,7 +47,7 @@ class queries():
     @staticmethod
     def delete_breeder_table(table_name=None):
         query = f"""
-        DROP TABLE IF EXISTS {table_name};
+        DROP TABLE IF EXISTS {table_name} CASCADE;
         """
 
         return query
@@ -115,7 +115,7 @@ class queries():
     @staticmethod
     def delete_procedure(procedure_name=None):
         query = f"""
-        DROP FUNCTION IF EXISTS {procedure_name}();
+        DROP FUNCTION IF EXISTS {procedure_name}() CASCADE;
         """
 
         return query
