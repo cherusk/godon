@@ -29,14 +29,14 @@ class queries():
 
     def remove_breeder_meta(table_name=None, breeder_name=None):
         query = f"""
-        DELETE FROM {table_name} WHERE definition->'breeder'->'name' = {breeder_name};
+        DELETE FROM {table_name} WHERE definition->>'name' = '{breeder_name}';
         """
 
         return query
 
     def fetch_meta_data(table_name=None, breeder_name=None):
         query = f"""
-        SELECT creation_tsz,definition FROM {table_name} WHERE definition->'breeder'->name = {breeder_name};
+        SELECT creation_tsz, definition FROM {table_name} WHERE definition->>'name' = '{breeder_name}';
         """
 
         return query
