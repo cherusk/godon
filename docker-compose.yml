@@ -40,7 +40,7 @@ services:
             - META_DB_USER=meta_data
             - META_DB_PASSWORD=meta_data
             - META_DB_HOSTNAME=meta-data-db
-            - META_DB_PORT=5433
+            - META_DB_PORT=5432
             - DLM_DB_USER=
             - DLM_DB_PASSWORD=
             - DLM_DB_HOST=locks_db
@@ -70,6 +70,8 @@ services:
         interval: 5s
         retries: 5
       restart: always
+      ports:
+         - 127.0.0.7:5432:5432
     db:
       image: postgres:13
       environment:
@@ -83,6 +85,8 @@ services:
         interval: 5s
         retries: 5
       restart: always
+      ports:
+         - 127.0.0.8:5432:5432
     locks_db:
       image: postgres:13
       environment:
@@ -96,6 +100,8 @@ services:
         interval: 5s
         retries: 5
       restart: always
+      ports:
+         - 127.0.0.6:5432:5432
     api:
         build:
           context: ./api/flask/
@@ -105,6 +111,10 @@ services:
           - AIRFLOW__URL=http://control_loop:8080
           - ARCHIVE_DB_HOSTNAME=archive-db
           - ARCHIVE_DB_PORT=5433
+          - META_DB_USER=meta_data
+          - META_DB_PASSWORD=meta_data
+          - META_DB_HOSTNAME=meta-data-db
+          - META_DB_PORT=5432
         volumes:
             - ./breeder/linux_network_stack/:/usr/src/app/openapi_server/templates/
             - ./breeder/dags:/usr/src/app/openapi_server/dags/
