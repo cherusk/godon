@@ -95,23 +95,23 @@ def breeders_name_delete(breeder_name):  # noqa: E501
     archive.archive_db.execute(db_info=db_config, query=__query)
 
 
-    __query = archive.queries.fetch_procedures(breeder_name=breeder_name, with_result=True)
-    procedures = archive.archive_db.execute(db_info=db_config, query=__query)
+    __query = archive.queries.fetch_procedures(breeder_name=breeder_name)
+    procedures = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     for procedure_name in procedures:
         __query = archive.queries.delete_procedure(procedure_name=f'{dag_id}_procedure')
         archive.archive_db.execute(db_info=db_config, query=__query)
 
-    __query = archive.queries.fetch_triggers(breeder_name=breeder_name, with_result=True)
-    triggers = archive.archive_db.execute(db_info=db_config, query=__query)
+    __query = archive.queries.fetch_triggers(breeder_name=breeder_name, )
+    triggers = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     for trigger_name in triggers:
         __query = archive.queries.delete_trigger(trigger_name=trigger_name,
                                                  table_name=dag_id)
         archive.archive_db.execute(db_info=db_config, query=__query)
 
-    __query = archive.queries.fetch_tables(breeder_name=breeder_name, with_result=True)
-    archive_tables = archive.archive_db.execute(db_info=db_config, query=__query)
+    __query = archive.queries.fetch_tables(breeder_name=breeder_name)
+    archive_tables = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     for table_name in archive_tables:
         __query = archive.queries.delete_breeder_table(table_name=table_name )
