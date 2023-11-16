@@ -45,6 +45,8 @@ import openapi_server.controllers.meta_data_db as meta_data
 
 import logging
 
+import json
+
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
 AIRFLOW_API_AUTH_USER = "airflow"
@@ -183,13 +185,13 @@ def breeders_name_get(breeder_name):  # noqa: E501
     __query = meta_data.queries.fetch_meta_data(table_name=db_table_name, breeder_name=breeder_name)
     breeder_meta_data = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
-    logging.error(breeder_meta_data)
+    breeder_meta_data_row = breeder_meta_data[0]
 
-    return Response(dict(creation_timestamp=breeder_meta_data[0],
-                         breeder_definition=breeder_meta_data[1]),
+    return Response(response=json.dumps(dict(creation_timestamp=breeder_meta_data_row[0].isoformat(),
+                                             breeder_definition=breeder_meta_data_row[1])),
+
                     status=200,
                     mimetype='application/json')
-
 
 def breeders_post(content):  # noqa: E501
     """breeders_post
