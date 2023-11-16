@@ -1,4 +1,6 @@
 
+import json
+
 class queries():
 
     @staticmethod
@@ -6,7 +8,7 @@ class queries():
         query = f"""
         CREATE TABLE IF NOT EXISTS {table_name}
         (
-        creation_tsz TIMESTAMPZ,
+        creation_tsz TIMESTAMPTZ,
         definition jsonb NOT NULL
         );
         """
@@ -15,9 +17,12 @@ class queries():
 
     @staticmethod
     def insert_breeder_meta(table_name=None, creation_ts=None, meta_state=None):
+
+        json_string = json.dumps(meta_state)
+
         query = f"""
         INSERT INTO {table_name} (creation_tsz, definition)
-        VALUES({creation_ts}, {meta_state});
+        VALUES('{creation_ts}', '{json_string}');
         """
 
         return query
