@@ -41,12 +41,30 @@ class queries():
         return query
 
     @staticmethod
+    def delete_breeder_table(table_name=None):
+        query = f"""
+        DROP TABLE IF EXISTS {table_name};
+        """
+
+        return query
+
+    @staticmethod
     def create_trigger(trigger_name=None, table_name=None, procedure_name=None):
         query = f"""
         CREATE TRIGGER {trigger_name}
         AFTER INSERT ON {table_name}
         FOR EACH ROW
         EXECUTE PROCEDURE {procedure_name} ();
+        """
+
+        return query
+
+
+    @staticmethod
+    def delete_trigger(trigger_name=None, table_name=None):
+        query = f"""
+        DROP TRIGGER IF EXISTS {trigger_name}
+        ON {table_name}
         """
 
         return query
@@ -73,3 +91,12 @@ class queries():
         """
 
         return query
+
+    @staticmethod
+    def delete_procedure(procedure_name=None):
+        query = f"""
+        DROP FUNCTION IF EXISTS {procedure_name}();
+        """
+
+        return query
+
