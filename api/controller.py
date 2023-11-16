@@ -77,8 +77,7 @@ def breeders_delete(content):  # noqa: E501
 
     """
 
-    breeder_config = dict(content.get('breeder'))
-    breeder_name = breeder_config.get('name')
+    breeder_name = content.get('name')
 
     # cleanup dag definition config file
     filename = f"{DAG_DIR}/root_dag.py"
@@ -88,35 +87,38 @@ def breeders_delete(content):  # noqa: E501
 
     time.sleep(2) # wait as workaround until synchronous reload of dags implemented
 
-
-    # extract config from request
-    parallel_runs = breeder_config.get('run').get('parallel')
-    targets = breeder_config.get('effectuation').get('targets')
-    dag_name = breeder_config.get('name')
-
     ## cleanup knowledge archive db relevant state
 
     # set dbname to work with to breeder_id
     db_config = ARCHIVE_DB_CONFIG.copy()
     db_config.update(dict(dbname="archive_db"))
 
-    __query = archive.queries.delete_breeder_table(table_name=dag_name)
+    __query = archive.queries.delete_breeder_table(table_name=breeder_name)
     archive.archive_db.execute(db_info=db_config, query=__query)
 
-    for target in targets:
-        identifier = str(abs(hash(target.get('address'))))[0:6]
-        for run_id in range(0, parallel_runs):
-            dag_id = f'{dag_name}_{run_id}_{identifier}'
 
-            __query = archive.queries.delete_procedure(procedure_name=f'{dag_id}_procedure')
-            archive.archive_db.execute(db_info=db_config, query=__query)
+    __query = archive.queries.fetch_procedures(breeder_name=breeder_name, with_result=True)
+    procedures = archive.archive_db.execute(db_info=db_config, query=__query)
 
-            __query = archive.queries.create_trigger(trigger_name=f'f{dag_id}_trigger',
-                                                     table_name=dag_id)
-            archive.archive_db.execute(db_info=db_config, query=__query)
+    for procedure_name in procedures:
+        __query = archive.queries.delete_procedure(procedure_name=f'{dag_id}_procedure')
+        archive.archive_db.execute(db_info=db_config, query=__query)
 
-            __query = archive.queries.delete_breeder_table(table_name=dag_id)
-            archive.archive_db.execute(db_info=db_config, query=__query)
+    __query = archive.queries.fetch_triggers(breeder_name=breeder_name, with_result=True)
+    triggers = archive.archive_db.execute(db_info=db_config, query=__query)
+
+    for trigger_name in triggers:
+        __query = archive.queries.delete_trigger(trigger_name=trigger_name,
+                                                 table_name=dag_id)
+        archive.archive_db.execute(db_info=db_config, query=__query)
+
+    __query = archive.queries.fetch_tables(breeder_name=breeder_name, with_result=True)
+    archive_tables = archive.archive_db.execute(db_info=db_config, query=__query)
+
+    for table_name in archive_tables:
+        __query = archive.queries.delete_breeder_table(table_name=table_name )
+        archive.archive_db.execute(db_info=db_config, query=__query)
+
 
     ## cleanup breeder meta data db state
     db_config = META_DB_CONFIG.copy()
