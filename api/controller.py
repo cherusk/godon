@@ -77,21 +77,59 @@ def breeders_delete(content):  # noqa: E501
 
     """
 
-    api_response = dict(result=success)
+    breeder_config = dict(content.get('breeder'))
+    breeder_name = breeder_config.get('name')
 
-    with client.ApiClient(configuration) as api_client:
-        api_instance = dag_run_api.DAGRunApi(api_client)
-        dag_id = content.get('name')
-        dag_run_id = dag_id
+    # cleanup dag definition config file
+    filename = f"{DAG_DIR}/root_dag.py"
 
-        try:
-            # Delete a DAG run
-            api_instance.delete_dag_run(dag_id, dag_run_id)
-        except client.ApiException as e:
-            print("Exception when calling DAGRunApi->delete_dag_run: %s\n" % e)
-            api_response = dict(result=failure)
+    if os.path.exists(filename):
+        os.remove(filename)
 
-    return api_response
+    time.sleep(2) # wait as workaround until synchronous reload of dags implemented
+
+
+    # extract config from request
+    parallel_runs = breeder_config.get('run').get('parallel')
+    targets = breeder_config.get('effectuation').get('targets')
+    dag_name = breeder_config.get('name')
+
+    ## cleanup knowledge archive db relevant state
+
+    # set dbname to work with to breeder_id
+    db_config = ARCHIVE_DB_CONFIG.copy()
+    db_config.update(dict(dbname="archive_db"))
+
+    __query = archive.queries.delete_breeder_table(table_name=dag_name)
+    archive.archive_db.execute(db_info=db_config, query=__query)
+
+    for target in targets:
+        identifier = str(abs(hash(target.get('address'))))[0:6]
+        for run_id in range(0, parallel_runs):
+            dag_id = f'{dag_name}_{run_id}_{identifier}'
+
+            __query = archive.queries.delete_procedure(procedure_name=f'{dag_id}_procedure')
+            archive.archive_db.execute(db_info=db_config, query=__query)
+
+            __query = archive.queries.create_trigger(trigger_name=f'f{dag_id}_trigger',
+                                                     table_name=dag_id)
+            archive.archive_db.execute(db_info=db_config, query=__query)
+
+            __query = archive.queries.delete_breeder_table(table_name=dag_id)
+            archive.archive_db.execute(db_info=db_config, query=__query)
+
+    ## cleanup breeder meta data db state
+    db_config = META_DB_CONFIG.copy()
+    db_config.update(dict(dbname='meta_data'))
+    db_table_name = 'breeder_meta_data'
+
+    __query = meta_data.queries.remove_breeder_meta(table_name=db_table_name,
+                                                    breeder_name=breeder_name)
+    archive.archive_db.execute(db_info=db_config, query=__query)
+
+    return Response(dict(message="Purged Breeder named {breeder_name}"),
+                    status=200,
+                    mimetype='application/json')
 
 
 def breeders_get():  # noqa: E501
