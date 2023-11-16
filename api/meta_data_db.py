@@ -28,3 +28,10 @@ class queries():
         """
 
         return query
+
+    def fetch_meta_data(table_name=None, breeder_name=None):
+        query = f"""
+        SELECT creation_tsz,definition FROM {table_name} WHERE definition->'breeder'->name = {breeder_name};
+        """
+
+        return query
