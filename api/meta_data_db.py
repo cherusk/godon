@@ -22,7 +22,7 @@ class queries():
 
         return query
 
-    def insert_breeder_meta(table_name=None, breeder_name=None):
+    def remove_breeder_meta(table_name=None, breeder_name=None):
         query = f"""
         DELETE FROM {table_name} WHERE definition->'breeder'->'name' = {breeder_name};
         """
