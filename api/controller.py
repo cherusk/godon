@@ -129,7 +129,7 @@ def breeders_delete(content):  # noqa: E501
                                                     breeder_name=breeder_name)
     archive.archive_db.execute(db_info=db_config, query=__query)
 
-    return Response(dict(message="Purged Breeder named {breeder_name}"),
+    return Response(message="Purged Breeder named {breeder_name}",
                     status=200,
                     mimetype='application/json')
 
