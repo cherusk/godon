@@ -53,6 +53,14 @@ class queries():
         return query
 
     @staticmethod
+    def fetch_tables(breeder_name=None):
+        query = f"""
+        SELECT tablename FROM pg_tables WHERE tablename ~ '^{breeder_name}.*';
+        """
+
+        return query
+
+    @staticmethod
     def create_trigger(trigger_name=None, table_name=None, procedure_name=None):
         query = f"""
         CREATE TRIGGER {trigger_name}
@@ -69,6 +77,14 @@ class queries():
         query = f"""
         DROP TRIGGER IF EXISTS {trigger_name}
         ON {table_name}
+        """
+
+        return query
+
+    @staticmethod
+    def fetch_triggers(breeder_name=None):
+        query = f"""
+        SELECT tgname FROM pg_trigger WHERE tgname ~ '^{breeder_name}.*';
         """
 
         return query
@@ -100,6 +116,14 @@ class queries():
     def delete_procedure(procedure_name=None):
         query = f"""
         DROP FUNCTION IF EXISTS {procedure_name}();
+        """
+
+        return query
+
+    @staticmethod
+    def fetch_procedures(breeder_name=None):
+        query = f"""
+        SELECT proname FROM pg_proc WHERE proname ~ '^{breeder_name}.*';
         """
 
         return query
