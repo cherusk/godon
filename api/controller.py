@@ -168,28 +168,27 @@ def breeders_get():  # noqa: E501
     return api_response.to_dict()
 
 
-def breeders_name_get(name):  # noqa: E501
+def breeders_name_get(breeder_name):  # noqa: E501
     """breeders_name_get
 
     Obtain information about breeder from its name # noqa: E501
 
     """
 
-    api_response = None
+    ## fetch breeder meta data
+    db_config = META_DB_CONFIG.copy()
+    db_config.update(dict(dbname='meta_data'))
+    db_table_name = 'breeder_meta_data'
 
-    with client.ApiClient(configuration) as api_client:
-        # Create an instance of the API class
-       api_instance = dag_run_api.DAGRunApi(api_client)
-       dag_id = name # str | The DAG ID.
-       dag_run_id = name # str | The DAG run ID.
+    __query = meta_data.queries.fetch_meta_data(table_name=db_table_name, breeder_name=breeder_name)
+    breeder_meta_data = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
-       try:
-       # Get a DAG run
-           api_response = api_instance.get_dag_run(dag_id, dag_run_id)
-       except client.ApiException as e:
-           print("Exception when calling DAGRunApi->get_dag_run: %s\n" % e)
+    logging.error(breeder_meta_data)
 
-    return api_response.to_dict()
+    return Response(dict(creation_timestamp=breeder_meta_data[0],
+                         breeder_definition=breeder_meta_data[1]),
+                    status=200,
+                    mimetype='application/json')
 
 
 def breeders_post(content):  # noqa: E501
