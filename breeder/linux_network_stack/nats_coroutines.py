@@ -24,6 +24,9 @@ async def send_msg_via_nats(subject=None, data_dict=None):
 {% endraw %}
 
 async def receive_msg_via_nats(subject=None, timeout=300):
+    import nats
+    import time
+    import sys
     # Connect to NATS Server.
     nc = await nats.connect(NATS_SERVER_URL)
     sub = await nc.subscribe(f'{subject}')

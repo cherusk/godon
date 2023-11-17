@@ -27,25 +27,7 @@ from airflow.models import Variable
 from airflow.utils.dates import days_ago
 from airflow.decorators import task
 
-import optuna
-from optuna.storages import InMemoryStorage
-from optuna.integration import DaskStorage
-from distributed import Client, wait
-
-from sqlalchemy import create_engine
-from sqlalchemy import text
-
-from prometheus_api_client import PrometheusConnect, MetricsList, Metric
-from prometheus_api_client.utils import parse_datetime
 from datetime import timedelta
-import asyncio
-
-import pals
-import urllib3
-
-import nats
-import time
-import sys
 
 import random
 import logging
@@ -86,10 +68,8 @@ PROMETHEUS_URL = "{PROMETHEUS_URL}"
 
 DASK_SERVER_ENDPOINT = "{DASK_ENDPOINT}"
 
-ARCHIVE_DB_ENGINE = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
 
 DLM_DB_CONNECTION = 'postgresql://{DLM_DB_USER}:{DLM_DB_PASSWORD}@{DLM_DB_HOST}/{DLM_DB_DATABASE}'
-LOCKER = pals.Locker('network_breeder_effectuation', DLM_DB_CONNECTION)
 
 ###
 
