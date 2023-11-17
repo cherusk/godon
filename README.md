@@ -19,6 +19,6 @@ along with this godon. If not, see <http://www.gnu.org/licenses/>.
 # godon
 (ancient german = improving, rearranging, rendering benign)
 
-![Logo](https://github.com/cherusk/godon/blob/master/docs_content/logo.svg?sanitize=true)
+![Logo](https://github.com/cherusk/godon-documentation/blob/main/material/logo.svg?sanitize=true)
 
-More data to be found on the [docs site](https://cherusk.github.io/godon/).
+Please refer to the [documentation](https://cherusk.github.io/godon-documentation/) for further.
