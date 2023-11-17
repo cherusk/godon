@@ -49,7 +49,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
             return dlm_lock
 
-        aquire_lock_step = run_aquire_lock
+        aquire_lock_step = run_aquire_lock()
 
 
         @dag.task(task_id="release_lock_step")
@@ -62,7 +62,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
             return dlm_lock
 
-        release_lock_step = run_release_lock
+        release_lock_step = run_release_lock()
 
 
         @dag.task(task_id="push_optimization_step")
