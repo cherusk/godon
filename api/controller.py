@@ -125,7 +125,7 @@ def breeders_name_delete(breeder_name):  # noqa: E501
                                                     breeder_name=breeder_name)
     archive.archive_db.execute(db_info=db_config, query=__query)
 
-    return Response(json.dumps(dict(message="Purged Breeder named {breeder_name}")),
+    return Response(json.dumps(dict(message=f"Purged Breeder named {breeder_name}")),
                     status=200,
                     mimetype='application/json')
 
@@ -258,7 +258,7 @@ def breeders_post(content):  # noqa: E501
         #api_response['breeder'] = create_breeder(api_client, content).to_dict()
         create_breeder(api_client, content)
 
-    return Response(json.dumps(dict(message="Created Breeder named {breeder_id}")),
+    return Response(json.dumps(dict(message=f"Created Breeder named {breeder_id}")),
                                status=200,
                                mimetype='application/json')
 
