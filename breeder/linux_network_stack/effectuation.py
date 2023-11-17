@@ -11,13 +11,6 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
     with dag as interaction_dag:
 
-        dump_config = BashOperator(
-            task_id='print_config',
-            bash_command='echo ${config}',
-            env={"config": str(config)},
-            dag=interaction_dag,
-        )
-
         @dag.task(task_id="pull_optimization_step")
         def run_pull_optimization():
             import asyncio
@@ -193,7 +186,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
         stop_step = EmptyOperator(task_id="stop_task", dag=interaction_dag)
 
-        dump_config >> pull_step >> aquire_lock_step >> effectuation_step >> recon_step >> release_lock_step >> push_step >> run_iter_count_step >> stopping_conditional_step >> [continue_step, stop_step]
+        pull_step >> aquire_lock_step >> effectuation_step >> recon_step >> release_lock_step >> push_step >> run_iter_count_step >> stopping_conditional_step >> [continue_step, stop_step]
 
     return dag
 

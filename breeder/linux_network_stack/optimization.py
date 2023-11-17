@@ -75,10 +75,9 @@ def create_optimization_dag(dag_id, config, identifier):
 
     with dag as optimization_dag:
 
-        dump_config = BashOperator(
-            task_id='print_config',
-            bash_command='echo ${config}',
-            env={"config": str(config)},
+        noop = BashOperator(
+            task_id='noop',
+            bash_command='echo "noop"',
             dag=optimization_dag,
         )
 
@@ -110,6 +109,6 @@ def create_optimization_dag(dag_id, config, identifier):
 
         optimization_step = run_optimization()
 
-        dump_config >> optimization_step
+        noop >> optimization_step
 
     return dag
