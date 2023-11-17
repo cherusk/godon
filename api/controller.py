@@ -136,38 +136,24 @@ def breeders_get():  # noqa: E501
     Provides info on configured breeders # noqa: E501
 
     """
+    configured_breeders = list()
 
-    api_response = None
+    ## fetch breeder meta data list
+    db_config = META_DB_CONFIG.copy()
+    db_config.update(dict(dbname='meta_data'))
+    db_table_name = 'breeder_meta_data'
 
-    with client.ApiClient(configuration) as api_client:
-        api_instance = dag_run_api.DAGRunApi(api_client)
+    __query = meta_data.queries.fetch_breeders_list(table_name=db_table_name)
+    breeder_meta_data_list = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
-        list_dag_runs_form = ListDagRunsForm(
-            #order_by="order_by_example",
-            page_offset=0,
-            page_limit=10000,
-            dag_ids=[
-                "linux_network_stack_breeder", # only one dag existing so far
-            ],
-            #states=[
-            #],
-            execution_date_gte=dateutil_parser('1970-01-01T00:00:00.00Z'),
-            execution_date_lte=dateutil_parser('1970-01-01T00:00:00.00Z'),
-            start_date_gte=dateutil_parser('1970-01-01T00:00:00.00Z'),
-            start_date_lte=dateutil_parser('1970-01-01T00:00:00.00Z'),
-            end_date_gte=dateutil_parser('1970-01-01T00:00:00.00Z'),
-            end_date_lte=dateutil_parser('1970-01-01T00:00:00.00Z'),
-        ) # ListDagRunsForm |
+    # preformat timestamp to be stringifyable
+    configured_breeders = [(breeder_row[0],breeder_row[1].isoformat()) for breeder_row in breeder_meta_data_list]
 
-        # example passing only required values which don't have defaults set
-        try:
-           # List DAG runs (batch)
-           api_response = api_instance.get_dag_runs_batch(list_dag_runs_form)
-        except client.ApiException as e:
-           pprint("Exception when calling DAGRunApi->get_dag_runs_batch: %s\n" % e)
-           raise e
+    logging.error(json.dumps(configured_breeders))
 
-    return api_response.to_dict()
+    return Response(response=json.dumps(configured_breeders),
+                    status=200,
+                    mimetype='application/json')
 
 
 def breeders_name_get(breeder_name):  # noqa: E501
