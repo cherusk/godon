@@ -40,3 +40,10 @@ class queries():
         """
 
         return query
+
+    def fetch_breeders_list(table_name=None):
+        query = f"""
+        SELECT definition->>'name',creation_tsz FROM {table_name};
+        """
+
+        return query
