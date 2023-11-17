@@ -1,3 +1,4 @@
+apache-airflow == 2.4.3
 optuna == 3.1.0b0
 joblib == 1.2.0
 dask == 2022.12.1
