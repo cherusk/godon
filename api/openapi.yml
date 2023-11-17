@@ -86,7 +86,7 @@ paths:
                 name:
                   type: string
       responses:
-        '204':
+        '200':
            description: Successfully updated the running breeder
         '400':
            description: Invalid request
