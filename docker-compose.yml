@@ -144,6 +144,8 @@ services:
       command: ["dask-worker", "tcp://dask-scheduler-airflow:8786"]
       deploy:
         replicas: 2
+      volumes:
+        - ./breeder/dags:/opt/airflow/dags/
     # for optuna parallel metaheuristics execution on dask
     dask_scheduler:
       build:
