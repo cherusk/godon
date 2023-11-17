@@ -20,6 +20,8 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
         @dag.task(task_id="pull_optimization_step")
         def run_pull_optimization():
+            import asyncio
+
             task_logger.debug("Entering")
 
             msg = asyncio.run(receive_msg_via_nats(subject=f'effectuation_{identifier}'))
@@ -36,7 +38,11 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
         def run_aquire_lock():
             task_logger.debug("Entering")
 
-            dlm_lock = LOCKER.lock(target)
+            import pals
+
+            locker = pals.Locker('network_breeder_effectuation', DLM_DB_CONNECTION)
+
+            dlm_lock = locker.lock(target)
 
             if not dlm_lock.acquire(acquire_timeout=600):
                 task_logger.debug("Could not aquire lock for {target}")
@@ -61,6 +67,12 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
         @dag.task(task_id="push_optimization_step")
         def run_push_optimization(ti=None):
+
+            import asyncio
+            from sqlalchemy import create_engine
+            from sqlalchemy import text
+
+            archive_db_engine = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
             task_logger.debug("Entering")
 
             metric_value = ti.xcom_pull(task_ids="recon_step")
@@ -82,7 +94,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
                                      bindparam("setting_full", settings_full, type_=String),
                                      bindparam("setting_result", metric_data, type_=String))
 
-            ARCHIVE_DB_ENGINE.execute(query)
+            archive_db_engine.execute(query)
 
             task_logger.debug("Done")
 
@@ -92,6 +104,11 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
         @dag.task(task_id="recon_step")
         def run_reconnaissance():
+
+            from prometheus_api_client import PrometheusConnect, MetricsList, Metric
+            from prometheus_api_client.utils import parse_datetime
+            import urllib3
+
             task_logger.debug("Entering")
             prom_conn = PrometheusConnect(url=PROMETHEUS_URL,
                                           retry=urllib3.util.retry.Retry(total=3, raise_on_status=True, backoff_factor=0.5),

@@ -9,8 +9,14 @@ def objective(trial, identifier):
 ###--- end coroutines ---###
 
     import logging
+    from sqlalchemy import create_engine
+    from sqlalchemy import text
+
     logger = logging.getLogger('objective')
     logger.setLevel(logging.DEBUG)
+
+
+    archive_db_engine = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
 
     logger.warning('entering')
 
@@ -35,7 +41,7 @@ def objective(trial, identifier):
     query = query.bindparams(bindparam("table_name", breeder_table_name, type_=String),
                              bindparam("setting_id", setting_id, type_=String))
 
-    archive_db_data = ARCHIVE_DB_ENGINE.execute(query).fetchall()
+    archive_db_data = archive_db_engine.execute(query).fetchall()
 
     if archive_db_data:
         is_setting_explored = True
@@ -79,6 +85,11 @@ def create_optimization_dag(dag_id, config, identifier):
         ## perform optimiziation run
         @dag.task(task_id="optimization_step")
         def run_optimization():
+            import optuna
+            from optuna.storages import InMemoryStorage
+            from optuna.integration import DaskStorage
+            from distributed import Client, wait
+
             __directions = list()
 
             for objective in config.get('objectvices'):
