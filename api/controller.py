@@ -190,6 +190,7 @@ def breeders_post(content):  # noqa: E501
 
     def create_breeder(api_client, content):
         api_instance = dag_run_api.DAGRunApi(api_client)
+        breeder_config_full = content
         breeder_config = dict(content.get('breeder'))
         breeder_id = breeder_config.get('name')
 
@@ -197,7 +198,7 @@ def breeders_post(content):  # noqa: E501
         environment = Environment(loader=FileSystemLoader(DAG_TEMPLATES_DIR))
         template = environment.get_template("root_dag.py")
         filename = f"{DAG_DIR}/root_dag.py"
-        rendered_dag = template.render(breeder_config)
+        rendered_dag = template.render(breeder_config_full)
 
         with open(filename, mode="w", encoding="utf-8") as dag_file:
             dag_file.write(rendered_dag)
