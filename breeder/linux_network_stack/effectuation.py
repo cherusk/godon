@@ -136,7 +136,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
             remote_host=target.get('address'),
             username=target.get('user'),
             key_file=target.get('key_file'),
-            timeout=30,
+            conn_timeout=30,
             keepalive_interval=10
         )
 
@@ -144,7 +144,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
         effectuation_step = SSHOperator(
             ssh_hook=_ssh_hook,
             task_id='effectuation',
-            timeout=30,
+            conn_timeout=30,
             command="""
                     {{ ti.xcom_pull(task_ids='pull_optimization_step') }}
                     """,
