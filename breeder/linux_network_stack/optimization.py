@@ -91,8 +91,8 @@ def create_optimization_dag(dag_id, config, identifier):
 
             __directions = list()
 
-            for objective in config.get('objectives'):
-                direction = objective.get('direction')
+            for __objective in config.get('objectives'):
+                direction = __objective.get('direction')
                 __directions.append(direction)
 
             with Client(address=DASK_SERVER_ENDPOINT) as client:
