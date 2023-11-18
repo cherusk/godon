@@ -34,6 +34,7 @@ import logging
 import json
 import copy
 import hashlib
+import os
 
 task_logger = logging.getLogger("airflow.task")
 task_logger.setLevel(logging.DEBUG)
