@@ -45,7 +45,7 @@ services:
             - DLM_DB_PASSWORD=
             - DLM_DB_HOST=locks_db
             - DLM_DB_DATABASE=distributed_locking
-            - DASK_ENDPOINT=dask_scheduler:8786
+            - DASK_ENDPOINT="dask-scheduler:8786"
             - NATS_SERVER_URL="nats://godon_nats_1:4222"
             - PROMETHEUS_URL="http://prometheus:9090"
         # minimum of setup steps
@@ -163,7 +163,7 @@ services:
           - DLM_DB_PASSWORD=
           - DLM_DB_HOST=locks_db
           - DLM_DB_DATABASE=distributed_locking
-          - DASK_ENDPOINT=dask_scheduler:8786
+          - DASK_ENDPOINT="dask-scheduler:8786"
           - NATS_SERVER_URL="nats://godon_nats_1:4222"
           - PROMETHEUS_URL="http://prometheus:9090"
       build:
@@ -210,7 +210,7 @@ services:
          - DLM_DB_PASSWORD=
          - DLM_DB_HOST=locks_db
          - DLM_DB_DATABASE=distributed_locking
-         - DASK_ENDPOINT=dask_scheduler:8786
+         - DASK_ENDPOINT="dask-scheduler:8786"
          - NATS_SERVER_URL="nats://godon_nats_1:4222"
          - PROMETHEUS_URL="http://prometheus:9090"
       build:
