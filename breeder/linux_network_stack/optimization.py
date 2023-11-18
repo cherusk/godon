@@ -105,7 +105,6 @@ def create_optimization_dag(dag_id, config, identifier):
                     client.submit(study.optimize, objective_wrapped, n_trials=10, pure=False)
                 ]
                 wait(futures, timeout=7200)
-                print(f"Best params: {study.best_params}")
 
         optimization_step = run_optimization()
 
