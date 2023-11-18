@@ -91,7 +91,7 @@ def create_optimization_dag(dag_id, config, identifier):
 
             __directions = list()
 
-            for objective in config.get('objectvices'):
+            for objective in config.get('objectives'):
                 direction = objective.get('direction')
                 __directions.append(direction)
 
