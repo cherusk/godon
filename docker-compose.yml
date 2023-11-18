@@ -54,6 +54,7 @@ services:
         volumes:
             - ./testing/infra/credentials/ssh/:/opt/airflow/credentials/
             - ./breeder/dags:/opt/airflow/dags/
+            - airflow-logs-volume:/opt/airflow/logs/
         ports:
             - 127.0.0.1:8080:8080
     meta_data_db:
@@ -173,6 +174,7 @@ services:
         replicas: 2
       volumes:
         - ./breeder/dags:/opt/airflow/dags/
+        - airflow-logs-volume:/opt/airflow/logs/
     # for optuna parallel metaheuristics execution on dask
     dask_scheduler:
       build:
@@ -244,3 +246,4 @@ volumes:
   postgres-db-volume:
   postgres-locking-db-volume:
   postgres-meta-data-db-volume:
+  airflow-logs-volume:
