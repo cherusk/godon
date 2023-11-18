@@ -33,7 +33,7 @@ import random
 import logging
 import json
 import copy
-
+import hashlib
 
 task_logger = logging.getLogger("airflow.task")
 task_logger.setLevel(logging.DEBUG)
@@ -111,7 +111,8 @@ def determine_config_shard(run_id=None,
 
 
 for target in targets:
-    identifier = str(abs(hash(target.get('address'))))[0:6]
+    identifier = hashlib.sha256(str.encode(target.get('address'))).hexdigest()[0:6]
+
     for run_id in range(0, parallel_runs):
         dag_id = f'{dag_name}_{run_id}'
         if not is_cooperative:

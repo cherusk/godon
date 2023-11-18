@@ -33,7 +33,7 @@ def objective(trial, identifier):
     settings = '\n'.join(settings)
 
     is_setting_explored = False
-    setting_id = str(abs(hash(settings)))
+    setting_id = hashlib.sha256(str.encode(settings_full)).hexdigest()[0:6]
 
     breeder_table_name = f"from_breeder_name" # TBD global knowledge db table nam
     query = text("SELECT * FROM :table_name WHERE :table_name.setting_id == :setting_id")

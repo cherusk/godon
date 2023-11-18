@@ -22,6 +22,7 @@ import requests
 import os
 import time
 import datetime
+import hashlib
 from pprint import pprint
 from dateutil.parser import parse as dateutil_parser
 
@@ -221,7 +222,7 @@ def breeders_post(content):  # noqa: E501
         archive.archive_db.execute(db_info=db_config, query=__query)
 
         for target in targets:
-            identifier = str(abs(hash(target.get('address'))))[0:6]
+            identifier = hashlib.sha256(str.encode(target.get('address'))).hexdigest()[0:6]
             for run_id in range(0, parallel_runs):
                 dag_id = f'{dag_name}_{run_id}_{identifier}'
 
