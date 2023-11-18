@@ -1,4 +1,4 @@
-optuna == 3.1.0b0
+optuna == 3.4.0
 joblib == 1.2.0
 prometheus-api-client == 0.5.2
 nats-py == 2.2.0
