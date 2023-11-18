@@ -62,14 +62,17 @@ DEFAULTS = {
     # 'sla_miss_callback': yet_another_function,
     }
 
-NATS_SERVER_URL = "{NATS_SERVER_URL}"
+NATS_SERVER_URL = os.environ.get("NATS_SERVER_URL")
 
-PROMETHEUS_URL = "{PROMETHEUS_URL}"
+PROMETHEUS_URL = os.environ.get("PROMETHEUS_URL")
 
-DASK_SERVER_ENDPOINT = "{DASK_ENDPOINT}"
+DASK_SERVER_ENDPOINT = os.environ.get("DASK_ENDPOINT")
 
-
-DLM_DB_CONNECTION = 'postgresql://{DLM_DB_USER}:{DLM_DB_PASSWORD}@{DLM_DB_HOST}/{DLM_DB_DATABASE}'
+DLM_DB_USER = os.environ.get("DLM_DB_USER")
+DLM_DB_PASSWORD = os.environ.get("DLM_DB_PASSWORD")
+DLM_DB_HOST = os.environ.get("DLM_DB_HOST")
+DLM_DB_DATABASE = os.environ.get("DLM_DB_DATABASE")
+DLM_DB_CONNECTION = f"postgresql://{DLM_DB_USER}:{DLM_DB_PASSWORD}@{DLM_DB_HOST}/{DLM_DB_DATABASE}"
 
 ###
 
