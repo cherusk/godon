@@ -1,6 +1,6 @@
 
 
-def objective(trial, identifier, archive_db_url):
+def objective(trial, identifier, archive_db_url, breeder_name):
 
 ###--- definition coroutines ---###
 ### We have to keep to coroutines in the objective function,
@@ -31,13 +31,10 @@ def objective(trial, identifier, archive_db_url):
     settings = '\n'.join(settings)
 
     is_setting_explored = False
-    setting_id = hashlib.sha256(str.encode(settings_full)).hexdigest()[0:6]
+    setting_id = hashlib.sha256(str.encode(settings)).hexdigest()[0:6]
 
-    breeder_table_name = f"from_breeder_name" # TBD global knowledge db table nam
-    query = text("SELECT * FROM :table_name WHERE :table_name.setting_id == :setting_id")
-
-    query = query.bindparams(bindparam("table_name", breeder_table_name, type_=String),
-                             bindparam("setting_id", setting_id, type_=String))
+    breeder_table_name = f"{breeder_name}"
+    query = f"SELECT * FROM {breeder_table_name} WHERE {breeder_table_name}.setting_id = '{setting_id}';"
 
     archive_db_data = archive_db_engine.execute(query).fetchall()
 
