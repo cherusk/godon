@@ -43,8 +43,8 @@ services:
             - META_DB_PASSWORD=meta_data
             - META_DB_HOSTNAME=meta-data-db
             - META_DB_PORT=5432
-            - DLM_DB_USER=
-            - DLM_DB_PASSWORD=
+            - DLM_DB_USER=locking
+            - DLM_DB_PASSWORD=locking
             - DLM_DB_HOST=locks_db
             - DLM_DB_DATABASE=distributed_locking
             - DASK_ENDPOINT=dask-scheduler:8786
@@ -161,8 +161,8 @@ services:
           - META_DB_PASSWORD=meta_data
           - META_DB_HOSTNAME=meta-data-db
           - META_DB_PORT=5432
-          - DLM_DB_USER=
-          - DLM_DB_PASSWORD=
+          - DLM_DB_USER=locking
+          - DLM_DB_PASSWORD=locking
           - DLM_DB_HOST=locks_db
           - DLM_DB_DATABASE=distributed_locking
           - DASK_ENDPOINT=dask-scheduler:8786
@@ -208,8 +208,8 @@ services:
          - META_DB_PASSWORD=meta_data
          - META_DB_HOSTNAME=meta-data-db
          - META_DB_PORT=5432
-         - DLM_DB_USER=
-         - DLM_DB_PASSWORD=
+         - DLM_DB_USER=locking
+         - DLM_DB_PASSWORD=locking
          - DLM_DB_HOST=locks_db
          - DLM_DB_DATABASE=distributed_locking
          - DASK_ENDPOINT=dask-scheduler:8786
