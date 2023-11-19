@@ -94,6 +94,13 @@ DLM_DB_HOST = os.environ.get("DLM_DB_HOST")
 DLM_DB_DATABASE = os.environ.get("DLM_DB_DATABASE")
 DLM_DB_CONNECTION = f"postgresql://{DLM_DB_USER}:{DLM_DB_PASSWORD}@{DLM_DB_HOST}/{DLM_DB_DATABASE}"
 
+
+ARCHIVE_DB_USER = os.environ.get("ARCHIVE_DB_USER")
+ARCHIVE_DB_PASSWORD = os.environ.get("ARCHIVE_DB_PASSWORD")
+ARCHIVE_DB_HOST = os.environ.get("ARCHIVE_DB_HOST")
+ARCHIVE_DB_PORT = os.environ.get("ARCHIVE_DB_PORT")
+ARCHIVE_DB_DATABASE = os.environ.get("ARCHIVE_DB_DATABASE")
+
 ###
 
 {% include 'effectuation.py' %}
