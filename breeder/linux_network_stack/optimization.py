@@ -8,9 +8,6 @@ def objective(trial, identifier):
     {{ local_coroutines_include()|indent }} # default is indent of 4 spaces!
 ###--- end coroutines ---###
 
-    import logging
-    from sqlalchemy import create_engine
-    from sqlalchemy import text
 
     logger = logging.getLogger('objective')
     logger.setLevel(logging.DEBUG)
@@ -84,10 +81,6 @@ def create_optimization_dag(dag_id, config, identifier):
         ## perform optimiziation run
         @dag.task(task_id="optimization_step")
         def run_optimization():
-            import optuna
-            from optuna.storages import InMemoryStorage
-            from optuna.integration import DaskStorage
-            from distributed import Client, wait
 
             __directions = list()
 
