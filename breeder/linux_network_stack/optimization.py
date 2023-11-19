@@ -37,7 +37,7 @@ def create_optimization_dag(dag_id, config, identifier):
                 # Create a study using Dask-compatible storage
                 storage = DaskStorage(InMemoryStorage())
                 study = optuna.create_study(directions=__directions, storage=storage)
-                objective_wrapped = lambda trial: objective(trial,identifier, archive_db_url)
+                objective_wrapped = lambda trial: objective(trial,identifier, archive_db_url, config.get('name'))
                 # Optimize in parallel on your Dask cluster
                 futures = [
                     client.submit(study.optimize, objective_wrapped, n_trials=10, pure=False)

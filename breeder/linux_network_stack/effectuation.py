@@ -72,14 +72,9 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
             metric_data = dict(metric=metric_value)
             msg = asyncio.run(send_msg_via_nats(subject=f'recon_{identifier}', data_dict=metric_data))
 
+            breeder_table_name = config.get("name")
 
-            breeder_table_name = f"from_dag_name" # TBD local dag id based name
-
-            query  = text("INSERT INTO :table_name VALUES (:setting_id, :setting_full, :setting_result )")
-            query = query.bindparams(bindparam("table_name", breeder_table_name, type_=String),
-                                     bindparam("setting_id", setting_id, type_=String),
-                                     bindparam("setting_full", settings_full, type_=String),
-                                     bindparam("setting_result", metric_data, type_=String))
+            query = f"INSERT INTO {breeder_table_name} VALUES ({setting_id}, {setting_full}, {setting_result});"
 
             archive_db_engine.execute(query)
 
