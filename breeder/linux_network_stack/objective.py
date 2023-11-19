@@ -49,7 +49,7 @@ def objective(trial, identifier, archive_db_url, breeder_name):
         asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))
 
         logger.warning('gathering recon')
-        metric = json.loads(asyncio.run(receive_msg_via_nat(subject=f'recon_{identifier}')))
+        metric = json.loads(asyncio.run(receive_msg_via_nats(subject=f'recon_{identifier}')))
         metric_value = metric.get('metric')
         rtt = float(metric_value['tcp_rtt'])
         delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
