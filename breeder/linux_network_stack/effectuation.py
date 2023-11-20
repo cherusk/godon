@@ -106,41 +106,13 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
         )
 {% endraw %}
 
-        @dag.task(task_id="run_iter_count_step")
-        def run_iter_count(ti=None):
-            last_iteration =  ti.xcom_pull(task_ids="run_iter_count_step")
-            current_iteration = last_iteration + 1 if last_iteration else 0
-            return current_iteration
-
-        run_iter_count_step = run_iter_count()
-
-        @task.branch(task_id="stopping_decision_step")
-        def stopping_decision(max_iterations, ti=None):
-            task_logger.debug("Entering")
-            current_iteration = ti.xcom_pull(task_ids="run_iter_count_step")
-            def is_stop_criteria_reached(iteration):
-                if iteration >= max_iterations:
-                    return True
-                else:
-                    return False
-
-            task_logger.debug("Done")
-            if is_stop_criteria_reached(current_iteration):
-                return "stop_step"
-            else:
-                return "continue_step"
-
-        stopping_conditional_step = stopping_decision(config.get('run').get('iterations').get('max'))
-
         continue_step = TriggerDagRunOperator(
                 task_id='continue_step',
                 trigger_dag_id=interaction_dag.dag_id,
                 dag=interaction_dag
                 )
 
-        stop_step = EmptyOperator(task_id="stop_task", dag=interaction_dag)
-
-        pull_step >> effectuation_step >> recon_step >> push_step >> run_iter_count_step >> stopping_conditional_step >> [continue_step, stop_step]
+        pull_step >> effectuation_step >> recon_step >> push_step >> continue_step
 
     return dag
 
