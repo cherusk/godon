@@ -1,6 +1,6 @@
 
 
-def objective(trial, identifier, archive_db_url, breeder_name):
+def objective(trial, identifier, archive_db_url, locking_db_url, breeder_name):
 
 ###--- definition coroutines ---###
 ### We have to keep to coroutines in the objective function,
@@ -46,10 +46,25 @@ def objective(trial, identifier, archive_db_url, breeder_name):
     if not is_setting_explored:
         logger.warning('doing effectuation')
         settings_data = dict(settings=settings)
+
+        # get lock to gate other objective runs
+        locker = pals.Locker('network_breeder_effectuation', locking_db_url)
+
+        dlm_lock = locker.lock(target)
+
+        if not dlm_lock.acquire(acquire_timeout=600):
+            task_logger.debug("Could not aquire lock for {target}")
+
+
         asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))
 
         logger.warning('gathering recon')
         metric = json.loads(asyncio.run(receive_msg_via_nats(subject=f'recon_{identifier}')))
+
+
+        # release lock to let other objective runs effectuation
+        dlm_lock.release()
+
         metric_value = metric.get('metric')
         rtt = float(metric_value['tcp_rtt'])
         delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])

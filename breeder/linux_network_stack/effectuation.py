@@ -25,37 +25,6 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
         pull_step = run_pull_optimization()
 
-
-        @dag.task(task_id="aquire_lock_step")
-        def run_aquire_lock():
-            task_logger.debug("Entering")
-
-
-            locker = pals.Locker('network_breeder_effectuation', DLM_DB_CONNECTION)
-
-            dlm_lock = locker.lock(target)
-
-            if not dlm_lock.acquire(acquire_timeout=600):
-                task_logger.debug("Could not aquire lock for {target}")
-
-            return dlm_lock
-
-        aquire_lock_step = run_aquire_lock()
-
-
-        @dag.task(task_id="release_lock_step")
-        def run_release_lock():
-            task_logger.debug("Entering")
-
-            dlm_lock = ti.xcom_pull(task_ids="aquire_lock_step")
-
-            dlm_lock.release()
-
-            return dlm_lock
-
-        release_lock_step = run_release_lock()
-
-
         @dag.task(task_id="push_optimization_step")
         def run_push_optimization(ti=None):
 
@@ -171,7 +140,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
 
         stop_step = EmptyOperator(task_id="stop_task", dag=interaction_dag)
 
-        pull_step >> aquire_lock_step >> effectuation_step >> recon_step >> release_lock_step >> push_step >> run_iter_count_step >> stopping_conditional_step >> [continue_step, stop_step]
+        pull_step >> effectuation_step >> recon_step >> push_step >> run_iter_count_step >> stopping_conditional_step >> [continue_step, stop_step]
 
     return dag
 
