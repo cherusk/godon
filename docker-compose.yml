@@ -18,7 +18,7 @@
 ##
 version: '3.4'
 services:
-    control_loop:
+    airflow:
         build:
           context: ./
           dockerfile: ./Dockerfile-dask
@@ -54,8 +54,9 @@ services:
       restart: always
       ports:
          - 127.0.0.7:5432:5432
-    db:
+    airflow_db:
       image: postgres:13
+      hostname: airflow-db
       environment:
         POSTGRES_USER: airflow
         POSTGRES_PASSWORD: airflow
@@ -93,7 +94,7 @@ services:
           - archive_db.env
           - meta_db.env
         environment:
-          - AIRFLOW__URL=http://control_loop:8080
+          - AIRFLOW__URL=http://airflow:8080
         volumes:
             - ./breeder/linux_network_stack/:/usr/src/app/openapi_server/templates/
             - ./breeder/dags:/usr/src/app/openapi_server/dags/
@@ -117,12 +118,12 @@ services:
         - 127.0.0.10:8787:8787
       entrypoint: bash -c "dask-scheduler"
     dask_worker_airflow:
-        env_file:
-          - airflow_vars.env
-          - archive_db.env
-          - meta_db.env
-          - pals_locking.env
-          - service_vars.env
+      env_file:
+        - airflow_vars.env
+        - archive_db.env
+        - meta_db.env
+        - pals_locking.env
+        - service_vars.env
       build:
         context: ./
         dockerfile: ./Dockerfile-dask
@@ -133,23 +134,22 @@ services:
         - ./breeder/dags:/opt/airflow/dags/
         - airflow-logs-volume:/opt/airflow/logs/
     # for optuna parallel metaheuristics execution on dask
-    dask_scheduler:
+    dask_scheduler_optuna:
       build:
           context: ./
           dockerfile: ./Dockerfile-dask
-      hostname: dask-scheduler
+      hostname: dask-scheduler-optuna
       ports:
         - 127.0.0.11:8786:8786
         - 127.0.0.11:8787:8787
       entrypoint: bash -c "dask-scheduler"
-    dask_worker:
-      environment:
-        env_file:
-          - airflow_vars.env
-          - archive_db.env
-          - meta_db.env
-          - pals_locking.env
-          - service_vars.env
+    dask_worker_optuna:
+      env_file:
+        - airflow_vars.env
+        - archive_db.env
+        - meta_db.env
+        - pals_locking.env
+        - service_vars.env
       build:
         context: ./
         dockerfile: ./Dockerfile-dask
