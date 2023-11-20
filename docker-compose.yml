@@ -23,33 +23,12 @@ services:
           context: ./
           dockerfile: ./Dockerfile-dask
         restart: always
-        environment:
-            - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=true
-            - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
-            - AIRFLOW__CORE__EXECUTOR=DaskExecutor
-            - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@db/airflow
-            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@db/airflow
-            - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
-            - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
-            - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
-            - AIRFLOW__DASK__CLUSTER_ADDRESS=tcp://dask-scheduler-airflow:8786
-            - 'AIRFLOW_CONN_LINUX_NETWORK_STACK_BREEDER_SSH={ "conn_type": "ssh", "login": "godon_robot", "host": "10.0.5.53", "port": 22, "extra": { "key_file": "/opt/airflow/credentials/id_rsa" } }'
-            - ARCHIVE_DB_USER=yugabyte
-            - ARCHIVE_DB_PASSWORD=yugabyte
-            - ARCHIVE_DB_HOST=archive-db
-            - ARCHIVE_DB_PORT=5433
-            - ARCHIVE_DB_DATABASE=archive_db
-            - META_DB_USER=meta_data
-            - META_DB_PASSWORD=meta_data
-            - META_DB_HOSTNAME=meta-data-db
-            - META_DB_PORT=5432
-            - DLM_DB_USER=locking
-            - DLM_DB_PASSWORD=locking
-            - DLM_DB_HOST=locks_db
-            - DLM_DB_DATABASE=distributed_locking
-            - DASK_ENDPOINT=dask-scheduler:8786
-            - NATS_SERVER_URL=nats://godon_nats_1:4222
-            - PROMETHEUS_URL=http://prometheus:9090
+        env_file:
+          - airflow_vars.env
+          - archive_db.env
+          - meta_db.env
+          - pals_locking.env
+          - service_vars.env
         # minimum of setup steps
         # on sequencial executor and local sqlite
         entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"
@@ -110,14 +89,11 @@ services:
           context: ./api/flask/
         image: godon/api:latest
         restart: always
+        env_file:
+          - archive_db.env
+          - meta_db.env
         environment:
           - AIRFLOW__URL=http://control_loop:8080
-          - ARCHIVE_DB_HOSTNAME=archive-db
-          - ARCHIVE_DB_PORT=5433
-          - META_DB_USER=meta_data
-          - META_DB_PASSWORD=meta_data
-          - META_DB_HOSTNAME=meta-data-db
-          - META_DB_PORT=5432
         volumes:
             - ./breeder/linux_network_stack/:/usr/src/app/openapi_server/templates/
             - ./breeder/dags:/usr/src/app/openapi_server/dags/
@@ -141,33 +117,12 @@ services:
         - 127.0.0.10:8787:8787
       entrypoint: bash -c "dask-scheduler"
     dask_worker_airflow:
-      environment:
-          - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=true
-          - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
-          - AIRFLOW__CORE__EXECUTOR=DaskExecutor
-          - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@db/airflow
-          - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@db/airflow
-          - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
-          - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
-          - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
-          - AIRFLOW__DASK__CLUSTER_ADDRESS=tcp://dask-scheduler-airflow:8786
-          - 'AIRFLOW_CONN_LINUX_NETWORK_STACK_BREEDER_SSH={ "conn_type": "ssh", "login": "godon_robot", "host": "10.0.5.53", "port": 22, "extra": { "key_file": "/opt/airflow/credentials/id_rsa" } }'
-          - ARCHIVE_DB_USER=yugabyte
-          - ARCHIVE_DB_PASSWORD=yugabyte
-          - ARCHIVE_DB_HOST=archive-db
-          - ARCHIVE_DB_PORT=5433
-          - ARCHIVE_DB_DATABASE=archive_db
-          - META_DB_USER=meta_data
-          - META_DB_PASSWORD=meta_data
-          - META_DB_HOSTNAME=meta-data-db
-          - META_DB_PORT=5432
-          - DLM_DB_USER=locking
-          - DLM_DB_PASSWORD=locking
-          - DLM_DB_HOST=locks_db
-          - DLM_DB_DATABASE=distributed_locking
-          - DASK_ENDPOINT=dask-scheduler:8786
-          - NATS_SERVER_URL=nats://godon_nats_1:4222
-          - PROMETHEUS_URL=http://prometheus:9090
+        env_file:
+          - airflow_vars.env
+          - archive_db.env
+          - meta_db.env
+          - pals_locking.env
+          - service_vars.env
       build:
         context: ./
         dockerfile: ./Dockerfile-dask
@@ -189,32 +144,12 @@ services:
       entrypoint: bash -c "dask-scheduler"
     dask_worker:
       environment:
-         - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=true
-         - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=True
-         - AIRFLOW__CORE__EXECUTOR=DaskExecutor
-         - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@db/airflow
-         - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@db/airflow
-         - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
-         - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
-         - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
-         - AIRFLOW__DASK__CLUSTER_ADDRESS=tcp://dask-scheduler-airflow:8786
-         - 'AIRFLOW_CONN_LINUX_NETWORK_STACK_BREEDER_SSH={ "conn_type": "ssh", "login": "godon_robot", "host": "10.0.5.53", "port": 22, "extra": { "key_file": "/opt/airflow/credentials/id_rsa" } }'
-         - ARCHIVE_DB_USER=yugabyte
-         - ARCHIVE_DB_PASSWORD=yugabyte
-         - ARCHIVE_DB_HOST=archive-db
-         - ARCHIVE_DB_PORT=5433
-         - ARCHIVE_DB_DATABASE=archive_db
-         - META_DB_USER=meta_data
-         - META_DB_PASSWORD=meta_data
-         - META_DB_HOSTNAME=meta-data-db
-         - META_DB_PORT=5432
-         - DLM_DB_USER=locking
-         - DLM_DB_PASSWORD=locking
-         - DLM_DB_HOST=locks_db
-         - DLM_DB_DATABASE=distributed_locking
-         - DASK_ENDPOINT=dask-scheduler:8786
-         - NATS_SERVER_URL=nats://godon_nats_1:4222
-         - PROMETHEUS_URL=http://prometheus:9090
+        env_file:
+          - airflow_vars.env
+          - archive_db.env
+          - meta_db.env
+          - pals_locking.env
+          - service_vars.env
       build:
         context: ./
         dockerfile: ./Dockerfile-dask
