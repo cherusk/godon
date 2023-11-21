@@ -170,7 +170,7 @@ services:
       build:
         context: ./
         dockerfile: ./Dockerfile-dask
-      entrypoint: bash -c "dask-worker tcp://dask_scheduler:8786"
+      entrypoint: bash -c "dask-worker tcp://dask-scheduler-optuna:8786"
       deploy:
         replicas: 2
     prometheus:
