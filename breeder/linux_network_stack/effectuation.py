@@ -72,9 +72,8 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
                 if recon_service_type == 'prometheus':
                     recon_query = objective.get('reconaissance').get('query')
                     query_name = objective.get('reconaissance').get('name')
-                    query_string = query.get('query')
 
-                    query_result = prom_conn.custom_query(query_string)
+                    query_result = prom_conn.custom_query(recon_query)
                     metric_value = query_result[0]
                     metric_data[query_name] = metric_value.get('value')[1]
                 else:
