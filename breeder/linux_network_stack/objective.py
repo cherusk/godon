@@ -50,10 +50,10 @@ def objective(trial, identifier, archive_db_url, locking_db_url, breeder_name):
         # get lock to gate other objective runs
         locker = pals.Locker('network_breeder_effectuation', locking_db_url)
 
-        dlm_lock = locker.lock(target)
+        dlm_lock = locker.lock(f'{breeder_name}_{identifier}')
 
-        if not dlm_lock.acquire(acquire_timeout=600):
-            task_logger.debug("Could not aquire lock for {target}")
+        if not dlm_lock.acquire(acquire_timeout=1200):
+            task_logger.debug("Could not aquire lock for {breeder_name}_{identifier}")
 
 
         asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))
