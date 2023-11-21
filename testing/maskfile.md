@@ -80,7 +80,7 @@ cat "${__template_file}" | yq '.breeder.effectuation.targets |= []' - > ${output
 
 for __target_ip_address in ${__target_ip_addresses_array[@]}
 do
-  export targets_object="{ "user": "godon_robot", "key_file": "/opt/airflow/credentials/id_rsa", "address": "${__target_ip_address}" }"
+  export target_object="{ "user": "godon_robot", "key_file": "/opt/airflow/credentials/id_rsa", "address": "${__target_ip_address}" }"
   yq -i '.breeder.effectuation.targets += env(target_object)' "${output_file}"
 done
 
