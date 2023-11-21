@@ -70,7 +70,7 @@ jobs:
         run: >
              source /etc/bashrc;
              mask --maskfile "${MASK_FILE}" infra create machines;
-             sleep 30;
+             sleep 50;
              mask --maskfile "${MASK_FILE}" config generate prometheus;
              mask --maskfile "${MASK_FILE}" config generate breeder "./examples/network_gen.yml";
              mask --maskfile "${MASK_FILE}" infra create network;
