@@ -1,6 +1,10 @@
 
 
-def objective(trial, identifier, archive_db_url, locking_db_url, breeder_name):
+def objective(trial,
+              identifier=None,
+              archive_db_url=None,
+              locking_db_url=None,
+              breeder_name=None):
 
 ###--- definition coroutines ---###
 ### We have to keep to coroutines in the objective function,

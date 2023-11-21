@@ -20,7 +20,11 @@ def create_optimization_dag(dag_id, config, identifier):
     {{ local_objective_includ()|indent(12) }} # default is indent of 4 spaces!
 ###--- end coroutines ---###
 
-            archive_db_url = f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}'
+            objective_kwargs = dict(archive_db_url=f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}',
+                                    locking_db_url=DLM_DB_CONNECTION,
+                                    identifier=identifier,
+                                    breeder_name=config.get('name'),
+                                    )
 
             __directions = list()
 
@@ -32,7 +36,7 @@ def create_optimization_dag(dag_id, config, identifier):
                 # Create a study using Dask-compatible storage
                 storage = DaskStorage(InMemoryStorage())
                 study = optuna.create_study(directions=__directions, storage=storage)
-                objective_wrapped = lambda trial: objective(trial,identifier, archive_db_url, DLM_DB_CONNECTION,config.get('name'))
+                objective_wrapped = lambda trial: objective(trial, **objective_kwargs)
                 # Optimize in parallel on your Dask cluster
                 futures = [
                     client.submit(study.optimize, objective_wrapped, n_trials=10, pure=False)
