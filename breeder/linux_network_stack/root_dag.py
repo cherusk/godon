@@ -82,7 +82,7 @@ NATS_SERVER_URL = os.environ.get("NATS_SERVER_URL")
 
 PROMETHEUS_URL = os.environ.get("PROMETHEUS_URL")
 
-DASK_SERVER_ENDPOINT = os.environ.get("DASK_ENDPOINT")
+DASK_OPTUNA_SCHEDULER_URL = os.environ.get("DASK_OPTUNA_SCHEDULER_URL")
 
 DLM_DB_USER = os.environ.get("DLM_DB_USER")
 DLM_DB_PASSWORD = os.environ.get("DLM_DB_PASSWORD")
