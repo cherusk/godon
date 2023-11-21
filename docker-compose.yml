@@ -18,7 +18,7 @@
 ##
 version: '3.4'
 services:
-    airflow:
+    airflow_web:
         build:
           context: ./
           dockerfile: ./Dockerfile-dask
@@ -30,14 +30,31 @@ services:
           - env_vars/pals_locking.env
           - env_vars/service_vars.env
         # minimum of setup steps
-        # on sequencial executor and local sqlite
-        entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; (airflow scheduler &); airflow webserver"
+        entrypoint: bash -c "airflow db init; airflow users create -u airflow -p airflow -r Admin -f airflow -l airflow -e airflow; airflow webserver"
         volumes:
             - ./testing/infra/credentials/ssh/:/opt/airflow/credentials/
             - ./breeder/dags:/opt/airflow/dags/
             - airflow-logs-volume:/opt/airflow/logs/
         ports:
             - 127.0.0.1:8080:8080
+    airflow_scheduler:
+      build:
+        context: ./
+        dockerfile: ./Dockerfile-dask
+      restart: always
+      env_file:
+        - env_vars/airflow_vars.env
+        - env_vars/archive_db.env
+        - env_vars/meta_db.env
+        - env_vars/pals_locking.env
+        - env_vars/service_vars.env
+      entrypoint: bash -c "airflow scheduler"
+      volumes:
+          - ./testing/infra/credentials/ssh/:/opt/airflow/credentials/
+          - ./breeder/dags:/opt/airflow/dags/
+          - airflow-logs-volume:/opt/airflow/logs/
+      deploy:
+        replicas: 2
     meta_data_db:
       hostname: meta-data-db
       image: postgres:13
