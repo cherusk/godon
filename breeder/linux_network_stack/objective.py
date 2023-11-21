@@ -51,8 +51,9 @@ def objective(trial,
     if archive_db_data:
         logger.debug('setting already explored')
         is_setting_explored = True
-        rtt = archive_db_data[0].get('setting_result').get('rtt')
-        delivery_rate = archive_db_data[0].get('setting_result').get('delivery_rate')
+        result_tuple = json.loads(archive_db_data[0])
+        rtt = result_tuple[0]
+        delivery_rate = result_tuple[1]
 
     if not is_setting_explored:
         logger.warning('doing effectuation')
@@ -84,7 +85,7 @@ def objective(trial,
 
         setting_result = (rtt, delivery_rate)
 
-        query = f"INSERT INTO {breeder_table_name} VALUES ({setting_id}, '{setting_full}', {setting_result});"
+        query = f"INSERT INTO {breeder_table_name} VALUES ('{setting_id}', '{setting_full}', '{setting_result}');"
         archive_db_engine.execute(query)
 
         logger.warning('Result stored in Knowledge Archive')

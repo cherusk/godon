@@ -37,7 +37,7 @@ class queries():
         (
         setting_id bpchar NOT NULL,
         setting_full jsonb NOT NULL,
-        setting_result FLOAT NOT NULL,
+        setting_result jsonb NOT NULL,
         PRIMARY KEY (setting_id HASH)
         );
         """
