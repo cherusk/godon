@@ -148,6 +148,7 @@ services:
       deploy:
         replicas: 2
       volumes:
+        - ./testing/infra/credentials/ssh/:/opt/airflow/credentials/
         - ./breeder/dags:/opt/airflow/dags/
         - airflow-logs-volume:/opt/airflow/logs/
     # for optuna parallel metaheuristics execution on dask
