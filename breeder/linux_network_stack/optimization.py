@@ -34,7 +34,7 @@ def create_optimization_dag(dag_id, config, identifier):
                 direction = __objective.get('direction')
                 __directions.append(direction)
 
-            with Client(address=DASK_SERVER_ENDPOINT) as client:
+            with Client(address=DASK_OPTUNA_SCHEDULER_URL) as client:
                 # Create a study using Dask-compatible storage
                 storage = DaskStorage(InMemoryStorage())
                 study = optuna.create_study(directions=__directions, storage=storage)
