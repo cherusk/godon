@@ -28,7 +28,7 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
         @dag.task(task_id="push_optimization_step")
         def run_push_optimization(ti=None):
 
-            archive_db_engine = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOST}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
+            archive_db_engine = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOSTNAME}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
             task_logger.debug("Entering")
 
             metric_value = ti.xcom_pull(task_ids="recon_step")
