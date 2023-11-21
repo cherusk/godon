@@ -36,24 +36,20 @@ import copy
 import hashlib
 import os
 
-from sqlalchemy import create_engine
-from sqlalchemy import text
+import pals
+import asyncio
+import urllib3
 
 import optuna
 from optuna.storages import InMemoryStorage
 from optuna.integration import DaskStorage
 from distributed import Client, wait
 
-import asyncio
-import pals
-
-import asyncio
 from sqlalchemy import create_engine
 from sqlalchemy import text
 
 from prometheus_api_client import PrometheusConnect, MetricsList, Metric
 from prometheus_api_client.utils import parse_datetime
-import urllib3
 
 task_logger = logging.getLogger("airflow.task")
 task_logger.setLevel(logging.DEBUG)
