@@ -17,10 +17,9 @@ def objective(trial,
     logger = logging.getLogger('objective')
     logger.setLevel(logging.DEBUG)
 
+    logger.debug('entering')
 
     archive_db_engine = create_engine(archive_db_url)
-
-    logger.warning('entering')
 
     # Compiling settings for effectuation
     settings = []
@@ -37,18 +36,22 @@ def objective(trial,
     is_setting_explored = False
     setting_id = hashlib.sha256(str.encode(settings)).hexdigest()[0:6]
 
+    logger.debug('fetching setting data')
+
     breeder_table_name = f"{breeder_name}"
     query = f"SELECT * FROM {breeder_table_name} WHERE {breeder_table_name}.setting_id = '{setting_id}';"
 
     archive_db_data = archive_db_engine.execute(query).fetchall()
 
     if archive_db_data:
+        logger.debug('setting already explored')
         is_setting_explored = True
         rtt = archive_db_data[0].get('setting_result').get('rtt')
         delivery_rate = archive_db_data[0].get('setting_result').get('delivery_rate')
 
     if not is_setting_explored:
         logger.warning('doing effectuation')
+        is_setting_explored = True
         settings_data = dict(settings=settings)
 
         # get lock to gate other objective runs
@@ -62,7 +65,7 @@ def objective(trial,
 
         asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))
 
-        logger.warning('gathering recon')
+        logger.info('gathering recon')
         metric = json.loads(asyncio.run(receive_msg_via_nats(subject=f'recon_{identifier}')))
 
 
@@ -72,7 +75,7 @@ def objective(trial,
         metric_value = metric.get('metric')
         rtt = float(metric_value['tcp_rtt'])
         delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
-        logger.warning(f'metric received {metric_value}')
+        logger.info(f'metric received {metric_value}')
 
     logger.warning('Done')
 
