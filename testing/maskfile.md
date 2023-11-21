@@ -222,7 +222,7 @@ echo "provisioning infra instances"
 ~~~bash
 set -eEux
 
-docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up --build -d
+docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up --build -d --force-recreate
 
 ~~~
 
@@ -233,7 +233,7 @@ docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" up --build -d
 ~~~bash
 set -eEux
 
-docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" down
+docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" down --remove-orphans  --volumes
 
 ~~~
 
