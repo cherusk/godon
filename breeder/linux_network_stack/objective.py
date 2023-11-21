@@ -23,15 +23,20 @@ def objective(trial,
 
     # Compiling settings for effectuation
     settings = []
+    setting_full = []
     for setting_name, setting_config in config.get('settings').get('sysctl').items():
         constraints = setting_config.get('constraints')
         step_width = setting_config.get('step')
         suggested_value = trial.suggest_int(setting_name, constraints.get('lower') , constraints.get('upper'), step_width)
+
+        setting_full.append({ setting_name : suggested_value })
+
         if setting_name in ['net.ipv4.tcp_rmem', 'net.ipv4.tcp_wmem']:
             settings.append(f"sudo sysctl -w {setting_name}='4096 131072 {suggested_value}';")
         else:
             settings.append(f"sudo sysctl -w {setting_name}='{suggested_value}';")
     settings = '\n'.join(settings)
+    setting_full = json.dumps(setting_full)
 
     is_setting_explored = False
     setting_id = hashlib.sha256(str.encode(settings)).hexdigest()[0:6]
@@ -76,6 +81,13 @@ def objective(trial,
         rtt = float(metric_value['tcp_rtt'])
         delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
         logger.info(f'metric received {metric_value}')
+
+        setting_result = (rtt, delivery_rate)
+
+        query = f"INSERT INTO {breeder_table_name} VALUES ({setting_id}, '{setting_full}', {setting_result});"
+        archive_db_engine.execute(query)
+
+        logger.warning('Result stored in Knowledge Archive')
 
     logger.warning('Done')
 
