@@ -32,9 +32,10 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
             task_logger.debug("Entering")
 
             metric_value = ti.xcom_pull(task_ids="recon_step")
-            settings_full = ti.xcom_pull(task_ids="pull_optimization_step")
+            setting_full = ti.xcom_pull(task_ids="pull_optimization_step")
+            setting_result = metric_value
 
-            setting_id = hashlib.sha256(str.encode(settings_full)).hexdigest()[0:6]
+            setting_id = hashlib.sha256(str.encode(setting_full)).hexdigest()[0:6]
 
             task_logger.debug(f"Metric : f{metric_value}")
 
