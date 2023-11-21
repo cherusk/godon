@@ -107,6 +107,8 @@ __kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
 echo "instanciating machines"
 ${__kcli_cmd} "create plan -f ./infra/machines/plan.yml ${__plan_name}"
 
+sleep 10
+
 ${__kcli_cmd} "list plan"
 ${__kcli_cmd} "list vm"
 
