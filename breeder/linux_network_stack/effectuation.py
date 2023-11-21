@@ -28,25 +28,14 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
         @dag.task(task_id="push_optimization_step")
         def run_push_optimization(ti=None):
 
-            archive_db_engine = create_engine(f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOSTNAME}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}')
             task_logger.debug("Entering")
 
             metric_value = ti.xcom_pull(task_ids="recon_step")
-            setting_full = ti.xcom_pull(task_ids="pull_optimization_step")
-            setting_result = metric_value
-
-            setting_id = hashlib.sha256(str.encode(setting_full)).hexdigest()[0:6]
 
             task_logger.debug(f"Metric : f{metric_value}")
 
             metric_data = dict(metric=metric_value)
             msg = asyncio.run(send_msg_via_nats(subject=f'recon_{identifier}', data_dict=metric_data))
-
-            breeder_table_name = config.get("name")
-
-            query = f"INSERT INTO {breeder_table_name} VALUES ({setting_id}, {setting_full}, {setting_result});"
-
-            archive_db_engine.execute(query)
 
             task_logger.debug("Done")
 
