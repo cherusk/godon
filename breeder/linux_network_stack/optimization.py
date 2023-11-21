@@ -9,12 +9,6 @@ def create_optimization_dag(dag_id, config, identifier):
 
     with dag as optimization_dag:
 
-        noop = BashOperator(
-            task_id='noop',
-            bash_command='echo "noop"',
-            dag=optimization_dag,
-        )
-
         ## perform optimiziation run
         @dag.task(task_id="optimization_step")
         def run_optimization():
