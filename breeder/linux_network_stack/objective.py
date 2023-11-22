@@ -1,6 +1,7 @@
 
 
 def objective(trial,
+              run=None,
               identifier=None,
               archive_db_url=None,
               locking_db_url=None,
@@ -43,7 +44,7 @@ def objective(trial,
 
     logger.debug('fetching setting data')
 
-    breeder_table_name = f"{breeder_name}"
+    breeder_table_name = f"{breeder_name}_{run}_{identifier}"
     query = f"SELECT * FROM {breeder_table_name} WHERE {breeder_table_name}.setting_id = '{setting_id}';"
 
     archive_db_data = archive_db_engine.execute(query).fetchall()

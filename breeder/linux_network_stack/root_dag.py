@@ -143,7 +143,7 @@ for target in targets:
         dag_id = f'{dag_name}_{run_id}'
         if not is_cooperative:
             config = determine_config_shard()
-        globals()[f'{dag_id}_optimization_{identifier}'] = create_optimization_dag(f'{dag_id}_optimization_{identifier}', config, identifier)
+        globals()[f'{dag_id}_optimization_{identifier}'] = create_optimization_dag(f'{dag_id}_optimization_{identifier}', config, run_id, identifier)
         globals()[f'{dag_id}_target_{identifier}'] = create_target_interaction_dag(f'{dag_id}_target_interaction_{identifier}', config, target, identifier)
 
     target_id += 1
