@@ -47,6 +47,8 @@ import openapi_server.controllers.meta_data_db as meta_data
 import logging
 
 import json
+import uuid
+
 
 AIRFLOW_API_BASE_URL = os.environ.get('AIRFLOW__URL')
 AIRFLOW_API_VERSION = "v1"
@@ -75,7 +77,7 @@ configuration = client.Configuration(
 )
 
 
-def breeders_name_delete(breeder_name):  # noqa: E501
+def breeders_id_delete(breeder_id):  # noqa: E501
     """breeders_delete
 
     Purge a breeder # noqa: E501
@@ -96,10 +98,10 @@ def breeders_name_delete(breeder_name):  # noqa: E501
     db_config = ARCHIVE_DB_CONFIG.copy()
     db_config.update(dict(dbname="archive_db"))
 
-    __query = archive.queries.delete_breeder_table(table_name=breeder_name)
+    __query = archive.queries.delete_breeder_table(table_name=breeder_id)
     archive.archive_db.execute(db_info=db_config, query=__query)
 
-    __query = archive.queries.fetch_procedures(breeder_name=breeder_name)
+    __query = archive.queries.fetch_procedures(breeder_id=breeder_id)
     procedures = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     for procedure_name in procedures:
@@ -108,7 +110,7 @@ def breeders_name_delete(breeder_name):  # noqa: E501
         __query = archive.queries.delete_procedure(procedure_name=procedure_name[0])
         archive.archive_db.execute(db_info=db_config, query=__query)
 
-    __query = archive.queries.fetch_tables(breeder_name=breeder_name)
+    __query = archive.queries.fetch_tables(breeder_id=breeder_id)
     archive_tables = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     for table_name in archive_tables:
@@ -123,10 +125,10 @@ def breeders_name_delete(breeder_name):  # noqa: E501
     db_table_name = 'breeder_meta_data'
 
     __query = meta_data.queries.remove_breeder_meta(table_name=db_table_name,
-                                                    breeder_name=breeder_name)
+                                                    breeder_id=breeder_id)
     archive.archive_db.execute(db_info=db_config, query=__query)
 
-    return Response(json.dumps(dict(message=f"Purged Breeder named {breeder_name}")),
+    return Response(json.dumps(dict(message=f"Purged Breeder named {breeder_id}")),
                     status=200,
                     mimetype='application/json')
 
@@ -157,7 +159,7 @@ def breeders_get():  # noqa: E501
                     mimetype='application/json')
 
 
-def breeders_name_get(breeder_name):  # noqa: E501
+def breeders_id_get(breeder_uuid):  # noqa: E501
     """breeders_name_get
 
     Obtain information about breeder from its name # noqa: E501
@@ -169,7 +171,7 @@ def breeders_name_get(breeder_name):  # noqa: E501
     db_config.update(dict(dbname='meta_data'))
     db_table_name = 'breeder_meta_data'
 
-    __query = meta_data.queries.fetch_meta_data(table_name=db_table_name, breeder_name=breeder_name)
+    __query = meta_data.queries.fetch_meta_data(table_name=db_table_name, breeder_id=breeder_uuid)
     breeder_meta_data = archive.archive_db.execute(db_info=db_config, query=__query, with_result=True)
 
     breeder_meta_data_row = breeder_meta_data[0]
@@ -190,7 +192,8 @@ def breeders_post(content):  # noqa: E501
 
     breeder_config_full = content
     breeder_config = dict(content.get('breeder'))
-    breeder_id = breeder_config.get('name')
+    breeder_name = breeder_config.get('name')
+    uuid = uuid.uuid4()
 
     def create_breeder(api_client, content):
 
@@ -218,13 +221,13 @@ def breeders_post(content):  # noqa: E501
         db_config = ARCHIVE_DB_CONFIG.copy()
         db_config.update(dict(dbname="archive_db"))
 
-        __query = archive.queries.create_breeder_table(table_name=dag_name)
+        __query = archive.queries.create_breeder_table(table_name=uuid)
         archive.archive_db.execute(db_info=db_config, query=__query)
 
         for target in targets:
-            identifier = hashlib.sha256(str.encode(target.get('address'))).hexdigest()[0:6]
+            hash_suffix = hashlib.sha256(str.encode(target.get('address'))).hexdigest()[0:6]
             for run_id in range(0, parallel_runs):
-                dag_id = f'{dag_name}_{run_id}_{identifier}'
+                dag_id = f'{uuid}_{run_id}_{hash_suffix}'
 
                 __query = archive.queries.create_breeder_table(table_name=dag_id)
                 archive.archive_db.execute(db_info=db_config, query=__query)
@@ -249,6 +252,7 @@ def breeders_post(content):  # noqa: E501
         archive.archive_db.execute(db_info=db_config, query=__query)
 
         __query = meta_data.queries.insert_breeder_meta(table_name=db_table_name,
+                                                      breeder_id=uuid,
                                                       creation_ts=datetime.datetime.now(),
                                                       meta_state=breeder_config)
         archive.archive_db.execute(db_info=db_config, query=__query)

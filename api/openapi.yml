@@ -39,9 +39,9 @@ paths:
                  items:
                    type: object
                    required:
-                     - name
+                     - id
                    properties:
-                     name:
+                     id:
                        type: string
         '400':
            description: Invalid request
@@ -61,7 +61,7 @@ paths:
             schema:
               type: object
       responses:
-        '204':
+        '200':
            description: Successfully created the breeder
         '400':
            description: Invalid request
@@ -98,11 +98,11 @@ paths:
                    message:
                      type: string
 
-  /breeders/{name}:
+  /breeders/{id}:
     delete:
       description: Purge a breeder
       parameters:
-        - name: name
+        - name: id
           in: path
           required: true
           schema:
@@ -127,9 +127,9 @@ paths:
                    message:
                      type: string
     get:
-      description: Obtain information about breeder from its name
+      description: Obtain information about breeder from its id(uuid)
       parameters:
-        - name: name
+        - name: id
           in: path
           required: true
           schema:
@@ -144,9 +144,9 @@ paths:
                  items:
                    type: object
                    required:
-                     - name
+                     - id
                    properties:
-                     name:
+                     id:
                        type: string
         '400':
            description: Invalid request

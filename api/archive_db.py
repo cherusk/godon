@@ -53,9 +53,9 @@ class queries():
         return query
 
     @staticmethod
-    def fetch_tables(breeder_name=None):
+    def fetch_tables(uuid=None):
         query = f"""
-        SELECT tablename FROM pg_tables WHERE tablename ~ '^{breeder_name}.*';
+        SELECT tablename FROM pg_tables WHERE tablename ~ '^{uuid}.*';
         """
 
         return query
@@ -82,9 +82,9 @@ class queries():
         return query
 
     @staticmethod
-    def fetch_triggers(breeder_name=None):
+    def fetch_triggers(breeder_id=None):
         query = f"""
-        SELECT tgname FROM pg_trigger WHERE tgname ~ '^{breeder_name}.*';
+        SELECT tgname FROM pg_trigger WHERE tgname ~ '^{breeder_id}.*';
         """
 
         return query
@@ -124,9 +124,9 @@ class queries():
         return query
 
     @staticmethod
-    def fetch_procedures(breeder_name=None):
+    def fetch_procedures(breeder_id=None):
         query = f"""
-        SELECT proname FROM pg_proc WHERE proname ~ '^{breeder_name}.*';
+        SELECT proname FROM pg_proc WHERE proname ~ '^{breeder_id}.*';
         """
 
         return query
