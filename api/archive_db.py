@@ -103,7 +103,7 @@ class queries():
             INSERT INTO {target_table_name} (target_table_setting_id, target_table_setting_full, target_table_setting_result)
             SELECT source_table_setting_id, source_table_setting_full, source_table_setting_result FROM {source_table_name}
             ON CONFLICT
-            DO UPDATE SET target_table_setting_result = source_table_setting_result WHERE  target_table_setting_result < source_table_setting_result;
+            DO UPDATE SET target_table_setting_result = source_table_setting_result WHERE  target_table_setting_result ->>0 > source_table_setting_result->>0 AND target_table_setting_result ->>1 < source_table_setting_result->>1 ;
           END IF;
 
         END;
