@@ -92,6 +92,7 @@ class queries():
     @staticmethod
     def create_procedure(procedure_name=None, probability=1.0, source_table_name=None, target_table_name=None):
         query = f"""
+
         CREATE OR REPLACE FUNCTION {procedure_name}() RETURNS TRIGGER AS $$
         DECLARE
           random_value real;
@@ -100,14 +101,18 @@ class queries():
           random_value = random();
 
           IF random_value < {probability} THEN
-            INSERT INTO {target_table_name} (target_table_setting_id, target_table_setting_full, target_table_setting_result)
-            SELECT source_table_setting_id, source_table_setting_full, source_table_setting_result FROM {source_table_name}
+            INSERT INTO {target_table_name} AS target_table (setting_id, setting_full, setting_result)
+            SELECT setting_id, setting_full, setting_result FROM {source_table_name} AS source_table
             ON CONFLICT
-            DO UPDATE SET target_table_setting_result = source_table_setting_result WHERE  target_table_setting_result ->>0 > source_table_setting_result->>0 AND target_table_setting_result ->>1 < source_table_setting_result->>1 ;
+            DO UPDATE SET target_table.setting_result = source_table.setting_result WHERE  (source_table.setting_result->>0 > target_table.setting_result->>0 AND
+                                                                                            source_table.setting_result->>1 < target_table.setting_result->>1);
           END IF;
+
+          RETURN NULL;
 
         END;
         $$ LANGUAGE plpgsql;
+
         """
 
         return query
