@@ -83,7 +83,7 @@ def objective(trial,
         delivery_rate = float(metric_value['tcp_delivery_rate_bytes'])
         logger.info(f'metric received {metric_value}')
 
-        setting_result = (rtt, delivery_rate)
+        setting_result = json.dumps([rtt, delivery_rate])
 
         query = f"INSERT INTO {breeder_table_name} VALUES ('{setting_id}', '{setting_full}', '{setting_result}');"
         archive_db_engine.execute(query)
