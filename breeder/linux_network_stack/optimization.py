@@ -1,6 +1,6 @@
 
 
-def create_optimization_dag(dag_id, config, identifier):
+def create_optimization_dag(dag_id, config, run, identifier):
 
     dag = DAG(dag_id,
               default_args=DEFAULTS,
@@ -22,6 +22,7 @@ def create_optimization_dag(dag_id, config, identifier):
 
             objective_kwargs = dict(archive_db_url=f'postgresql://{ARCHIVE_DB_USER}:{ARCHIVE_DB_PASSWORD}@{ARCHIVE_DB_HOSTNAME}:{ARCHIVE_DB_PORT}/{ARCHIVE_DB_DATABASE}',
                                     locking_db_url=DLM_DB_CONNECTION,
+                                    run=run,
                                     identifier=identifier,
                                     breeder_name=config.get('name'),
                                     )
