@@ -243,25 +243,25 @@ docker-compose -f "${MASKFILE_DIR}/../docker-compose.yml" down --remove-orphans 
 
 ### testing perform
 
-> Perform/Orchestrate Session of Tests Run
+> Orchestrate and Perform Session of Test Run
 
 ~~~bash
 set -eEux
 
 echo "performing tests"
+__kcli_cmd="mask --maskfile ${MASKFILE_DIR}/maskfile.md util kcli run"
+__ssh_cmd="ssh -o UserKnownHostsFile=/dev/null -o GlobalKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${MASKFILE_DIR}/infra/credentials/ssh/id_rsa_robot"
 
- # TODO improvised until formatted parser install 
-target_ip="$(sudo ansible-inventory --list -y -i ${MASKFILE_DIR}/infra/inventory.sh | 
-             grep ansible_host | head -n 1 | \
-             awk -F: '{print $2}' | xargs echo -n)"
-svc_name=control_loop
-dag_name="lnx_net_stack"
+__source_vm_ip_address=($(${__kcli_cmd} "list vm" | grep 'micro_stack' | grep 'source' | awk -F\| '{ print $4 }' | xargs))
+__sink_vm_ip_address=($(${__kcli_cmd} "list vm" | grep 'micro_stack' | grep 'sink' | awk -F\| '{ print $4 }' | xargs))
 
+__sink_vm_test_iface_ip_address=($(${__ssh_cmd} "godon_robot@${__sink_vm_ip_address}" "ip --json a show dev ens8  | jq '.[0].addr_info[0].local'"))
 
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}" \
-                        airflow variables --set target "${target_ip}"
-sudo docker-compose -f "${MASKFILE_DIR}/docker-compose.yml" exec -T "${svc_name}" \
-                        airflow trigger_dag "${dag_name}"
+${__ssh_cmd} "godon_robot@${__sink_vm_ip_address}" "sudo systemctl stop test-server; sudo systemctl start test-server"
+
+${__ssh_cmd} "godon_robot@${__source_vm_ip_address}" "echo "SINK_IP=${__sink_vm_test_iface_ip_address}" > /home/test/sink_ip"
+${__ssh_cmd} "godon_robot@${__source_vm_ip_address}" "sudo systemctl stop test-client; sudo systemctl start test-client"
+
 
 ~~~
 
