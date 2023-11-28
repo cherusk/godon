@@ -39,6 +39,29 @@
     };
   };
 
+ systemd.services.test-client = {
+    enable = true;
+    wantedBy = [ ];
+    after = [ ];
+    description = "Start test-client";
+    serviceConfig = {
+      Type = "exec";
+      EnvironmentFile = "/home/test/sink_ip";
+      ExecStart = "/run/current-system/sw/bin/iperf3 -P 5 -t 36000 -c $SINK_IP";
+    };
+  };
+
+ systemd.services.test-server = {
+    enable = true;
+    wantedBy = [ ];
+    after = [ ];
+    description = "Start test-server";
+    serviceConfig = {
+      Type = "exec";
+      ExecStart = "/run/current-system/sw/bin/iperf3 -s";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     python3
     bashInteractive_5
