@@ -5,7 +5,7 @@ def objective(trial,
               identifier=None,
               archive_db_url=None,
               locking_db_url=None,
-              breeder_name=None):
+              breeder_id=None):
 
 ###--- definition coroutines ---###
 ### We have to keep to coroutines in the objective function,
@@ -44,7 +44,7 @@ def objective(trial,
 
     logger.debug('fetching setting data')
 
-    breeder_table_name = f"{breeder_name}_{run}_{identifier}"
+    breeder_table_name = f"{breeder_id}_{run}_{identifier}"
     query = f"SELECT * FROM {breeder_table_name} WHERE {breeder_table_name}.setting_id = '{setting_id}';"
 
     archive_db_data = archive_db_engine.execute(query).fetchall()
@@ -64,10 +64,10 @@ def objective(trial,
         # get lock to gate other objective runs
         locker = pals.Locker('network_breeder_effectuation', locking_db_url)
 
-        dlm_lock = locker.lock(f'{breeder_name}_{identifier}')
+        dlm_lock = locker.lock(f'{breeder_id}')
 
         if not dlm_lock.acquire(acquire_timeout=1200):
-            task_logger.debug("Could not aquire lock for {breeder_name}_{identifier}")
+            task_logger.debug("Could not aquire lock for {breeder_id}")
 
 
         asyncio.run(send_msg_via_nats(subject=f'effectuation_{identifier}', data_dict=settings_data))

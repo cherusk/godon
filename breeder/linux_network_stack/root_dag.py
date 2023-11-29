@@ -107,7 +107,7 @@ config = {{ breeder }}
 
 parallel_runs = config.get('run').get('parallel')
 targets = config.get('effectuation').get('targets')
-dag_name = config.get('name')
+dag_name = config.get('uuid')
 is_cooperative = config.get('cooperation').get('active')
 
 target_id = 0
@@ -137,13 +137,13 @@ def determine_config_shard(run_id=None,
 
 
 for target in targets:
-    identifier = hashlib.sha256(str.encode(target.get('address'))).hexdigest()[0:6]
+    hash_suffix = hashlib.sha256(str.encode(target.get('address'))).hexdigest()[0:6]
 
     for run_id in range(0, parallel_runs):
         dag_id = f'{dag_name}_{run_id}'
         if not is_cooperative:
             config = determine_config_shard()
-        globals()[f'{dag_id}_optimization_{identifier}'] = create_optimization_dag(f'{dag_id}_optimization_{identifier}', config, run_id, identifier)
-        globals()[f'{dag_id}_target_{identifier}'] = create_target_interaction_dag(f'{dag_id}_target_interaction_{identifier}', config, target, identifier)
+        globals()[f'{dag_id}_optimization_{hash_suffix}'] = create_optimization_dag(f'{dag_id}_optimization_{hash_suffix}', config, run_id, hash_suffix)
+        globals()[f'{dag_id}_target_{hash_suffix}'] = create_target_interaction_dag(f'{dag_id}_target_interaction_{hash_suffix}', config, target, hash_suffix)
 
     target_id += 1
