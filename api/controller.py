@@ -194,6 +194,7 @@ def breeders_post(content):  # noqa: E501
     breeder_config = dict(content.get('breeder'))
     breeder_name = breeder_config.get('name')
     uuid = uuid.uuid4()
+    config.update(dict(uuid=uuid))
 
     def create_breeder(api_client, content):
 

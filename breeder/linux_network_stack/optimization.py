@@ -24,7 +24,7 @@ def create_optimization_dag(dag_id, config, run, identifier):
                                     locking_db_url=DLM_DB_CONNECTION,
                                     run=run,
                                     identifier=identifier,
-                                    breeder_name=config.get('name'),
+                                    breeder_id=config.get('uuid'),
                                     )
 
             __directions = list()
