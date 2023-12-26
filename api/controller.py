@@ -85,7 +85,7 @@ def breeders_id_delete(breeder_id):  # noqa: E501
     """
 
     # cleanup dag definition config file
-    filename = f"{DAG_DIR}/root_dag.py"
+    filename = f"{DAG_DIR}/{breeder_id}.py"
 
     if os.path.exists(filename):
         os.remove(filename)
@@ -201,7 +201,7 @@ def breeders_post(content):  # noqa: E501
         # templating related
         environment = Environment(loader=FileSystemLoader(DAG_TEMPLATES_DIR))
         template = environment.get_template("root_dag.py")
-        filename = f"{DAG_DIR}/root_dag.py"
+        filename = f"{DAG_DIR}/{breeder_id}.py"
         rendered_dag = template.render(breeder_config_full)
 
         with open(filename, mode="w", encoding="utf-8") as dag_file:
