@@ -73,7 +73,12 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
                     #       ]
                     #     }
 
-                    metric_data[query_name] = metric_value.get('result')[1]
+                    value = metric_value.get('result')[1]
+
+                    if value == "NaN":
+                        raise Exception("Scalar reduction of custom query probably ailing, only returning NaN.")
+
+                    metric_data[query_name] = value
                 else:
                     raise Exception("Reconnaisance service type {recon_service_type} not supported yet.")
 
