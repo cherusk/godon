@@ -60,8 +60,20 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
                     query_name = objective.get('name')
 
                     query_result = prom_conn.custom_query(recon_query)
-                    metric_value = query_result[0]
-                    metric_data[query_name] = metric_value.get('value')[1]
+
+                    if query_result.get('resultType') != 'scalar':
+                        raise Exception("Custom Query must be of result type scalar.")
+
+                    # Example format of result processed
+                    #   "data": {
+                    #       "resultType": "scalar",
+                    #       "result": [
+                    #         1703619892.31, << TS
+                    #         "0.401370548"  << Value
+                    #       ]
+                    #     }
+
+                    metric_data[query_name] = metric_value.get('result')[1]
                 else:
                     raise Exception("Reconnaisance service type {recon_service_type} not supported yet.")
 
