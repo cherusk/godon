@@ -51,10 +51,6 @@ def create_target_interaction_dag(dag_id, config, target, identifier):
                                           retry=urllib3.util.retry.Retry(total=3, raise_on_status=True, backoff_factor=0.5),
                                           disable_ssl=True)
 
-            start_time = parse_datetime("2m")
-            end_time = parse_datetime("now")
-            chunk_size = timedelta(minutes=1)
-
             metric_data = dict()
             for objective in config.get('objectives'):
                 recon_service_type = objective.get('reconaissance').get('service')
