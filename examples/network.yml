@@ -48,12 +48,12 @@ breeder:
       direction: minimize
       reconaissance:
         service: prometheus
-        query: "quantile(0.5, tcp_rtt)" # median
+        query: "scalar(quantile(0.5, tcp_rtt))" # median
     - name: "tcp_delivery_rate_bytes"
       direction: maximize
       reconaissance:
         service: prometheus
-        query: "quantile(0.5, tcp_delivery_rate_bytes)" # median
+        query: "scalar(quantile(0.5, tcp_delivery_rate_bytes))" # median
   effectuation:
     targets:
       - user: godon_robot
