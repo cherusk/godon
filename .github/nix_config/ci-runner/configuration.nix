@@ -36,13 +36,22 @@
       extraLabels = [ "nixos" "osuosl" ];
       extraPackages = let
         old_pkgs = import (builtins.fetchTarball {
-          url = "https://github.com/NixOS/nixpkgs/archive/d1c3fea7ecbed758168787fe4e4a3157e52bc808.tar.gz";
+          url =
+            "https://github.com/NixOS/nixpkgs/archive/d1c3fea7ecbed758168787fe4e4a3157e52bc808.tar.gz";
         }) { };
 
         docker_old = old_pkgs.docker-client;
         docker_compose_old = old_pkgs.docker-compose;
 
-      in with pkgs; [ nixos-generators mask docker_old docker_compose_old iproute2 jq yq-go ];
+      in with pkgs; [
+        nixos-generators
+        mask
+        docker_old
+        docker_compose_old
+        iproute2
+        jq
+        yq-go
+      ];
       workDir = "/github-runner/";
       serviceOverrides = {
         PrivateUsers = false;
@@ -53,15 +62,25 @@
         CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
       };
     };
+    # lightweight kubernetes
+    k3s.enable = true;
+    k3s.role = "server";
+    k3s.extraFlags = toString [
+      # "--kubelet-arg=v=4" # Optionally add additional args to k3s
+    ];
   };
 
   # create github-runner work dir
-  systemd.tmpfiles.rules = [ "d /github-runner/ 0755 root root -" "d /github-runner/artifacts 0755 root root -" ];
+  systemd.tmpfiles.rules = [
+    "d /github-runner/ 0755 root root -"
+    "d /github-runner/artifacts 0755 root root -"
+  ];
 
   environment.systemPackages = let
     pythonModules = pythonPackages: with pythonPackages; [ pyyaml ];
     old_pkgs = import (builtins.fetchTarball {
-      url = "https://github.com/NixOS/nixpkgs/archive/d1c3fea7ecbed758168787fe4e4a3157e52bc808.tar.gz";
+      url =
+        "https://github.com/NixOS/nixpkgs/archive/d1c3fea7ecbed758168787fe4e4a3157e52bc808.tar.gz";
     }) { };
     docker_old = old_pkgs.docker-client;
     docker_compose_old = old_pkgs.docker-compose;
@@ -85,6 +104,7 @@
     jq
     yq-go
     killall
+    k3s
     mask
     nmap
     nixos-generators
