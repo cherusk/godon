@@ -66,7 +66,7 @@
     k3s.enable = true;
     k3s.role = "server";
     k3s.extraFlags = toString [
-      # "--kubelet-arg=v=4" # Optionally add additional args to k3s
+      "--bind-address=localhost" "--kubelet-arg='address=127.0.0.1'"
     ];
   };
 
