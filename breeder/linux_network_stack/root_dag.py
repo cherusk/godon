@@ -17,15 +17,6 @@
 # along with this godon. If not, see <http://www.gnu.org/licenses/>.
 #
 
-from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
-from airflow.operators.dagrun_operator import TriggerDagRunOperator
-from airflow.operators.empty import EmptyOperator
-from airflow.contrib.operators.ssh_operator import SSHOperator
-from airflow.contrib.hooks.ssh_hook import SSHHook
-from airflow.models import Variable
-from airflow.utils.dates import days_ago
-from airflow.decorators import task
 
 from datetime import timedelta
 
